@@ -175,6 +175,10 @@ java -jar mybatis.jar ll.xml
 
 3、分析结果多个SQL用@@@分割，ID和SQL指纹内容通过:分割
 
+## 联系方式
+
+QQ群:573249030
+
 ### Acknowledgments
 -----------------
 This project was inspired by the following projects and websites:
