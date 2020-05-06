@@ -1,4 +1,7 @@
 mybatis2sql 基于mybatis-3.5.4定制支持静态分析XML文件输出SQL指纹。
+
+原生的mybatis必须传参数，动态构造对象，传入mybatis API生成SQL，本项目绕开这个限制，直接分析mybatis XML文件。
+
 ## XML
 #### test.xml ####
 ```xml
