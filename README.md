@@ -174,3 +174,11 @@ java -jar mybatis.jar ll.xml
 2、避免一些语法解析不兼容，语法错误，语义不对等情况。
 
 3、分析结果多个SQL用@@@分割，ID和SQL指纹内容通过:分割
+
+### Acknowledgments
+-----------------
+This project was inspired by the following projects and websites:
+- https://github.com/OldBlackJoe/mybatis-mapper 
+- http://www.mybatis.org/mybatis-3/dynamic-sql.html
+- http://www.enmoedu.com/article-205.html
+- https://github.com/hhyo/mybatis-mapper2sql
