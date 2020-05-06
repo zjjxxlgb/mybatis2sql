@@ -9,7 +9,7 @@ cd mybatis_jar
 
 java -jar mybatis.jar ll.xml
 
-![案例](/release/help.PNG)
+![案例](https://github.com/zjjxxlgb/mybatis2sql/raw/master/release/help.PNG)
 
 ## 特定：
 1、基于mybatis定制，支持更多标签，更多属性。
