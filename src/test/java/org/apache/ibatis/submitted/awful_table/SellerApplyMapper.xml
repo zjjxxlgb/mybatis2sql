@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sibu.mall.seller.persistence.dao.SellerApplyMapper">
+    <resultMap id="SellerApplyResult" type="com.sibu.mall.seller.persistence.entity.SellerApply">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="name" column="name"/>
+        <result property="password" column="password"/>
+        <result property="businessLicenseType" column="business_license_type"/>
+        <result property="company" column="company"/>
+        <result property="bussinessLicense" column="bussiness_license"/>
+        <result property="taxLicense" column="tax_license"/>
+        <result property="companyProvince" column="company_province"/>
+        <result property="companyCity" column="company_city"/>
+        <result property="companyLogo" column="company_logo"/>
+        <result property="companyStartTime" column="company_start_time"/>
+        <result property="companyEndTime" column="company_end_time"/>
+        <result property="companyAdd" column="company_add"/>
+        <result property="telephone" column="telephone"/>
+        <result property="fax" column="fax"/>
+        <result property="bussinessLicenseImage" column="bussiness_license_image"/>
+        <result property="bussinessLicenseImageWaterMark" column="bussiness_license_image_water_mark"/>
+        <result property="bussinessPermitImage" column="bussiness_permit_image"/>
+        <result property="organization" column="organization"/>
+        <result property="licenseInOne" column="license_in_one"/>
+        <result property="bankUser" column="bank_user"/>
+        <result property="bankName" column="bank_name"/>
+        <result property="bankNameBranch" column="bank_name_branch"/>
+        <result property="brandNameCode" column="brand_name_code"/>
+        <result property="bankLicenseImage" column="bank_license_image"/>
+        <result property="bankCode" column="bank_code"/>
+        <result property="bankProvince" column="bank_province"/>
+        <result property="bankCity" column="bank_city"/>
+        <result property="swiftCode" column="swift_code"/>
+        <result property="bankAddress" column="bank_address"/>
+        <result property="legalPerson" column="legal_person"/>
+        <result property="legalPersonCard" column="legal_person_card"/>
+        <result property="legalPersonCardType" column="legal_person_card_type"/>
+        <result property="personCardUp" column="person_card_up"/>
+        <result property="personCardDown" column="person_card_down"/>
+        <result property="idCardValidityPeriodStartTime" column="id_card_validity_period_start_time"/>
+        <result property="idCardValidityPeriodEndTime" column="id_card_validity_period_end_time"/>
+        <result property="personPhone" column="person_phone"/>
+        <result property="email" column="email"/>
+        <result property="state" column="state"/>
+        <result property="type" column="type"/>
+        <result property="optId" column="opt_id"/>
+        <result property="bond" column="bond"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="sellerEnterCate" column="seller_enter_cate"/>
+        <result property="productList" column="product_list"/>
+        <result property="stateMessage" column="state_message"/>
+        <result property="contractId" column="contract_id"/>
+        <result property="contractTemplateId" column="contract_template_id"/>
+        <result property="beautyMakeupContractId" column="beauty_makeup_contract_id"/>
+        <result property="beautyMakeupContractStatus" column="beauty_makeup_contract_status"/>
+    </resultMap>
+    <select id="get" parameterType="Integer" resultMap="SellerApplyResult">
+		select
+		   *
+		from `seller_apply`
+		where `id` = #{id}
+	</select>
+
+    <select id="getSellerApplyByName" parameterType="java.lang.String" resultMap="SellerApplyResult">
+		select
+		   *
+		from `seller_apply`
+		where `name` = #{name}
+	</select>
+
+    <select id="getSellerApplyByUser" parameterType="Integer" resultMap="SellerApplyResult">
+		select
+		   *
+		from `seller_apply`
+		where `user_id` = #{userid}
+	</select>
+    <select id="getSellerApplyBySellerId" resultMap="SellerApplyResult">
+		select
+			sa.*
+		from seller_apply sa
+		left join seller s on sa.user_id = s.member_id
+		where s.id=#{sellerId}
+	</select>
+
+
+    <select id="getSellerApplyBySellerIds" resultType="com.sibu.mall.seller.persistence.entity.SellerApply">
+		select
+			sa.*
+		from seller_apply sa
+		left join seller s on sa.user_id = s.member_id
+		where
+        s.`id` in
+        <foreach collection="sellerIds" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+	</select>
+
+
+    <select id="getSellerApplysCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(1) from seller_apply sa
+        left join seller s
+        ON sa.user_id = s.member_id
+        <include refid="getSellerApplysCondition"/>
+    </select>
+
+    <delete id="delete">
+        delete from `seller_apply` where `id` = #{id}
+    </delete>
+
+    <select id="getSellerApplyByUserId" parameterType="Integer" resultMap="SellerApplyResult">
+		select
+		   *
+		from `seller_apply`
+		where `user_id` = #{userId}
+	</select>
+
+    <insert id="insert" parameterType="com.sibu.mall.seller.persistence.entity.SellerApply" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="id">
+		insert into `seller_apply`
+		(
+			`user_id`,
+			`name`,
+			`password`,
+			`business_license_type`,
+			`company`,
+			`bussiness_license`,
+			`tax_license`,
+			`company_province`,
+			`company_city`,
+			`company_start_time`,
+			`company_end_time`,
+			`company_add`,
+			`telephone`,
+			`fax`,
+			`bussiness_license_image`,
+			`bussiness_license_image_water_mark`,
+			`bussiness_permit_image`,
+			`organization`,
+			`bank_user`,
+			`bank_name`,
+			`bank_name_branch`,
+			`brand_name_code`,
+			`bank_license_image`,
+			`bank_code`,
+			`bank_province`,
+			`bank_city`,
+			`swift_code`,
+			`bank_address`,
+			`legal_person`,
+			`legal_person_card`,
+            `legal_person_card_type`,
+			`person_card_up`,
+			`person_card_down`,
+			`id_card_validity_period_start_time`,
+			`id_card_validity_period_end_time`,
+			`person_phone`,
+			`email`,
+			`state`,
+			`type`,
+			`opt_id`,
+			`bond`,
+			`create_time`,
+			`update_time`,
+			`seller_enter_cate`,
+			`third_iden`,
+			`license_in_one`,
+			`beauty_makeup_contract_id`,
+			`beauty_makeup_contract_status`
+		)
+		values
+		(
+			#{userId},
+			#{name},
+			#{password},
+			#{businessLicenseType},
+			#{company},
+			#{bussinessLicense},
+			#{taxLicense},
+			#{companyProvince},
+			#{companyCity},
+			#{companyStartTime},
+			#{companyEndTime},
+			#{companyAdd},
+			#{telephone},
+			#{fax},
+			#{bussinessLicenseImage},
+			#{bussinessLicenseImageWaterMark},
+			#{bussinessPermitImage},
+			#{organization},
+			#{bankUser},
+			#{bankName},
+			#{bankNameBranch},
+			#{brandNameCode},
+			#{bankLicenseImage},
+			#{bankCode},
+			#{bankProvince},
+			#{bankCity},
+			#{swiftCode},
+			#{bankAddress},
+			#{legalPerson},
+			#{legalPersonCard},
+			#{legalPersonCardType},
+			#{personCardUp},
+			#{personCardDown},
+			#{idCardValidityPeriodStartTime},
+			#{idCardValidityPeriodEndTime},
+			#{personPhone},
+			#{email},
+			#{state},
+			#{type},
+			#{optId},
+			#{bond},
+			now(),
+			#{updateTime},
+			#{sellerEnterCate},
+			#{thirdIden},
+			#{licenseInOne},
+			#{beautyMakeupContractId},
+			#{beautyMakeupContractStatus}
+		)
+	</insert>
+
+    <update id="update" parameterType="com.sibu.mall.seller.persistence.entity.SellerApply">
+        update `seller_apply`
+        <set>
+            <!-- <if test="id != null">`id`= #{id},</if> -->
+            <if test="userId != null">`user_id`= #{userId},</if>
+            <if test="name != null">`name`= #{name},</if>
+            <if test="password != null">`password`= #{password},</if>
+            <if test="businessLicenseType != null">`business_license_type`= #{businessLicenseType},</if>
+            <if test="company != null">`company`= #{company},</if>
+            <if test="bussinessLicense != null">`bussiness_license`= #{bussinessLicense},</if>
+            <if test="taxLicense != null">`tax_license`= #{taxLicense},</if>
+            <if test="companyProvince != null">`company_province`= #{companyProvince},</if>
+            <if test="companyCity != null">`company_city`= #{companyCity},</if>
+            <if test="companyLogo != null">`company_logo`= #{companyLogo},</if>
+            <if test="companyStartTime != null">`company_start_time`= #{companyStartTime},</if>
+            <if test="companyEndTime != null">`company_end_time`= #{companyEndTime},</if>
+            <if test="companyAdd != null">`company_add`= #{companyAdd},</if>
+            <if test="telephone != null">`telephone`= #{telephone},</if>
+            <if test="fax != null">`fax`= #{fax},</if>
+            <if test="bussinessLicenseImage != null">`bussiness_license_image`= #{bussinessLicenseImage},</if>
+            <if test="bussinessLicenseImageWaterMark != null">`bussiness_license_image_water_mark`= #{bussinessLicenseImageWaterMark},</if>
+            <if test="bussinessPermitImage != null">`bussiness_permit_image`= #{bussinessPermitImage},</if>
+            <if test="organization != null">`organization`= #{organization},</if>
+            <if test="bankUser != null">`bank_user`= #{bankUser},</if>
+            <if test="bankName != null">`bank_name`= #{bankName},</if>
+            <if test="bankNameBranch != null">`bank_name_branch`= #{bankNameBranch},</if>
+            <if test="brandNameCode != null">`brand_name_code`= #{brandNameCode},</if>
+            <if test="bankLicenseImage != null">`bank_license_image`= #{bankLicenseImage},</if>
+            <if test="bankCode != null">`bank_code`= #{bankCode},</if>
+            <if test="bankProvince != null">`bank_province`= #{bankProvince},</if>
+            <if test="bankCity != null">`bank_city`= #{bankCity},</if>
+            <if test="swiftCode != null">`swift_code`= #{swiftCode},</if>
+            <if test="bankAddress != null">`bank_address`= #{bankAddress},</if>
+            <if test="legalPerson != null">`legal_person`= #{legalPerson},</if>
+            <if test="legalPersonCard != null">`legal_person_card`= #{legalPersonCard},</if>
+            <if test="legalPersonCardType != null">`legal_person_card_type`= #{legalPersonCardType},</if>
+            <if test="personCardUp != null">`person_card_up`= #{personCardUp},</if>
+            <if test="personCardDown != null">`person_card_down`= #{personCardDown},</if>
+            <if test="idCardValidityPeriodStartTime != null">`id_card_validity_period_start_time`= #{idCardValidityPeriodStartTime},</if>
+            <if test="idCardValidityPeriodEndTime != null">`id_card_validity_period_end_time`= #{idCardValidityPeriodEndTime},</if>
+            <if test="personPhone != null">`person_phone`= #{personPhone},</if>
+            <if test="email != null">`email`= #{email},</if>
+            <if test="state != null">`state`= #{state},</if>
+            <if test="type != null">`type`= #{type},</if>
+            <if test="optId != null">`opt_id`= #{optId},</if>
+            <if test="bond != null">`bond`= #{bond},</if>
+            <if test="sellerEnterCate != null">`seller_enter_cate`= #{sellerEnterCate},</if>
+            <if test="sellerEnterCate != null">`seller_enter_cate`= #{sellerEnterCate},</if>
+            <if test="thirdIden != null">`third_iden`= #{thirdIden},</if>
+            <if test="productList != null">`product_list`= #{productList},</if>
+            <if test="stateMessage != null">`state_message`= #{stateMessage},</if>
+            <if test="licenseInOne != null">`license_in_one`= #{licenseInOne},</if>
+            <!-- <if test="createTime != null">`create_time`= #{createTime},</if> -->
+            <if test="contractId != null">`contract_id`= #{contractId},</if>
+            <if test="contractTemplateId != null">`contract_template_id`= #{contractTemplateId},</if>
+            <if test="beautyMakeupContractId != null">`beauty_makeup_contract_id`= #{beautyMakeupContractId},</if>
+            <if test="beautyMakeupContractStatus != null">`beauty_makeup_contract_status`= #{beautyMakeupContractStatus},</if>
+            `update_time`= now()
+        </set>
+        where `id` = #{id}
+    </update>
+
+    <update id="updateCompanyLogo">
+		UPDATE `seller_apply`
+		SET  `company_logo` = #{companyLogo}
+		WHERE `id` = #{sellerApplyId}
+	</update>
+
+    <select id="getSellerApplys" resultType="com.sibu.mall.seller.persistence.entity.SellerApply">
+        select * from seller_apply sa
+        left join seller s
+        ON sa.user_id = s.member_id
+        <include refid="getSellerApplysCondition"/>
+        order by sa.id desc
+        <if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+    </select>
+
+    <sql id="getSellerApplysCondition">
+        <where>
+            <if test="queryMap.q_name != null and queryMap.q_name != ''">
+                and sa.`name` like CONCAT('%',#{queryMap.q_name},'%')
+            </if>
+            <if test="queryMap.q_sellerNum != null and queryMap.q_sellerNum != ''">
+                and s.`seller_num` = #{queryMap.q_sellerNum}
+            </if>
+            <if test="queryMap.q_state != null and queryMap.q_state != ''">
+                and sa.`state` = #{queryMap.q_state}
+            </if>
+            <if test="queryMap.bussinessLicense != null and queryMap.bussinessLicense != ''">
+                and sa.`bussiness_license` = #{queryMap.bussinessLicense}
+            </if>
+            <if test="queryMap.q_taxLicense != null and queryMap.q_taxLicense != ''">
+                and sa.`tax_license` like CONCAT('%',#{queryMap.q_taxLicense},'%')
+            </if>
+            <if test="queryMap.q_userId != null and queryMap.q_userId != ''">
+                and sa.`user_id` = #{queryMap.q_userId}
+            </if>
+            <if test="queryMap.q_company != null and queryMap.q_company != ''">
+                and sa.`company` = #{queryMap.q_company}
+            </if>
+            <if test="queryMap.startTime != null and queryMap.startTime != ''">
+                and sa.`create_time` &gt;= #{queryMap.startTime}
+            </if>
+            <if test="queryMap.endTime != null and queryMap.endTime != ''">
+                and sa.`create_time` &lt;= #{queryMap.endTime}
+            </if>
+        </where>
+    </sql>
+
+    <select id="getSellerApplyByCompany" resultType="com.sibu.mall.seller.persistence.entity.SellerApply">
+		select * from seller_apply
+		where `company` = #{company}
+        <if test="reviewStateList != null and reviewStateList.size() > 0">
+            AND state IN
+            <foreach item="item" index="index" collection="reviewStateList"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+	</select>
+
+    <select id="getMaxUserId" resultType="java.lang.Integer">
+		select max(user_id) from seller_apply
+	</select>
+
+    <select id="getSellerApplyByPersonPhone" parameterType="String" resultType="com.sibu.mall.seller.persistence.entity.SellerApply">
+		select
+			*
+		from seller_apply
+		where person_phone =#{personPhone}
+	</select>
+
+</mapper>

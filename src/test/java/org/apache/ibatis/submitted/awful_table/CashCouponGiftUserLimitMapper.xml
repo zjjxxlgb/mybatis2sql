@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sibu.mall.coupon.persistence.dao.CashCouponGiftUserLimitMapper" >
+  <resultMap id="BaseResultMap" type="com.sibu.mall.coupon.persistence.entity.CashCouponGiftUserLimit" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="member_id" property="memberId" jdbcType="INTEGER" />
+    <result column="gift_id" property="giftId" jdbcType="VARCHAR" />
+    <result column="kind_limit_num" property="kindLimitNum" jdbcType="INTEGER"/>
+    <result column="kind_num" property="kindNum" jdbcType="INTEGER"/>
+    <result column="receive_type" property="receiveType" jdbcType="TINYINT"/>
+    <result column="order_sn" property="orderSn" jdbcType="VARCHAR"/>
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, member_id, gift_id, kind_limit_num, kind_num, receive_type, order_sn, create_time, update_time
+  </sql>
+  <select id="findByMemberIdAndGiftId" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from cash_coupon_gift_user_limit
+    where member_id = #{arg0} and gift_id = #{arg1}
+  </select>
+  <update id="incKindNum" parameterType="com.sibu.mall.coupon.persistence.entity.CashCouponGiftUserLimit">
+    update cash_coupon_gift_user_limit
+    <set >
+        kind_num = kind_num + 1,
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+    </set>
+    where member_id = #{memberId} and gift_id = #{giftId} and kind_num = #{kindNum} and kind_num &lt; kind_limit_num
+  </update>
+
+</mapper>

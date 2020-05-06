@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sibu.mall.coupon.persistence.dao.CashCouponMapper" >
+  <resultMap id="BaseResultMap" type="com.sibu.mall.coupon.persistence.entity.CashCoupon" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="source_type" property="sourceType" jdbcType="TINYINT" />
+    <result column="seller_id" property="sellerId" jdbcType="INTEGER" />
+    <result column="coupon_name" property="couponName" jdbcType="VARCHAR" />
+    <result column="coupon_type" property="couponType" jdbcType="TINYINT" />
+    <result column="coupon_value" property="couponValue" jdbcType="DECIMAL" />
+    <result column="min_amount" property="minAmount" jdbcType="DECIMAL" />
+    <result column="use_start_time" property="useStartTime" jdbcType="TIMESTAMP" />
+    <result column="use_end_time" property="useEndTime" jdbcType="TIMESTAMP" />
+    <result column="use_valid_days" property="useValidDays" jdbcType="INTEGER" />
+    <result column="total_num" property="totalNum" jdbcType="INTEGER" />
+    <result column="received_num" property="receivedNum" jdbcType="INTEGER" />
+    <result column="use_type" property="useType" jdbcType="TINYINT" />
+    <result column="use_type_value" property="useTypeValue" jdbcType="BIGINT" />
+    <result column="user_level" property="userLevel" jdbcType="VARCHAR" />
+    <result column="person_limit_num" property="personLimitNum" jdbcType="INTEGER" />
+    <result column="use_limit_num" property="useLimitNum" jdbcType="INTEGER" />
+    <result column="receive_type" property="receiveType" jdbcType="TINYINT" />
+    <result column="saller_overlay" property="sallerOverlay" jdbcType="TINYINT" />
+    <result column="platform_overlay" property="platformOverlay" jdbcType="TINYINT" />
+    <result column="show_start_time" property="showStartTime" jdbcType="TIMESTAMP" />
+    <result column="show_end_time" property="showEndTime" jdbcType="TIMESTAMP" />
+    <result column="receive_start_time" property="receiveStartTime" jdbcType="TIMESTAMP" />
+    <result column="receive_end_time" property="receiveEndTime" jdbcType="TIMESTAMP" />
+    <result column="receive_platform" property="receivePlatform" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="use_remark" property="useRemark" jdbcType="VARCHAR" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="create_user_type" property="createUserType" jdbcType="TINYINT" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="update_user_name" property="updateUserName" jdbcType="VARCHAR" />
+    <result column="update_user_type" property="updateUserType" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, source_type, seller_id, coupon_name, coupon_type, coupon_value, min_amount, use_start_time,
+    use_end_time, use_valid_days, total_num, received_num, use_type, use_type_value, 
+    user_level, person_limit_num, use_limit_num, receive_type, saller_overlay, platform_overlay, 
+    show_start_time, show_end_time, receive_start_time, receive_end_time, receive_platform, 
+    `status`, use_remark, create_user_id, create_user_name, create_user_type, update_user_id,
+    update_user_name, update_user_type, create_time, update_time
+  </sql>
+
+
+  <insert id="save" parameterType="com.sibu.mall.coupon.persistence.entity.CashCoupon">
+    insert into cash_coupon
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="sourceType != null" >
+        source_type,
+      </if>
+      <if test="sellerId != null" >
+        seller_id,
+      </if>
+      <if test="couponName != null" >
+        coupon_name,
+      </if>
+      <if test="couponType != null" >
+        coupon_type,
+      </if>
+      <if test="couponValue != null" >
+        coupon_value,
+      </if>
+      <if test="minAmount != null" >
+        min_amount,
+      </if>
+      <if test="useStartTime != null" >
+        use_start_time,
+      </if>
+      <if test="useEndTime != null" >
+        use_end_time,
+      </if>
+      <if test="useValidDays != null" >
+        use_valid_days,
+      </if>
+      <if test="totalNum != null" >
+        total_num,
+      </if>
+      <if test="receivedNum != null" >
+        received_num,
+      </if>
+      <if test="useType != null" >
+        use_type,
+      </if>
+      <if test="useTypeValue != null" >
+        use_type_value,
+      </if>
+      <if test="userLevel != null" >
+        user_level,
+      </if>
+      <if test="personLimitNum != null" >
+        person_limit_num,
+      </if>
+      <if test="useLimitNum != null" >
+        use_limit_num,
+      </if>
+      <if test="receiveType != null" >
+        receive_type,
+      </if>
+      <if test="sallerOverlay != null" >
+        saller_overlay,
+      </if>
+      <if test="platformOverlay != null" >
+        platform_overlay,
+      </if>
+      <if test="showStartTime != null" >
+        show_start_time,
+      </if>
+      <if test="showEndTime != null" >
+        show_end_time,
+      </if>
+      <if test="receiveStartTime != null" >
+        receive_start_time,
+      </if>
+      <if test="receiveEndTime != null" >
+        receive_end_time,
+      </if>
+      <if test="receivePlatform != null" >
+        receive_platform,
+      </if>
+      <if test="status != null" >
+        `status`,
+      </if>
+      <if test="useRemark != null" >
+        use_remark,
+      </if>
+      <if test="createUserId != null" >
+        create_user_id,
+      </if>
+      <if test="createUserName != null" >
+        create_user_name,
+      </if>
+      <if test="createUserType != null" >
+        create_user_type,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="updateUserName != null" >
+        update_user_name,
+      </if>
+      <if test="updateUserType != null" >
+        update_user_type,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+        #{sourceType,jdbcType=TINYINT},
+      </if>
+      <if test="sellerId != null" >
+        #{sellerId,jdbcType=INTEGER},
+      </if>
+      <if test="couponName != null" >
+        #{couponName,jdbcType=VARCHAR},
+      </if>
+      <if test="couponType != null" >
+        #{couponType,jdbcType=TINYINT},
+      </if>
+      <if test="couponValue != null" >
+        #{couponValue,jdbcType=DECIMAL},
+      </if>
+      <if test="minAmount != null" >
+        #{minAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="useStartTime != null" >
+        #{useStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useEndTime != null" >
+        #{useEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useValidDays != null" >
+        #{useValidDays,jdbcType=INTEGER},
+      </if>
+      <if test="totalNum != null" >
+        #{totalNum,jdbcType=INTEGER},
+      </if>
+      <if test="receivedNum != null" >
+        #{receivedNum,jdbcType=INTEGER},
+      </if>
+      <if test="useType != null" >
+        #{useType,jdbcType=TINYINT},
+      </if>
+      <if test="useTypeValue != null" >
+        #{useTypeValue,jdbcType=BIGINT},
+      </if>
+      <if test="userLevel != null" >
+        #{userLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="personLimitNum != null" >
+        #{personLimitNum,jdbcType=INTEGER},
+      </if>
+      <if test="useLimitNum != null" >
+        #{useLimitNum,jdbcType=INTEGER},
+      </if>
+      <if test="receiveType != null" >
+        #{receiveType,jdbcType=TINYINT},
+      </if>
+      <if test="sallerOverlay != null" >
+        #{sallerOverlay,jdbcType=TINYINT},
+      </if>
+      <if test="platformOverlay != null" >
+        #{platformOverlay,jdbcType=TINYINT},
+      </if>
+      <if test="showStartTime != null" >
+        #{showStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="showEndTime != null" >
+        #{showEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="receiveStartTime != null" >
+        #{receiveStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="receiveEndTime != null" >
+        #{receiveEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="receivePlatform != null" >
+        #{receivePlatform,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="useRemark != null" >
+        #{useRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createUserName != null" >
+        #{createUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="createUserType != null" >
+        #{createUserType,jdbcType=TINYINT},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateUserName != null" >
+        #{updateUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUserType != null" >
+        #{updateUserType,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="update" parameterType="com.sibu.mall.coupon.persistence.entity.CashCoupon">
+    update cash_coupon
+    <set >
+      <if test="sourceType != null" >
+        source_type = #{sourceType,jdbcType=TINYINT},
+      </if>
+      <if test="sellerId != null" >
+        seller_id = #{sellerId,jdbcType=INTEGER},
+      </if>
+      <if test="couponName != null" >
+        coupon_name = #{couponName,jdbcType=VARCHAR},
+      </if>
+      <if test="couponType != null" >
+        coupon_type = #{couponType,jdbcType=TINYINT},
+      </if>
+      <if test="couponValue != null" >
+        coupon_value = #{couponValue,jdbcType=DECIMAL},
+      </if>
+      <if test="minAmount != null" >
+        min_amount = #{minAmount,jdbcType=DECIMAL},
+      </if>
+        use_start_time = #{useStartTime,jdbcType=TIMESTAMP},
+        use_end_time = #{useEndTime,jdbcType=TIMESTAMP},
+        use_valid_days = #{useValidDays,jdbcType=INTEGER},
+      <if test="totalNum != null" >
+        total_num = #{totalNum,jdbcType=INTEGER},
+      </if>
+      <if test="receivedNum != null" >
+        received_num = #{receivedNum,jdbcType=INTEGER},
+      </if>
+      <if test="useType != null" >
+        use_type = #{useType,jdbcType=TINYINT},
+      </if>
+      <if test="useTypeValue != null" >
+        use_type_value = #{useTypeValue,jdbcType=BIGINT},
+      </if>
+      <if test="userLevel != null" >
+        user_level = #{userLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="personLimitNum != null" >
+        person_limit_num = #{personLimitNum,jdbcType=INTEGER},
+      </if>
+      <if test="useLimitNum != null" >
+        use_limit_num = #{useLimitNum,jdbcType=INTEGER},
+      </if>
+      <if test="receiveType != null" >
+        receive_type = #{receiveType,jdbcType=TINYINT},
+      </if>
+      <if test="sallerOverlay != null" >
+        saller_overlay = #{sallerOverlay,jdbcType=TINYINT},
+      </if>
+      <if test="platformOverlay != null" >
+        platform_overlay = #{platformOverlay,jdbcType=TINYINT},
+      </if>
+      <if test="showStartTime != null" >
+        show_start_time = #{showStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="showEndTime != null" >
+        show_end_time = #{showEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="receiveStartTime != null" >
+        receive_start_time = #{receiveStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="receiveEndTime != null" >
+        receive_end_time = #{receiveEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="receivePlatform != null" >
+        receive_platform = #{receivePlatform,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="useRemark != null" >
+        use_remark = #{useRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="createUserId != null" >
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createUserName != null" >
+        create_user_name = #{createUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="createUserType != null" >
+        create_user_type = #{createUserType,jdbcType=TINYINT},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateUserName != null" >
+        update_user_name = #{updateUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUserType != null" >
+        update_user_type = #{updateUserType,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id} and status = 3
+  </update>
+
+  <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from `cash_coupon`
+    where `id` = #{id}
+  </select>
+
+  <!-- 平台创建的优惠券状态直接到3（审核通过）,此阶段可以删除 -->
+  <update id="delete" parameterType="com.sibu.mall.coupon.persistence.entity.CashCoupon">
+    update `cash_coupon`
+    <set>
+      `update_user_id`= #{updateUserId},
+      `update_user_name`= #{updateUserName},
+      `update_time`= #{updateTime},
+      status = 7
+    </set>
+    where `id` = #{id} and
+    (
+    (seller_id != 0 and status in (1, 4))
+    OR
+    (source = 0 and status = 3)
+    )
+  </update>
+
+  <sql id="pageCondition">
+    <where>
+
+      status != 7
+      <if test="sellerId != null and sellerId !=''">
+        and `seller_id` = #{sellerId}
+      </if>
+      <if test="couponName != null and couponName !=''">
+        and `coupon_name` like CONCAT('%', #{couponName}, '%')
+      </if>
+      <if test="status != null and status !=''">
+        and `status` = #{status}
+      </if>
+      <if test="receivePlatform != null">
+        and receive_platform like CONCAT('%', #{receivePlatform}, '%')
+      </if>
+      <if test="useType != null">
+        and use_type = #{useType}
+      </if>
+      <if test="useTypeValue != null">
+        and use_type_value = #{useTypeValue}
+      </if>
+      <if test="couponType != null">
+        and `coupon_type` = #{couponType}
+      </if>
+      <if test="useTimeStart != null and useTimeStart !=''">
+        and `use_start_time` &lt;= #{useTimeStart}
+      </if>
+      <if test="useTimeEnd != null and useTimeEnd !=''">
+        and `use_end_time` &lt;= #{useTimeEnd}
+      </if>
+    </where>
+  </sql>
+
+  <select id="page" parameterType="com.sibu.mall.coupon.persistence.request.PageCouponCondition" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from `cash_coupon`
+    <include refid="pageCondition"/>
+    order by `id` desc
+  </select>
+
+  <update id="up" parameterType="com.sibu.mall.coupon.persistence.entity.CashCoupon">
+    update `cash_coupon`
+    <set>
+      `update_user_id`= #{updateUserId},
+      `update_user_name`= #{updateUserName},
+      `update_time`= #{updateTime},
+      status = 5
+    </set>
+    where `id` = #{id} and status = 3
+  </update>
+
+  <update id="down" parameterType="com.sibu.mall.coupon.persistence.entity.CashCoupon">
+    update `cash_coupon`
+    <set>
+      `update_user_id`= #{updateUserId},
+      `update_user_name`= #{updateUserName},
+      `update_time`= #{updateTime},
+      status = 6
+    </set>
+    where `id` = #{id} and status = 5;
+  </update>
+
+  <update id="addReceivedNum">
+    update `cash_coupon`
+    set `received_num`= `received_num` + 1
+    where `id` = #{couponId} AND `received_num` &lt; `total_num`
+  </update>
+
+  <update id="subReceivedNum">
+    update `cash_coupon`
+    set `received_num`= `received_num` - 1
+    where `id` = #{couponId} AND `received_num` &gt; 0
+  </update>
+
+  <resultMap id="CouponListResult" type="com.sibu.mall.coupon.persistence.entity.CashCoupon">
+    <result column="id" property="id" jdbcType="BIGINT" />
+    <result column="source_type" property="sourceType" jdbcType="TINYINT" />
+    <result column="seller_id" property="sellerId" jdbcType="INTEGER" />
+    <result column="coupon_name" property="couponName" jdbcType="VARCHAR" />
+    <result column="coupon_type" property="couponType" jdbcType="TINYINT" />
+    <result column="coupon_value" property="couponValue" jdbcType="DECIMAL" />
+    <result column="min_amount" property="minAmount" jdbcType="DECIMAL" />
+    <result column="use_start_time" property="useStartTime" jdbcType="TIMESTAMP" />
+    <result column="use_end_time" property="useEndTime" jdbcType="TIMESTAMP" />
+    <result column="use_valid_days" property="useValidDays" jdbcType="INTEGER" />
+    <result column="total_num" property="totalNum" jdbcType="INTEGER" />
+    <result column="received_num" property="receivedNum" jdbcType="INTEGER" />
+    <result column="use_type" property="useType" jdbcType="TINYINT" />
+    <result column="use_type_value" property="useTypeValue" jdbcType="BIGINT" />
+    <result column="user_level" property="userLevel" jdbcType="VARCHAR" />
+    <result column="person_limit_num" property="personLimitNum" jdbcType="INTEGER" />
+    <result column="use_limit_num" property="useLimitNum" jdbcType="INTEGER" />
+    <result column="receive_type" property="receiveType" jdbcType="TINYINT" />
+    <result column="saller_overlay" property="sallerOverlay" jdbcType="TINYINT" />
+    <result column="platform_overlay" property="platformOverlay" jdbcType="TINYINT" />
+    <result column="show_start_time" property="showStartTime" jdbcType="TIMESTAMP" />
+    <result column="show_end_time" property="showEndTime" jdbcType="TIMESTAMP" />
+    <result column="receive_start_time" property="receiveStartTime" jdbcType="TIMESTAMP" />
+    <result column="receive_end_time" property="receiveEndTime" jdbcType="TIMESTAMP" />
+    <result column="receive_platform" property="receivePlatform" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="use_remark" property="useRemark" jdbcType="VARCHAR" />
+    <result column="create_user_id" property="createUserId" jdbcType="INTEGER" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
+    <result column="create_user_type" property="createUserType" jdbcType="TINYINT" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="update_user_name" property="updateUserName" jdbcType="VARCHAR" />
+    <result column="update_user_type" property="updateUserType" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Coupon_List_Column_List" >
+    id,source_type, seller_id, coupon_name, coupon_type, coupon_value, min_amount, use_start_time,
+    use_end_time, use_valid_days, total_num, received_num, use_type, use_type_value,
+    user_level, person_limit_num, use_limit_num, receive_type, saller_overlay, platform_overlay,
+    show_start_time, show_end_time, receive_start_time, receive_end_time, receive_platform,
+    `status`, use_remark, create_user_id, create_user_name, create_user_type, update_user_id,
+    update_user_name, update_user_type, create_time, update_time
+  </sql>
+
+  <select id="findOrderCouponListBySellerId" resultMap="CouponListResult">
+    select
+    <include refid="Coupon_List_Column_List"/>
+    from `cash_coupon`
+    where seller_id = #{sellerId}
+    and `status` = 5
+    and `receive_type` = 1
+    and `received_num` &lt; `total_num`
+    and `receive_start_time` &lt;= now()
+    and `receive_end_time` &gt;= now()
+    and `use_end_time` &gt;= now()
+  </select>
+
+  <!-- 查询当前商品有效的商品优惠卷-->
+  <select id="findProductCouponListBySellerIdAndProductId" resultMap="CouponListResult">
+    select
+    <include refid="Coupon_List_Column_List"/>
+    from `cash_coupon`
+    where seller_id = #{sellerId}
+    and use_type=1
+    and use_type_value in
+    <foreach collection="productIdList" item="productId" index="index" open="(" close=")" separator=",">
+      #{productId}
+    </foreach>
+    and `status` = 5
+    and `receive_type` = 1
+    and `received_num` &lt; `total_num`
+    and `receive_start_time` &lt;= now()
+    and `receive_end_time` &gt;= now()
+    and `use_end_time` &gt;= now()
+  </select>
+
+  <select id="findProductCouponListByProductId" parameterType="java.lang.Integer" resultMap="CouponListResult">
+    select
+    <include refid="Coupon_List_Column_List"/>
+    from `cash_coupon`
+    where
+     use_type=1
+    and use_type_value  = #{productId}
+    and `status` = 5
+    and `receive_type` = 1
+    and `received_num` &lt; `total_num`
+    and `receive_start_time` &lt;= now()
+    and `receive_end_time` &gt;= now()
+    and `use_end_time` &gt;= now()
+  </select>
+</mapper>

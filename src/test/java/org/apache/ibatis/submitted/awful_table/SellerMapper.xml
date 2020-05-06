@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sibu.mall.seller.persistence.dao.SellerMapper">
+	<resultMap id="SellerResult" type="com.sibu.mall.seller.persistence.entity.Seller">
+			<result property="id" column="id" />
+			<result property="memberId" column="member_id" />
+			<result property="name" column="name" />
+			<result property="sellerName" column="seller_name" />
+			<result property="sellerLogo" column="seller_logo" />
+			<result property="sellerGrade" column="seller_grade" />
+			<result property="scoreService" column="score_service" />
+			<result property="scoreDeliverGoods" column="score_deliver_goods" />
+			<result property="scoreDescription" column="score_description" />
+			<result property="productNumber" column="product_number" />
+			<result property="collectionNumber" column="collection_number" />
+			<result property="createTime" column="create_time" />
+			<result property="saleMoney" column="sale_money" />
+			<result property="orderCount" column="order_count" />
+			<result property="orderCountOver" column="order_count_over" />
+			<result property="sellerKeyword" column="seller_keyword" />
+			<result property="sellerDes" column="seller_des" />
+			<result property="auditStatus" column="audit_status" />
+			<result property="storeSlide" column="store_slide" />
+			<result property="serviceChargeRate" column="service_charge_rate" />
+			<result property="saleType" column="sale_type" />
+			<result property="sellerLicense" column="seller_license" />
+			<result property="helpType" column="help_type" />
+			<result property="helpGroup" column="help_group" />
+			<result property="backgroundBanner" column="background_banner"/>
+			<result property="updateTime" column="update_time"/>
+	</resultMap>
+
+	<resultMap id="ApplyCateResult" type="com.sibu.mall.seller.persistence.entity.ApplyCate">
+		<result property="id" column="id" />
+		<result property="name" column="name" />
+	</resultMap>
+	
+	<select id="get" parameterType="Integer" resultMap="SellerResult">
+		select
+		   *
+		from `seller`
+		where `id` = #{id}
+	</select>
+	
+	<select id="getSettlementSeller" resultMap="SellerResult">
+		select
+		   *
+		from `seller`
+		where `audit_status` > 1
+	</select>
+
+	<select id="getSettlementSellerByCondition" parameterType="com.sibu.mall.seller.persistence.bo.SettlementRequest" resultMap="SellerResult">
+		select
+		*
+		from `seller`
+		where `audit_status` > 1
+		<if test="sellerId !=null and sellerId !=''">
+			and id = #{sellerId}
+		</if>
+	</select>
+
+	
+	<select id="getByMemberId" parameterType="Integer" resultMap="SellerResult">
+		select
+		   *
+		from `seller`
+		where `member_id` = #{memberId}
+	</select>
+	
+	<select id="getSellersCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(1) from seller
+		<include refid="getSellersCondition" />
+	</select>
+	
+	<select id="getSellers" resultType="com.sibu.mall.seller.persistence.entity.Seller">
+		select * from seller
+		<include refid="getSellersCondition" />
+		order by convert(seller_name using gbk) collate gbk_chinese_ci
+		<if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+	</select>
+	
+	<sql id="getSellersCondition">
+		<where>
+			<if test="queryMap.q_name != null and queryMap.q_name != ''">
+				and `name` like CONCAT('%',#{queryMap.q_name},'%')
+			</if>
+			<if test="queryMap.q_auditStatus != null and queryMap.q_auditStatus != ''">
+				and `audit_status` = #{queryMap.q_auditStatus}
+			</if>
+			<if test="queryMap.q_sellerName != null and queryMap.q_sellerName != ''">
+				and `seller_name` like CONCAT('%',#{queryMap.q_sellerName},'%')
+			</if>
+			<if test="queryMap.q_sellerNum != null and queryMap.q_sellerNum != ''">
+				and `seller_num` = #{queryMap.q_sellerNum}
+			</if>
+			<if test="queryMap.q_saleType != null and queryMap.q_saleType != ''">
+				and `sale_type` = #{queryMap.q_saleType}
+			</if>
+		</where>
+	</sql>
+
+	<select id="getSellerByList" resultType="com.sibu.mall.seller.persistence.entity.Seller">
+		select * FROM  seller WHERE  id IN
+		<foreach collection="list" index="index" item="item"
+				 open="(" separator="," close=")">
+			#{item}
+		</foreach>
+
+	</select>
+
+	<select id="getSellerByIdsAndType" resultType="com.sibu.mall.seller.persistence.entity.Seller">
+		select s.* from seller s
+		left join seller_apply sa on s.member_id=sa.user_id
+		where sa.type = #{type}
+		and s.`id` in
+		<foreach collection="ids" item="id" separator="," open="(" close=")" >
+			#{id}
+		</foreach>
+	</select>
+
+	<select id="getApplyCateList" resultMap="ApplyCateResult">
+		select id,name  from apply_cate order by name
+	</select>
+
+	<select id="getSellersForSelect" resultType="com.sibu.mall.seller.persistence.entity.Seller">
+		select id, seller_name from seller
+		<include refid="getSellersCondition" />
+		order by id desc
+	</select>
+
+
+	<delete id="deleteByMemberId" parameterType="Integer">
+        delete from `seller` where `member_id` = #{memberId}
+    </delete>
+
+	<update id="auditSeller">
+        update `seller` 
+    	set `audit_status` = #{auditStatus}
+        where `member_id` = #{memberId}
+	</update>
+
+	<delete id="deleteByMemberIds">
+		delete from `seller`
+		where `member_id` in
+		<foreach collection="memberIds" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+	<select id="getSellerByMemberId" parameterType="Integer" resultMap="SellerResult">
+		select
+			*
+		from `seller`
+		where `member_id` = #{memberId}
+		limit 1
+	</select>
+
+	<update id="updateSeller" parameterType="com.sibu.mall.seller.persistence.entity.Seller">
+		update `seller`
+		<set>
+			<!-- <if test="id != null">`id`= #{id},</if> -->
+			<if test="memberId != null">`member_id`= #{memberId},</if>
+			<if test="name != null">`name`= #{name},</if>
+			<if test="sellerName != null">`seller_name`= #{sellerName},</if>
+			<if test="sellerLogo != null">`seller_logo`= #{sellerLogo},</if>
+			<if test="sellerGrade != null">`seller_grade`= #{sellerGrade},</if>
+			<if test="scoreService != null">`score_service`= #{scoreService},</if>
+			<if test="scoreDeliverGoods != null">`score_deliver_goods`= #{scoreDeliverGoods},</if>
+			<if test="scoreDescription != null">`score_description`= #{scoreDescription},</if>
+			<if test="productNumber != null">`product_number`= #{productNumber},</if>
+			<if test="collectionNumber != null">`collection_number`= #{collectionNumber},</if>
+			<!-- <if test="createTime != null">`create_time`= #{createTime},</if> -->
+			<if test="saleMoney != null">`sale_money`= #{saleMoney},</if>
+			<if test="orderCount != null">`order_count`= #{orderCount},</if>
+			<if test="orderCountOver != null">`order_count_over`= #{orderCountOver},</if>
+			<if test="sellerKeyword != null">`seller_keyword`= #{sellerKeyword},</if>
+			<if test="sellerDes != null">`seller_des`= #{sellerDes},</if>
+			<if test="auditStatus != null">`audit_status`= #{auditStatus},</if>
+			<if test="storeSlide != null">`store_slide`= #{storeSlide},</if>
+			<if test="serviceChargeRate != null">`service_charge_rate`= #{serviceChargeRate},</if>
+			<if test="saleType != null">`sale_type`= #{saleType},</if>
+			<if test="sellerLicense != null">`seller_license`= #{sellerLicense},</if>
+			<if test="thirdIden != null">`third_iden`= #{thirdIden},</if>
+			<if test="helpType != null">`help_type`= #{helpType},</if>
+			<if test="helpGroup != null">`help_group`= #{helpGroup},</if>
+			<if test="backgroundBanner != null and backgroundBanner !=''">`background_banner`= #{backgroundBanner},</if>
+			update_time = now()
+		</set>
+		where `id` = #{id}
+	</update>
+
+	<insert id="save" parameterType="com.sibu.mall.seller.persistence.entity.Seller" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into `seller`
+		(
+		`member_id`,
+		`seller_num`,
+		`name`,
+		`seller_name`,
+		`seller_logo`,
+		`seller_grade`,
+		`score_service`,
+		`score_deliver_goods`,
+		`score_description`,
+		`product_number`,
+		`collection_number`,
+		`create_time`,
+		`sale_money`,
+		`order_count`,
+		`order_count_over`,
+		`seller_keyword`,
+		`seller_des`,
+		`audit_status`,
+		`store_slide`,
+		`service_charge_rate`,
+		`help_type`,
+		`help_group`,
+		`sale_type`
+		<if test="thirdIden != null">
+			,`third_iden`
+		</if>
+
+		)
+		values
+		(
+		#{memberId},
+		#{sellerNum},
+		#{name},
+		#{sellerName},
+		#{sellerLogo},
+		#{sellerGrade},
+		#{scoreService},
+		#{scoreDeliverGoods},
+		#{scoreDescription},
+		#{productNumber},
+		#{collectionNumber},
+		now(),
+		#{saleMoney},
+		#{orderCount},
+		#{orderCountOver},
+		#{sellerKeyword},
+		#{sellerDes},
+		#{auditStatus},
+		#{storeSlide},
+		#{serviceChargeRate},
+		#{helpType},
+		#{helpGroup},
+		#{saleType}
+		<if test="thirdIden != null">
+			,#{thirdIden}
+		</if>
+		)
+	</insert>
+
+	<!-- 冻结（auditStatus=3）、解冻商家（auditStatus=2） -->
+	<update id="freezeSeller">
+        update `seller` 
+    	set `audit_status` = #{auditStatus}
+        where `id` = #{id}
+	</update>
+
+	<select id="getSellerByName" resultType="com.sibu.mall.seller.persistence.entity.Seller">
+		select * from seller
+		where `name` = #{name}
+	</select>
+
+	<select id="getSellerBySellerName" resultType="com.sibu.mall.seller.persistence.entity.Seller">
+		select * from seller
+		where `seller_name` = #{sellerName}
+	</select>
+
+	<select id="getByIdsAndAuditStatus" parameterType="java.util.List" resultType="com.sibu.mall.seller.persistence.entity.Seller">
+		select
+		s.*
+		from seller s
+		WHERE s.audit_status = #{auditStatus}
+		and s.`id` in
+		<foreach collection="ids" item="id" separator="," open="(" close=")">
+			#{id}
+		</foreach>
+	</select>
+
+	<select id="checkSellerIsExist" resultType="java.lang.Integer">
+        SELECT count(1) FROM `seller` where name = #{name}
+    </select>
+
+	<select id="getAll" resultType="com.sibu.mall.seller.persistence.entity.Seller">
+		select * from seller
+	</select>
+
+	<update id="updateSellerNumByOldData">
+		update `seller`
+    	set `seller_num` = #{sellerNum}, update_time = now()
+        where `id` = #{id}
+	</update>
+
+	<select id="getSellerListByCondition" resultType="com.sibu.mall.seller.persistence.entity.Seller">
+		select
+			*
+		from
+			seller
+		<where>
+				update_time &gt;= #{startTime, jdbcType=VARCHAR}
+			and	update_time &lt;= #{endTime, jdbcType=VARCHAR}
+			<if test="auditStatus != null">
+				and audit_status = #{auditStatus, jdbcType=INTEGER}
+			</if>
+		</where>
+		limit #{currentPage, jdbcType=INTEGER}, #{pageSize, jdbcType=INTEGER}
+	</select>
+
+	<select id="countSellerListByCondition" resultType="java.lang.Integer">
+		select
+			count(*)
+		from
+			seller
+		<where>
+			update_time &gt;= #{startTime, jdbcType=VARCHAR}
+			and	update_time &lt;= #{endTime, jdbcType=VARCHAR}
+			<if test="auditStatus != null">
+				and audit_status = #{auditStatus, jdbcType=INTEGER}
+			</if>
+		</where>
+	</select>
+
+	<select id="searchSellerAndApply" resultType="com.sibu.mall.seller.response.SearchSellerAndApplyResponse">
+		SELECT
+			s.id AS sellerId,
+			s.member_id AS memberId,
+			s.NAME,
+			s.seller_num AS sellerNum,
+			s.seller_name AS sellerName,
+			s.seller_logo AS sellerLogo,
+			s.audit_status AS auditStatus,
+			s.third_iden AS thirdIden,
+			s.help_type AS helpType,
+			s.help_group AS helpGroup,
+			s.background_banner AS backgroundBanner,
+			s.sale_type AS saleType,
+			s.seller_license AS sellerLicense,
+			sa.id AS sellerApplyId,
+			sa.`name` AS sellerApplyName,
+			sa.`password` AS PASSWORD,
+			sa.business_license_type AS businessLicenseType,
+			sa.company,
+			sa.bussiness_license AS bussinessLicense,
+			sa.tax_license AS taxLicense,
+			sa.company_province AS companyProvince,
+			sa.company_city AS companyCity,
+			sa.company_start_time AS companyStartTime,
+			sa.company_end_time AS companyEndTime,
+			sa.company_add AS companyAdd,
+			sa.telephone,
+			sa.fax,
+			sa.bussiness_license_image AS bussinessLicenseImage,
+			sa.bussiness_license_image_water_mark AS bussinessLicenseImageWaterMark,
+			sa.bussiness_permit_image AS bussinessPermitImage,
+			sa.organization,
+			sa.bank_user AS bankUser,
+			sa.bank_name AS bankName,
+			sa.bank_name_branch AS bankNameBranch,
+			sa.bank_license_image AS bankLicenseImage,
+			sa.bank_code AS bankCode,
+			sa.bank_province AS bankProvince,
+			sa.bank_city AS bankCity,
+			sa.swift_code AS swiftCode,
+			sa.bank_address AS bankAddress,
+			sa.legal_person AS legalPerson,
+			sa.legal_person_card AS legalPersonCard,
+			sa.legal_person_card_type AS legalPersonCardType,
+			sa.person_card_up AS personCardUp,
+			sa.person_card_down AS personCardDown,
+			sa.id_card_validity_period_start_time AS idCardValidityPeriodStartTime,
+			sa.id_card_validity_period_end_time AS idCardValidityPeriodEndTime,
+			sa.person_phone AS personPhone,
+			sa.email,
+			sa.state,
+			sa.type,
+			sa.bond,
+			sa.company_logo AS companyLogo,
+			sa.contract_id AS contractId,
+			sa.contract_template_id AS contractTemplateId,
+			sa.product_list AS productList,
+			sa.license_in_one AS licenseInOne
+		FROM
+			seller s
+			JOIN seller_apply sa ON s.member_id = sa.user_id
+			where 1=1
+		<if test="sellerId != null">
+			and s.id = #{sellerId}
+		</if>
+		<if test="name != null and name != ''">
+			and s.NAME = #{name}
+		</if>
+		<if test="sellerNum != null">
+			and s.seller_num = #{sellerNum}
+		</if>
+		<if test="sellerName != null and sellerName != ''">
+			and s.seller_name like CONCAT('%',#{sellerName},'%')
+		</if>
+		<if test="memberId != null">
+			and s.member_id = #{memberId}
+		</if>
+		<if test="company != null and company != ''">
+			and sa.company like CONCAT('%',#{company},'%')
+		</if>
+		<if test="legalPerson != null and legalPerson != ''">
+			and sa.legal_person = #{legalPerson}
+		</if>
+		<if test="legalPersonCard != null and legalPersonCard != ''">
+			and sa.legal_person_card = #{legalPersonCard}
+		</if>
+		<if test="state != null ">
+			and sa.state = #{state}
+		</if>
+		<if test="taxLicense != null and taxLicense != ''">
+			and sa.tax_license = #{taxLicense}
+		</if>
+		<if test="saleType != null">
+			and s.sale_type = #{saleType}
+		</if>
+
+	</select>
+
+	<sql id="search_condition">
+		where 1=1 and seller_name like concat('%', #{sellerName}, '%')
+	</sql>
+	<select id="pageListSellers" resultType="com.sibu.mall.seller.persistence.entity.Seller">
+		select id, seller_name from seller
+		<include refid="search_condition"></include>
+		<if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+	</select>
+
+	<select id="pageCountSellers" resultType="java.lang.Integer">
+		select count(*) from seller
+		<include refid="search_condition"></include>
+	</select>
+
+</mapper>

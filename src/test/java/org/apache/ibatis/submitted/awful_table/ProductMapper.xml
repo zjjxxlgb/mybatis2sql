@@ -1,0 +1,2027 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sibu.mall.product.persistence.dao.ProductMapper">
+
+
+    <!--前端分类部分  根据分类ids获取商品-->
+    <select id="getProductsByProductCateIds" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        t1.id,
+        t1.product_cate_id,
+        t1.name1,
+        t1.product_code,
+        t1.cost_price,
+        t1.protected_price,
+        t1.mal_mobile_price,
+        t1.actual_sales,
+        t1.is_top,
+        t1.up_time,
+        t1.create_time,
+        t1.state,
+        t2.name as productCateName
+        from product t1
+        LEFT JOIN product_cate t2 ON t2.id=t1.product_cate_id
+        where t1.state = 6 AND t1.product_cate_id in
+        <foreach collection="list" index="index" item="item" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="param1.q_name1 != null and '' != param1.q_name1">
+            and t1.name1 like CONCAT('%',#{param1.q_name1},'%')
+        </if>
+        <if test="param1.q_name2 != null and '' != param1.q_name2">
+            and t1.name1 like CONCAT('%',#{param1.q_name2},'%')
+        </if>
+        <if test="param1.q_productCateId1 != null and param1.q_productCateId1 != ''" >
+            and t1.product_cate_id in (
+            select PC1.id from product_cate PC1 where EXISTS
+            (select id from product_cate PC2 where PC2.id in (${param1.q_productCateId1}) and (PC1.id=PC2.id or FIND_IN_SET(PC2.id, REPLACE(PC1.path, '/', ','))) )
+            )
+        </if>
+        <if test="param1.q_productCateId2 != null and param1.q_productCateId2 != ''" >
+            and t1.product_cate_id in (
+            select PC1.id from product_cate PC1 where EXISTS
+            (select id from product_cate PC2 where PC2.id in (${param1.q_productCateId2}) and (PC1.id=PC2.id or FIND_IN_SET(PC2.id, REPLACE(PC1.path, '/', ','))) )
+            )
+        </if>
+    </select>
+
+    <select id="getFrontProducts" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        t1.id,
+        t1.product_cate_id,
+        t1.name1,
+        t1.product_code,
+        t1.cost_price,
+        t1.protected_price,
+        t1.mal_mobile_price,
+        t1.actual_sales,
+        t1.is_top,
+        t1.up_time,
+        t1.create_time,
+        t1.state,
+        t2.name as productCateName
+        from product t1
+        LEFT JOIN product_cate t2 ON t2.id=t1.product_cate_id
+        where t1.state = 6
+        <if test="param1.q_name2 != null and '' != param1.q_name2">
+            and t1.name1 like CONCAT('%',#{param1.q_name2},'%')
+        </if>
+        <if test="param1.q_productCateId2 != null and param1.q_productCateId2 != ''" >
+            and t1.product_cate_id in (
+            select PC1.id from product_cate PC1 where EXISTS
+            (select id from product_cate PC2 where PC2.id in (${param1.q_productCateId2}) and (PC1.id=PC2.id or FIND_IN_SET(PC2.id, REPLACE(PC1.path, '/', ','))) )
+            )
+        </if>
+    </select>
+
+    <select id="getProductListByIds" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        t1.id,
+        t1.product_cate_id,
+        t1.name1,
+        t1.product_code,
+        t1.cost_price,
+        t1.protected_price,
+        t1.mal_mobile_price,
+        t1.actual_sales,
+        t1.is_top,
+        t1.up_time,
+        t1.create_time,
+        t1.master_img,
+        t1.state,
+        t1.market_price,
+        t1.seller_id,
+        t2.name as productCateName
+        from product t1
+        LEFT JOIN product_cate t2 ON t2.id=t1.product_cate_id
+        where  t1.id in
+        <foreach close=")" collection="productIds" item="listItem" open="(" separator=",">
+            #{listItem}
+        </foreach>
+    </select>
+
+    <select id="findProductListByIds" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        t1.id,
+        t1.product_cate_id,
+        t1.name1,
+        t1.product_code,
+        t1.cost_price,
+        t1.protected_price,
+        t1.mal_mobile_price,
+        t1.actual_sales,
+        t1.is_top,
+        t1.up_time,
+        t1.create_time,
+        t1.state,
+        t2.name as productCateName
+        from product t1
+        LEFT JOIN product_cate t2 ON t2.id=t1.product_cate_id
+        where t1.state = 6 and t1.id in
+        <foreach close=")" collection="productIds" item="listItem" open="(" separator=",">
+            #{listItem}
+        </foreach>
+        <if test="param1.q_name1 != null and '' != param1.q_name1">
+            and t1.name1 like CONCAT('%',#{param1.q_name1},'%')
+        </if>
+        <if test="param1.q_name2 != null and '' != param1.q_name2">
+            and t1.name1 like CONCAT('%',#{param1.q_name2},'%')
+        </if>
+        <if test="param1.q_productCateId1 != null and param1.q_productCateId1 != ''" >
+            and t1.product_cate_id in (
+            select PC1.id from product_cate PC1 where EXISTS
+            (select id from product_cate PC2 where PC2.id in (${param1.q_productCateId1}) and (PC1.id=PC2.id or FIND_IN_SET(PC2.id, REPLACE(PC1.path, '/', ','))) )
+            )
+        </if>
+        <if test="param1.q_productCateId2 != null and param1.q_productCateId2 != ''" >
+            and t1.product_cate_id in (
+            select PC1.id from product_cate PC1 where EXISTS
+            (select id from product_cate PC2 where PC2.id in (${param1.q_productCateId2}) and (PC1.id=PC2.id or FIND_IN_SET(PC2.id, REPLACE(PC1.path, '/', ','))) )
+            )
+        </if>
+    </select>
+    <!--=========end-->
+
+    <select id="getSellerNewProducts" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where `seller_id` = #{sellerId}
+        and `state` = 6
+        and `seller_state` = 1
+        order by id desc
+        <if test="size != null and size &gt; 0">limit #{size}</if>
+    </select>
+
+    <!-- 查询商铺所有在售商品 -->
+    <select id="getProductForSellerList" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        <include refid="getProductForSellerListCond"/>
+        <choose>
+            <when test="sort == 0">
+                order by `actual_sales` desc
+            </when>
+            <when test="sort == 1">
+                order by `actual_sales` desc
+            </when>
+            <when test="sort == 2">
+                order by `comments_number` desc
+            </when>
+            <when test="sort == 3">
+                order by `mall_pc_price` asc
+            </when>
+            <when test="sort == 4">
+                order by `mall_pc_price` desc
+            </when>
+        </choose>
+        <if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+    </select>
+
+    <!-- 查询所有在售商品 -->
+    <select id="getProducts" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where
+        `seller_state` = 1
+        and `state` = 6
+        and `product_cate_state` = 1
+        and `up_time`  &lt; now()
+        <if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+    </select>
+
+    <!-- 查询所有在售商品 -->
+    <select id="getProductsUpdateTime" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where
+        `update_time` &gt; #{dateIndex}
+    </select>
+
+    <!-- 统计所有在售商品 -->
+    <select id="getProductsCount" resultType="java.lang.Integer">
+        select
+        count(1)
+        from `product`
+        where
+        `seller_state` = 1
+        and `state` = 6
+        and `product_cate_state` = 1
+        and `up_time`  &lt; now()
+    </select>
+
+    <select id="getProductForSellerListCount" resultType="java.lang.Integer">
+        select
+        count(1)
+        from `product`
+        <include refid="getProductForSellerListCond"/>
+    </select>
+
+    <sql id="getProductForSellerListCond">
+        where `seller_id` = #{sellerId}
+        and `seller_state` = 1
+        and `state` = 6
+        and `product_cate_state` = 1
+        and `up_time` &lt; now()
+        <if test="sellerCateId != null and sellerCateId!=''">
+            and seller_cate_id = #{sellerCateId}
+        </if>
+    </sql>
+
+    <select id="getRecommendProducts" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where `is_top` = 2
+        and `seller_state` = 1
+        and `state` = 6
+        and `product_cate_state` = 1
+        <if test="size != null and size &gt; 0">limit #{size}</if>
+    </select>
+
+    <select id="getProductAndRealSellPrice" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        p.`id`,
+        p.`product_cate_id`,
+        p.`product_cate_path`,
+        p.`name1`,
+        p.`name2`,
+        p.`keyword`,
+        p.`product_brand_id`,
+        p.`is_self`,
+        p.`cost_price`,
+        p.`protected_price`,
+        p.`market_price`,
+        p.`mall_pc_price`,
+        p.`mal_mobile_price` as old_mal_mobile_price,
+        ifnull(
+        (SELECT min(mall_mobile_price) FROM ejavashop.product_goods pg where pg.product_id=p.id),
+        p.`mal_mobile_price`
+        )as mal_mobile_price,
+        p.`virtual_sales`,
+        p.`actual_sales`,
+        p.`product_stock`,
+        p.`is_norm`,
+        p.`norm_ids`,
+        p.`norm_name`,
+        p.`state`,
+        p.`is_top`,
+        p.`up_time`,
+        p.`description`,
+        p.`packing`,
+        p.`seller_id`,
+        p.`create_id`,
+        p.`create_time`,
+        p.`update_time`,
+        p.`seller_cate_id`,
+        p.`seller_is_top`,
+        p.`seller_state`,
+        p.`comments_number`,
+        p.`product_cate_state`,
+        p.`is_invented_product`,
+        p.`transport_type`,
+        p.`transport_id`,
+        p.`master_img`,
+        p.`product_code`,
+        p.`sale_scale1`,
+        p.`sale_scale2`,
+        p.`view_num`,
+        p.`show_type`
+        from `product` p
+        where `id` = #{id}
+    </select>
+    <select id="getProductByMax" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        order by id desc
+        limit 1
+    </select>
+
+    <select id="getUpProductCountBySellerId" resultType="java.lang.Integer">
+        select
+        count(1)
+        from `product`
+        where
+        `seller_id` = #{sellerId}
+        and `state` = 6
+        and `product_cate_state` = 1
+       /* and `up_time`  &lt; now()*/
+    </select>
+
+    <!-- 查询条件 -->
+    <sql id="Where_Clause">
+        where 1=1
+        <trim  suffixOverrides="," >
+            <if test="id != null and id != ''" >
+                and id =  #{id}
+            </if>
+            <if test="productCateId != null and productCateId != ''" >
+                and product_cate_id =  #{productCateId}
+            </if>
+            <if test="productCatePath != null and productCatePath != ''" >
+                and product_cate_path =  #{productCatePath}
+            </if>
+            <if test="keyword != null and keyword != ''" >
+                and keyword =  #{keyword}
+            </if>
+            <if test="productBrandId != null and productBrandId != ''" >
+                and product_brand_id =  #{productBrandId}
+            </if>
+            <if test="isSelf != null and isSelf != ''" >
+                and is_self =  #{isSelf}
+            </if>
+            <if test="isNorm != null and isNorm != ''" >
+                and is_norm =  #{isNorm}
+            </if>
+            <if test="state != null and state != ''" >
+                and state =  #{state}
+            </if>
+            <if test="isTop != null and isTop != ''" >
+                and is_top =  #{isTop}
+            </if>
+            <if test="sellerId != null and sellerId != ''" >
+                and seller_id =  #{sellerId}
+            </if>
+            <if test="sellerCateId != null and sellerCateId != ''" >
+                and seller_cate_id =  #{sellerCateId}
+            </if>
+            <if test="sellerIsTop != null and sellerIsTop != ''" >
+                and seller_is_top =  #{sellerIsTop}
+            </if>
+            <if test="sellerState != null and sellerState != ''" >
+                and seller_state =  #{sellerState}
+            </if>
+            <if test="productCateState != null and productCateState != ''" >
+                and product_cate_state =  #{productCateState}
+            </if>
+            <if test="isInventedProduct != null and isInventedProduct != ''" >
+                and is_invented_product =  #{isInventedProduct}
+            </if>
+            <if test="transportId != null and transportId != ''" >
+                and transport_id =  #{transportId}
+            </if>
+            <if test="productCode != null and productCode != ''" >
+                and product_code =  #{productCode}
+            </if>
+        </trim>
+    </sql>
+
+    <select id="getByCateIdTop" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where
+        `seller_state` = 1
+        and `state` = 6
+        and `product_cate_state` = 1
+        <if test="cateId != null and cateId != 0" >
+            and `product_cate_id` = #{cateId}
+        </if>
+        order by
+        `is_top` desc, `id` desc
+        limit 0,4
+    </select>
+
+    <select id="getByCateIdLeft" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where
+        `seller_state` = 1
+        and `state` = 6
+        and `product_cate_state` = 1
+        and `up_time`  &lt; now()
+        <if test="cateId != null and cateId != 0" >
+            and `product_cate_id` = #{cateId}
+        </if>
+        order by
+        `actual_sales` desc
+        limit 6
+    </select>
+
+    <select id="getProductsBySellerId" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where seller_id = #{sellerid}
+        order by id desc
+    </select>
+
+    <!-- 商品表 列表总数-->
+    <select id="queryCount" resultType="java.lang.Integer"  parameterType="map">
+        select count(1) from product
+        <include refid="Where_Clause"/>
+    </select>
+
+    <!-- 查询商品表列表 -->
+    <select id="queryList" resultType="com.sibu.mall.product.persistence.vo.ProductVo"  parameterType="map">
+        select
+        *
+        from product
+        <include refid="Where_Clause"/>
+        order by  create_time desc
+        <if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+    </select>
+
+
+    <select id="getProductListBySellerCateId" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where
+        <if test="cateString != null and cateString != ''" >
+            `seller_cate_id` in (${cateString})
+            and
+        </if>
+        `seller_id` = #{sellerId}
+        and `seller_state` = 1
+        and `state` = 6
+        and `product_cate_state` = 1
+        and `up_time`  &lt; now()
+        <choose>
+            <when test="sort == 0">
+                order by `seller_is_top` desc
+            </when>
+            <when test="sort == 1">
+                order by `mall_pc_price` asc
+            </when>
+            <when test="sort == 2">
+                order by `mall_pc_price` desc
+            </when>
+            <when test="sort == 3">
+                order by `actual_sales` desc
+            </when>
+            <when test="sort == 4">
+                order by `actual_sales` asc
+            </when>
+            <when test="sort == 5">
+                order by `up_time` desc
+            </when>
+            <when test="sort == 6">
+                order by `up_time` asc
+            </when>
+        </choose>
+        <if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+    </select>
+
+    <select id="getProductListBySellerCateIdCount" resultType="java.lang.Integer">
+        select count(1) from `product`
+        where
+        <if test="cateString != null and cateString != ''" >
+            `seller_cate_id` in (${cateString})
+            and
+        </if>
+        `seller_id` = #{sellerId}
+        and `seller_state` = 1
+        and `state` = 6
+        and `product_cate_state` = 1
+        and `up_time`  &lt; now()
+    </select>
+
+    <select id="getByBrandId" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where `product_brand_id` = #{brandId}
+        and `seller_state` = 1
+        and `state` = 6
+        and `product_cate_state` = 1
+        and `up_time`  &lt; now()
+        <if test="doSelf == 1">
+            and `is_self` = 1
+        </if>
+        <if test="store == 1">
+            and `product_stock` > 0
+        </if>
+        <choose>
+            <when test="sort == 0">
+                order by `actual_sales` desc
+            </when>
+            <when test="sort == 1">
+                order by `actual_sales` desc
+            </when>
+            <when test="sort == 2">
+                order by `comments_number` desc
+            </when>
+            <when test="sort == 3">
+                order by `mall_pc_price` asc
+            </when>
+            <when test="sort == 4">
+                order by `mall_pc_price` desc
+            </when>
+        </choose>
+        <if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+    </select>
+
+    <select id="getByBrandIdCount" resultType="java.lang.Integer">
+        select
+        count(1)
+        from `product`
+        where `product_brand_id` = #{brandId}
+        and `seller_state` = 1
+        and `state` = 6
+        and `product_cate_state` = 1
+        and `up_time`  &lt; now()
+        <if test="doSelf == 1">
+            and `is_self` = 1
+        </if>
+        <if test="store == 1">
+            and `product_stock` > 0
+        </if>
+    </select>
+
+    <select id="getByBrandIdTop" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where `product_brand_id` = #{brandId}
+        and `seller_state` = 1
+        and `state` = 6
+        and `product_cate_state` = 1
+        and `up_time`  &lt; now()
+        order by
+        `actual_sales` desc
+        limit 4
+    </select>
+
+
+    <select id="getProductByPathCount" resultType="java.lang.Integer">
+        select
+        count(1)
+        from `product`
+        where `product_cate_path` = #{productCatePath}
+        and `seller_state` = 1
+        and `state` = 6
+        and `product_cate_state` = 1
+        and `up_time`  &lt; now()
+    </select>
+
+    <select id="getProductByPath" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where `product_cate_path` = #{productCatePath}
+        and `seller_state` = 1
+        and `state` = 6
+        and `product_cate_state` = 1
+        and `up_time`  &lt; now()
+        <choose>
+            <when test="sort == 0">
+                order by `is_top` desc, `id` desc
+            </when>
+            <when test="sort == 1">
+                order by `mall_pc_price` asc
+            </when>
+            <when test="sort == 2">
+                order by `mall_pc_price` desc
+            </when>
+            <when test="sort == 3">
+                order by `actual_sales` desc
+            </when>
+            <when test="sort == 4">
+                order by `comments_number` desc
+            </when>
+        </choose>
+        <if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+    </select>
+
+    <select id="getProNumByTransportId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select
+        count(*)
+        from `product`
+        where `transport_id` = #{transportId}
+    </select>
+
+    <select id="getProNumByTransportIdAndState" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select
+        count(*)
+        from `product`
+        where `transport_id` = #{transportId}
+        and `state` = #{state}
+    </select>
+
+    <select id="getSalesProducts" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where  `seller_state` = 1
+        and `state` = 6
+        and `product_cate_state` = 1
+        order by `actual_sales` desc
+        <if test="size != null and size &gt; 0">limit #{size}</if>
+    </select>
+    <select id="getCountByStateAndSellerId" resultType="java.lang.Integer">
+        select ifnull(count(*),0) from product where
+        seller_id =#{sellerId}
+        <if test="status != null"  >
+            AND `state` in
+            <foreach item="item" index="index" collection="status" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    <select id="getCountMapByStateAndSellerId" resultType="map">
+        select `state`, count(1) as cnt from `product` where
+        `seller_id`=#{sellerId}
+        <if test="status != null"  >
+            AND `state` in
+            <foreach item="item" index="index" collection="status" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        group by `state`
+    </select>
+    <select id="getBySellerIdAndSpu" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where `seller_id` = #{sellerId}
+        and `product_code` = #{productCode}
+        and `id` != #{productId}
+        and `state` != 5
+    </select>
+
+    <!-- 导出商品列表 -->
+    <select id="getExpertedProducts" resultType="java.util.Map">
+        select P.*,S.seller_name AS seller from (
+        select
+        P.id AS id,
+        P.seller_id AS sellerId,
+        P.name1 AS name1,
+        PC.name AS productCateName,
+        PB.name AS productBrandName,
+        P.product_cate_id AS productCateId,
+        P.product_code AS productCode,
+        P.cost_price AS costPrice,
+        P.supply_price AS supplyPrice,
+        P.protected_price AS protectedPrice,
+        P.mal_mobile_price AS malMobilePrice,
+        P.product_stock AS productStock,
+        P.actual_sales AS actualSales,
+        P.sale_scale1 AS saleScale1,
+        P.sale_scale2 AS saleScale2,
+        CASE IFNULL(P.is_top,1)
+        WHEN 1 THEN '不推荐'
+        WHEN 2 THEN '推荐'
+        END isTop,
+        DATE_FORMAT(P.create_time, '%Y-%m-%d %H:%i:%s') AS createTime,
+        DATE_FORMAT(P.up_time, '%Y-%m-%d %H:%i:%s') AS upTime,
+        DATE_FORMAT(P.seller_apply_time, '%Y-%m-%d %H:%i:%s') AS sellerApplyTime,
+        SC.name AS sellerCateName,
+        CASE IFNULL(P.state,1)
+        WHEN 1 THEN '新建'
+        WHEN 2 THEN '提交审核'
+        WHEN 3 THEN '审核通过'
+        WHEN 4 THEN '申请驳回'
+        WHEN 5 THEN '商品删除'
+        WHEN 6 THEN '上架'
+        WHEN 7 THEN '下架'
+        END state
+        from `product` P
+        left join `product_cate` PC on PC.id=P.product_cate_id
+        left join `product_brand` PB on PB.id = P.product_brand_id
+        left join `seller_cate` SC on SC.id = P.seller_cate_id
+        <include refid="whereConditions1"/>
+        ) P
+        left join `seller` S on S.id=P.sellerId
+        <choose>
+            <when test="param1.q_orderBySellerAndCreateTime != null">
+                order by  S.seller_name, P.createTime desc
+            </when>
+            <when test="param1.q_orderBySellerAndApplyTime != null">
+                order by  S.seller_name, P.sellerApplyTime desc
+            </when>
+            <when test="param1.q_orderByApplyTime != null">
+                order by  P.sellerApplyTime desc
+            </when>
+            <otherwise>
+                order by  P.createTime desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 导出商品列表 -->
+    <select id="getExpertedProductsV2" resultType="java.util.Map">
+        select P.* from (
+        select
+        P.id AS id,
+        P.seller_id AS sellerId,
+        P.name1 AS name1,
+        PC.name AS productCateName,
+        PB.name AS productBrandName,
+        P.product_cate_id AS productCateId,
+        P.product_code AS productCode,
+        P.cost_price AS costPrice,
+        P.supply_price AS supplyPrice,
+        P.protected_price AS protectedPrice,
+        P.mal_mobile_price AS malMobilePrice,
+        P.product_stock AS productStock,
+        P.actual_sales AS actualSales,
+        P.sale_scale1 AS saleScale1,
+        P.sale_scale2 AS saleScale2,
+        CASE IFNULL(P.is_top,1)
+        WHEN 1 THEN '不推荐'
+        WHEN 2 THEN '推荐'
+        END isTop,
+        DATE_FORMAT(P.create_time, '%Y-%m-%d %H:%i:%s') AS createTime,
+        DATE_FORMAT(P.up_time, '%Y-%m-%d %H:%i:%s') AS upTime,
+        DATE_FORMAT(P.seller_apply_time, '%Y-%m-%d %H:%i:%s') AS sellerApplyTime,
+        CASE IFNULL(P.state,1)
+        WHEN 1 THEN '待提交'
+        WHEN 2 THEN '审核中'
+        WHEN 3 THEN '待上架'
+        WHEN 4 THEN '不通过'
+        WHEN 5 THEN '已删除'
+        WHEN 6 THEN '在售'
+        WHEN 7 THEN '下架'
+        WHEN 8 THEN '待设置价格'
+        END state,
+        DATE_FORMAT(P.putaway_time, '%Y-%m-%d %H:%i:%s') AS  putawayTime,
+        CASE IFNULL(P.putaway_type,0)
+        WHEN 1 THEN '商家'
+        WHEN 2 THEN '平台运营人员'
+        ELSE ''
+        END putawayType
+        from `product` P
+        left join `product_cate` PC on PC.id=P.product_cate_id
+        left join `product_brand` PB on PB.id = P.product_brand_id
+        <include refid="whereConditions1"/>
+        ) P
+        <choose>
+            <when test="param1.q_orderByApplyTime != null">
+                order by  P.sellerApplyTime desc
+            </when>
+            <otherwise>
+                order by  P.createTime desc
+            </otherwise>
+        </choose>
+        limit #{pageNow},#{pageSize}
+    </select>
+
+    <select id="searchCollageProduct" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        SELECT p.*,a.id AS  actCollageId FROM act_collage a
+        LEFT JOIN product p ON a.product_id = p.id
+        WHERE p.state = 6
+        AND a.status = 3
+        AND    (    a.channel = 3     or a.channel = 1)
+        AND
+        a.start_dt  &lt;= NOW()
+        AND
+        a.end_dt >=NOW()
+        order by rand() limit 0,6
+    </select>
+
+
+    <select id="findListById" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from product
+        where id in
+        <foreach close=")" collection="productIds" item="listItem" open="(" separator=",">
+            #{listItem}
+        </foreach>
+    </select>
+
+    <select id="listForComboBox" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        SELECT id,name1 as productName
+        FROM `product`
+        WHERE 1=1
+        <if test="productName != null">
+            and name1 like CONCAT('%',#{productName},'%')
+        </if>
+        <if test="sellerIdList != null and sellerIdList.size()>0">
+            and seller_id in
+            <foreach collection="sellerIdList" item="item" separator="," open="(" close=")">
+              #{item}
+            </foreach>
+        </if>
+    </select>
+
+
+    <update id="freezeProductsBySellerId">
+        update `product`
+        set
+        `seller_state`= #{sellerState},
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime},
+            </when>
+            <otherwise>
+                `update_time` = now(),
+            </otherwise>
+        </choose>
+        `update_user_id` = #{updateUserId}
+		,`update_user_type` = #{updateUserType}
+        where `seller_id`= #{sellerId}
+    </update>
+
+    <update id="updateState">
+        update `product`
+        set
+        `state`= #{state},
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime},
+            </when>
+            <otherwise>
+                `update_time` = now(),
+            </otherwise>
+        </choose>
+        `update_user_id` = #{updateUserId},
+        `update_user_type` = #{updateUserType}
+        where `id`= #{id}
+    </update>
+
+    <update id="updateSale">
+        update `product`
+        set actual_sales = #{actualSales},
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime}
+            </when>
+            <otherwise>
+                `update_time` = now()
+            </otherwise>
+        </choose>
+        where `id`= #{id}
+    </update>
+
+    <update id="updateActSales">
+        update `product`
+        set actual_sales = actual_sales + #{actualSales},
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime}
+            </when>
+            <otherwise>
+                `update_time` = now()
+            </otherwise>
+        </choose>
+        where `id`= #{id}
+    </update>
+
+    <update id="updateRecommend">
+        update `product`
+        set
+        `is_top`= #{isTop},
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime},
+            </when>
+            <otherwise>
+                `update_time` = now(),
+            </otherwise>
+        </choose>
+        `update_user_id` = #{updateUserId},
+        `update_user_type` = #{updateUserType}
+        where `id`= #{id}
+    </update>
+
+    <update id="updateCommentsNumber">
+        update `product`
+        set `comments_number`= `comments_number` + #{number},
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime},
+            </when>
+            <otherwise>
+                `update_time` = now(),
+            </otherwise>
+        </choose>
+        `update_user_id` = #{updateUserId}
+		,`update_user_type` = #{updateUserType}
+        where `id` = #{id}
+    </update>
+
+    <select id="countByCateId" resultType="java.lang.Integer">
+        select
+        count(1)
+        from `product`
+        where `product_cate_id` = #{productCateId}
+    </select>
+
+    <select id="countBySellerCateId" resultType="java.lang.Integer">
+        select
+        count(1)
+        from `product`
+        where `seller_cate_id` = #{sellerCateId}
+    </select>
+
+
+    <insert id="insert"  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into `product`(
+        `product_cate_id`,
+        `product_cate_path`,
+        `name1`,
+        `name2`,
+        `keyword`,
+        `product_brand_id`,
+        `is_self`,
+        `cost_price`,
+        `protected_price`,
+        `market_price`,
+        `mall_pc_price`,
+        `mal_mobile_price`,
+        `supply_price`,
+        `settle_transport`,
+        `virtual_sales`,
+        `actual_sales`,
+        `product_stock`,
+        `is_norm`,
+        `norm_ids`,
+        `norm_name`,
+        `state`,
+        `is_top`,
+        `up_time`,
+        `description`,
+        `packing`,
+        `seller_id`,
+        `create_id`,
+        `create_time`,
+        `update_time`,
+        `seller_cate_id`,
+        `seller_is_top`,
+        `seller_state`,
+        `product_cate_state`,
+        `is_invented_product`,
+        `comments_number`,
+        `product_code`,
+        `master_img`,
+        `video_url`,
+        `transport_type`,
+        `transport_id`,
+        `seller_apply_time`,
+        `purchase_num`,
+        `activity_url`,
+        `product_num`,
+        `type`,
+        `update_user_id`,
+        `update_user_type`,
+        `original_country_code`,
+        `original_path`,
+        `sale_type`
+        )
+        values(
+        #{productCateId},
+        #{productCatePath},
+        #{name1},
+        #{name2},
+        #{keyword},
+        #{productBrandId},
+        #{isSelf},
+        0,
+        0,
+        #{marketPrice},
+        0,
+        #{malMobilePrice},
+        #{supplyPrice},
+        #{settleTransport},
+        0,
+        0,
+        #{productStock},
+        #{isNorm},
+        #{normIds},
+        #{normName},
+        #{state},
+        #{isTop},
+        #{upTime},
+        #{description},
+        #{packing},
+        #{sellerId},
+        #{createId},
+        now(),
+        <choose>
+            <when test="updateTime != null">
+                #{updateTime},
+            </when>
+            <otherwise>
+                now(),
+            </otherwise>
+        </choose>
+        #{sellerCateId},
+        0,
+        #{sellerState},
+        #{productCateState},
+        #{isInventedProduct},
+        #{commentsNumber},
+        #{productCode},
+        #{masterImg},
+        #{videoUrl},
+        #{transportType},
+        #{transportId},
+        #{sellerApplyTime},
+        0,
+        #{activityUrl},
+        #{productNum},
+        #{type},
+        #{updateUserId},
+        #{updateUserType},
+        #{originalCountryCode},
+        #{originalPath},
+        #{saleType}
+        )
+    </insert>
+    <update id="update2">
+        update `product`
+        <set>
+            <if test = "null != productCateId">`product_cate_id`= #{productCateId},</if>
+            <if test = "null != productCatePath">`product_cate_path`= #{productCatePath},</if>
+            <if test = "null != name1 and '' != name1">`name1`= #{name1},</if>
+            <if test = "null != name2 and '' != name2">`name2`= #{name2},</if>
+            <if test = "null != keyword and '' != keyword">`keyword`= #{keyword},</if>
+            <if test = "null != productBrandId">`product_brand_id`= #{productBrandId},</if>
+            <if test = "null != isSelf">`is_self`= #{isSelf},</if>
+            <if test = "null != costPrice">`cost_price`= #{costPrice},</if>
+            <if test = "null != protectedPrice">`protected_price`= #{protectedPrice},</if>
+            <if test = "null != marketPrice">`market_price`= #{marketPrice},</if>
+            <if test = "null != mallPcPrice">`mall_pc_price`= #{mallPcPrice},</if>
+            <if test = "null != malMobilePrice">`mal_mobile_price`= #{malMobilePrice},</if>
+            <if test = "null != canUseCurrency">`can_use_currency`= #{canUseCurrency},</if>
+            <if test = "null != saleScale1">`sale_scale1`= #{saleScale1},</if>
+            <if test = "null != supplyPrice">`supply_price`= #{supplyPrice},</if>
+            <if test = "null != settleTransport">`settle_transport`= #{settleTransport},</if>
+            <if test = "null != virtualSales">`virtual_sales`= #{virtualSales},</if>
+            <if test = "null != actualSales">`actual_sales`= #{actualSales},</if>
+            <if test = "null != isNorm">`is_norm`= #{isNorm},</if>
+            <if test = "null != normIds and '' != normIds">`norm_ids`= #{normIds},</if>
+            <if test = "null != normName and '' != normName">`norm_name`= #{normName},</if>
+            <if test = "null != state">`state`= #{state},</if>
+            <if test = "null != isTop">`is_top`= #{isTop},</if>
+            <if test = "null != upTime">`up_time`= #{upTime},</if>
+            <if test = "null != description and '' != description">`description`= #{description},</if>
+            <if test = "null != packing">`packing`= #{packing},</if>
+            <if test = "null != sellerCateId">`seller_cate_id`= #{sellerCateId},</if>
+            <if test = "null != sellerIsTop">`seller_is_top`= #{sellerIsTop},</if>
+            <if test = "null != sellerState">`seller_state`= #{sellerState},</if>
+            <if test = "null != productCateState">`product_cate_state`= #{productCateState},</if>
+            <if test = "null != isInventedProduct">`is_invented_product`= #{isInventedProduct},</if>
+            <if test = "null != productCode and '' != productCode">`product_code`= #{productCode},</if>
+            <if test = "null != masterImg and '' != masterImg">`master_img`= #{masterImg},</if>
+            <if test = "null != videoUrl and '' != videoUrl">`video_url`= #{videoUrl},</if>
+            <if test = "null != transportType and '' != transportType">`transport_type`= #{transportType},</if>
+            <if test = "null != transportId and '' != transportId">`transport_id`= #{transportId},</if>
+            <if test = "null != sellerApplyTime">`seller_apply_time`= #{sellerApplyTime},</if>
+            <if test = "null != showType and '' != showType">`show_type`= #{showType},</if>
+            <if test = "null != purchaseNum and '' != purchaseNum">`purchase_num`= #{purchaseNum},</if>
+            <if test = "null != activityUrl and '' != activityUrl">`activity_url`= #{activityUrl},</if>
+           <!--  权益商品(type=1)不可动 直接写死 后续需求变更再修改 -->
+            <if test = "null != type"> `type`= if(`type`=1,1,#{type}),</if>
+            <choose>
+                <when test="updateTime !=null">
+                    `update_time` = #{updateTime}
+                </when>
+                <otherwise>
+                    `update_time` = now()
+                </otherwise>
+            </choose>
+            ,`update_user_id` = #{updateUserId}
+            ,`update_user_type` = #{updateUserType}
+        </set>
+        where `id` = #{id}
+    </update>
+
+    <update id="updateProductUpdateTimeByProductId">
+        update `product`
+        <set>
+            `update_time` = now(),
+            `update_user_id` = #{updateUserId}
+            ,`update_user_type` = #{updateUserType}
+        </set>
+        where `id` = #{id}
+    </update>
+
+    <update id="updateProductUpdateTimeByCateId">
+        update `product`
+        <set>
+            <choose>
+                <when test="updateTime !=null">
+                    `update_time` = #{updateTime},
+                </when>
+                <otherwise>
+                    `update_time` = now(),
+                </otherwise>
+            </choose>
+            `update_user_id` = #{updateUserId}
+            ,`update_user_type` = #{updateUserType}
+        </set>
+        where `product_cate_id` = #{id}
+    </update>
+
+    <delete id="del">
+        delete from `product` where `id` = #{id}
+    </delete>
+
+    <select id="get" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where `id` = #{id}
+    </select>
+    <select id="page" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        P.*
+        <if test="param1.q_state != null and param1.q_state == '9'.toString() ">
+        ,
+        if(P.state='9',
+        (select update_time from product_change_log p_log where product_id=P.id and change_field='state' and change_value_after='9' order by id desc limit 1) ,
+        null
+        )
+        as apply_time
+        </if>
+
+        <if test="param1.q_queryByAdmin != null or param1.q_queryBySeller != null">
+            ,CASE
+            WHEN FD.ref_id is null THEN false
+            WHEN FD.ref_id='' THEN false
+            ELSE true
+            END selectFlag
+        </if>
+        from `product` P
+        <if test="param1.q_singleGoods != null and '' != param1.q_singleGoods">
+            join (select product_id from product_goods group by product_id having count(product_id)=1) PG
+            on P.id=PG.product_id
+        </if>
+        <choose>
+            <when test="param1.q_queryByAdmin != null">
+                left join (select ref_id from `m_index_floor_data` where data_type=1
+                <if test="param1.q_indexFloorId != null and '' != param1.q_indexFloorId">
+                    and index_floor_id = #{param1.q_indexFloorId}
+                </if>
+                group by ref_id) FD on P.id=FD.ref_id
+            </when>
+            <when test="param1.q_queryBySeller != null">
+                left join (select ref_id from `m_seller_index_floor_data` where data_type=1 and seller_id=#{param1.q_sellerId}
+                <if test="param1.q_indexFloorId != null and '' != param1.q_indexFloorId">
+                    and index_floor_id = #{param1.q_indexFloorId}
+                </if>
+                group by ref_id) FD on P.id=FD.ref_id
+            </when>
+        </choose>
+        <include refid="whereConditions"/>
+        <choose>
+         <when test="param1.orderByCause !=null and ''!= param1.orderByCause">
+             <!-- orderByCause 示例值: apply_time desc  -->
+             order by ${param1.orderByCause}
+         </when>
+         <otherwise>
+             <choose>
+                 <when test="param1.q_all != null">
+                     order by FIELD(P.state, 6,1,2,3,4,7,5), P.create_time desc
+                 </when>
+                 <otherwise>
+                     order by  P.id desc
+                 </otherwise>
+             </choose>
+         </otherwise>
+        </choose>
+
+
+
+        <if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+    </select>
+    <select id="page1" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        P.*
+        from `product` P
+        <if test="param1.q_singleGoods != null and '' != param1.q_singleGoods">
+            join (select product_id from product_goods group by product_id having count(product_id)=1) PG
+            on P.id=PG.product_id
+        </if>
+        <!--'1、刚创建；2、提交审核；3、审核通过；4、申请驳回；5、商品删除；6、上架；7、下架', -->
+        <include refid="whereConditions1"/>
+        <choose>
+            <when test="param1.q_orderByApplyTime != null">
+                order by  P.seller_apply_time desc
+            </when>
+            <when test="param1.q_all != null">
+                order by FIELD(P.state, 6,1,2,3,4,7,5), P.create_time desc
+            </when>
+            <otherwise>
+                order by  P.id desc
+            </otherwise>
+        </choose>
+        <if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        select count(1) from `product` P
+        <if test="param1.q_singleGoods != null and '' != param1.q_singleGoods">
+            join (select product_id from product_goods group by product_id having count(product_id)=1) PG
+            on P.id=PG.product_id
+        </if>
+        <include refid="whereConditions"/>
+    </select>
+    <select id="count1" resultType="java.lang.Integer">
+        select count(1) from `product` P
+        <if test="param1.q_singleGoods != null and '' != param1.q_singleGoods">
+            join (select product_id from product_goods group by product_id having count(product_id)=1) PG
+            on P.id=PG.product_id
+        </if>
+        <include refid="whereConditions1"/>
+    </select>
+
+    <sql id="whereConditions">
+        <where>
+            <if test="param1.q_id != null and '' != param1.q_id">
+                and P.`id`= #{param1.q_id}
+            </if>
+            <if test="param1.q_productNum != null and '' != param1.q_productNum">
+                and P.`product_num`= #{param1.q_productNum}
+            </if>
+            <if test="param1.q_productCateId != null and '' != param1.q_productCateId">
+                and P.`product_cate_id` in (
+                select PC1.id from product_cate PC1 where EXISTS
+                (select id from product_cate PC2 where PC2.id in (${param1.q_productCateId}) and (PC1.id=PC2.id or FIND_IN_SET(PC2.id, REPLACE(PC1.path, '/', ','))) )
+                )
+            </if>
+            <if test="param1.q_productCatePath != null and '' != param1.q_productCatePath">
+                and P.`product_cate_path`= #{param1.q_productCatePath}
+            </if>
+            <if test="param1.q_productCateName != null and '' != param1.q_productCateName">
+                and P.`product_cate_id`in (select id from product_cate where name like CONCAT('%',#{param1.q_productCateName},'%'))
+            </if>
+            <if test="param1.q_name1 != null and '' != param1.q_name1">
+                and P.`name1`like CONCAT('%',#{param1.q_name1},'%')
+            </if>
+            <if test="param1.q_name2 != null and '' != param1.q_name2">
+                and P.`name2`= #{param1.q_name2}
+            </if>
+            <if test="param1.q_keyword != null and '' != param1.q_keyword">
+                and P.`keyword`= #{param1.q_keyword}
+            </if>
+            <if test="param1.q_productBrandId != null and '' != param1.q_productBrandId">
+                and P.`product_brand_id`= #{param1.q_productBrandId}
+            </if>
+            <if test="param1.q_productBrandName != null and '' != param1.q_productBrandName">
+                and P.`product_brand_id`in (select id from product_brand where name like CONCAT('%',#{param1.q_productBrandName},'%'))
+            </if>
+            <if test="param1.q_isSelf != null and '' != param1.q_isSelf">
+                and P.`is_self`= #{param1.q_isSelf}
+            </if>
+            <if test="param1.q_costPrice != null and '' != param1.q_costPrice">
+                and P.`cost_price`= #{param1.q_costPrice}
+            </if>
+            <if test="param1.q_protectedPrice != null and '' != param1.q_protectedPrice">
+                and P.`protected_price`= #{param1.q_protectedPrice}
+            </if>
+            <if test="param1.q_marketPrice != null and '' != param1.q_marketPrice">
+                and P.`market_price`= #{param1.q_marketPrice}
+            </if>
+            <if test="param1.q_mallPcPrice != null and '' != param1.q_mallPcPrice">
+                and P.`mall_pc_price`= #{param1.q_mallPcPrice}
+            </if>
+            <if test="param1.q_malMobilePrice != null and '' != param1.q_malMobilePrice">
+                and P.`mal_mobile_price`= #{param1.q_malMobilePrice}
+            </if>
+            <if test="param1.q_virtualSales != null and '' != param1.q_virtualSales">
+                and P.`virtual_sales`= #{param1.q_virtualSales}
+            </if>
+            <if test="param1.q_actualSales != null and '' != param1.q_actualSales">
+                and P.`actual_sales`= #{param1.q_actualSales}
+            </if>
+            <if test="param1.q_productStock != null and '' != param1.q_productStock">
+                and P.`product_stock`= #{param1.q_productStock}
+            </if>
+            <if test="param1.q_isNorm != null and '' != param1.q_isNorm">
+                and P.`is_norm`= #{param1.q_isNorm}
+            </if>
+            <if test="param1.q_normIds != null and '' != param1.q_normIds">
+                and P.`norm_ids`= #{param1.q_normIds}
+            </if>
+            <if test="param1.q_normName != null and '' != param1.q_normName">
+                and P.`norm_name`= #{param1.q_normName}
+            </if>
+            <if test="param1.q_state != null and '' != param1.q_state">
+                and P.`state`= #{param1.q_state}
+            </if>
+            <if test="param1.q_isTop != null and '' != param1.q_isTop">
+                and P.`is_top`= #{param1.q_isTop}
+            </if>
+            <if test="param1.q_upTime != null and '' != param1.q_upTime">
+                and P.`up_time`= #{param1.q_upTime}
+            </if>
+            <if test="param1.q_description != null and '' != param1.q_description">
+                and P.`description`= #{param1.q_description}
+            </if>
+            <if test="param1.q_packing != null and '' != param1.q_packing">
+                and P.`packing`= #{param1.q_packing}
+            </if>
+            <if test="param1.q_sellerId != null and '' != param1.q_sellerId">
+                and P.`seller_id`= #{param1.q_sellerId}
+            </if>
+            <if test="param1.q_createId != null and '' != param1.q_createId">
+                and P.`create_id`= #{param1.q_createId}
+            </if>
+            <if test="param1.q_createTime != null and '' != param1.q_createTime">
+                and DATE_FORMAT(P.`create_time`,'%Y-%m-%d') = #{param1.q_createTime}
+            </if>
+            <if test="param1.q_updateTime != null and '' != param1.q_updateTime">
+                and DATE_FORMAT(P.`update_time`,'%Y-%m-%d')= #{param1.q_updateTime}
+            </if>
+            <if test="param1.q_sellerCateId != null and '' != param1.q_sellerCateId">
+                and P.`seller_cate_id`= #{param1.q_sellerCateId}
+            </if>
+            <if test="param1.q_sellerIsTop != null and '' != param1.q_sellerIsTop">
+                and P.`seller_is_top`= #{param1.q_sellerIsTop}
+            </if>
+            <if test="param1.q_sellerState != null and '' != param1.q_sellerState">
+                and P.`seller_state`= #{param1.q_sellerState}
+            </if>
+            <if test="param1.q_productCateState != null and '' != param1.q_productCateState">
+                and P.`product_cate_state`= #{param1.q_productCateState}
+            </if>
+            <if test="param1.q_isInventedProduct != null and '' != param1.q_isInventedProduct">
+                and P.`is_invented_product`= #{param1.q_isInventedProduct}
+            </if>
+            <if test="param1.q_createStartTime != null and param1.q_createStartTime !=''"  >
+                and DATE_FORMAT(P.`create_time`,'%Y-%m-%d') &gt;= #{param1.q_createStartTime}
+            </if>
+            <if test="param1.q_createEndTime != null and param1.q_createEndTime !=''"  >
+                and DATE_FORMAT(P.`create_time`,'%Y-%m-%d') &lt;= #{param1.q_createEndTime}
+            </if>
+            <if test="param1.q_sellerApplyStartTime != null and param1.q_sellerApplyStartTime !=''"  >
+                and DATE_FORMAT(P.`seller_apply_time`,'%Y-%m-%d') &gt;= #{param1.q_sellerApplyStartTime}
+            </if>
+            <if test="param1.q_sellerApplyEndTime != null and param1.q_sellerApplyEndTime !=''"  >
+                and DATE_FORMAT(P.`seller_apply_time`,'%Y-%m-%d') &lt;= #{param1.q_sellerApplyEndTime}
+            </if>
+            <if test="param1.q_isDisSale != null and param1.q_isDisSale =='1'"  >
+                and (
+                exists (select 0 from dis_sale_seller_commission_cate_config DC where P.`product_cate_id`=DC.`product_cate_id`)
+                or exists (select 0 from dis_sale_seller_commission_product_config PC where P.`id`=PC.`product_id`)
+                )
+            </if>
+            <if test="param1.q_saleType != null  and param1.q_saleType !=''">
+                and ifnull(P.sale_type,0)=#{param1.q_saleType}
+            </if>
+
+        </where>
+    </sql>
+
+    <sql id="whereConditions1">
+        <where>
+            <if test="param1.q_id != null and '' != param1.q_id">
+                and  P.`id`= #{param1.q_id}
+            </if>
+            <if test="param1.q_productNum != null and '' != param1.q_productNum">
+                and P.`product_num`= #{param1.q_productNum}
+            </if>
+            <if test="param1.q_productCateId != null and '' != param1.q_productCateId">
+                and P.`product_cate_id` in (
+                select PC1.id from product_cate PC1 where EXISTS
+                (select id from product_cate PC2 where PC2.id in (${param1.q_productCateId}) and (PC1.id=PC2.id or FIND_IN_SET(PC2.id, REPLACE(PC1.path, '/', ','))) )
+                )
+            </if>
+            <if test="param1.q_productCatePath != null and '' != param1.q_productCatePath">
+                and P.`product_cate_path`= #{param1.q_productCatePath}
+            </if>
+            <if test="param1.q_productCateName != null and '' != param1.q_productCateName">
+                and P.`product_cate_id`in (select id from product_cate where name like CONCAT('%',#{param1.q_productCateName},'%'))
+            </if>
+            <if test="param1.q_name1 != null and '' != param1.q_name1">
+                and P.`name1`like CONCAT('%',#{param1.q_name1},'%')
+            </if>
+            <if test="param1.q_name2 != null and '' != param1.q_name2">
+                and P.`name2`= #{param1.q_name2}
+            </if>
+            <if test="param1.q_keyword != null and '' != param1.q_keyword">
+                and P.`keyword`= #{param1.q_keyword}
+            </if>
+            <if test="param1.q_productBrandId != null and '' != param1.q_productBrandId">
+                and P.`product_brand_id`= #{param1.q_productBrandId}
+            </if>
+            <if test="param1.q_productBrandName != null and '' != param1.q_productBrandName">
+                and P.`product_brand_id`in (select id from product_brand where name like CONCAT('%',#{param1.q_productBrandName},'%'))
+            </if>
+            <if test="param1.q_isSelf != null and '' != param1.q_isSelf">
+                and P.`is_self`= #{param1.q_isSelf}
+            </if>
+            <if test="param1.q_costPrice != null and '' != param1.q_costPrice">
+                and P.`cost_price`= #{param1.q_costPrice}
+            </if>
+            <if test="param1.q_protectedPrice != null and '' != param1.q_protectedPrice">
+                and P.`protected_price`= #{param1.q_protectedPrice}
+            </if>
+            <if test="param1.q_marketPrice != null and '' != param1.q_marketPrice">
+                and P.`market_price`= #{param1.q_marketPrice}
+            </if>
+            <if test="param1.q_mallPcPrice != null and '' != param1.q_mallPcPrice">
+                and P.`mall_pc_price`= #{param1.q_mallPcPrice}
+            </if>
+            <if test="param1.q_malMobilePrice != null and '' != param1.q_malMobilePrice">
+                and P.`mal_mobile_price`= #{param1.q_malMobilePrice}
+            </if>
+            <if test="param1.q_virtualSales != null and '' != param1.q_virtualSales">
+                and P.`virtual_sales`= #{param1.q_virtualSales}
+            </if>
+            <if test="param1.q_actualSales != null and '' != param1.q_actualSales">
+                and P.`actual_sales`= #{param1.q_actualSales}
+            </if>
+            <if test="param1.q_productStock != null and '' != param1.q_productStock">
+                and P.`product_stock`= #{param1.q_productStock}
+            </if>
+            <if test="param1.q_isNorm != null and '' != param1.q_isNorm">
+                and P.`is_norm`= #{param1.q_isNorm}
+            </if>
+            <if test="param1.q_normIds != null and '' != param1.q_normIds">
+                and P.`norm_ids`= #{param1.q_normIds}
+            </if>
+            <if test="param1.q_normName != null and '' != param1.q_normName">
+                and P.`norm_name`= #{param1.q_normName}
+            </if>
+            <if test="param1.q_state != null and '' != param1.q_state">
+                and P.`state` in(${param1.q_state})
+            </if>
+            <if test="param1.q_isTop != null and '' != param1.q_isTop">
+                and P.`is_top`= #{param1.q_isTop}
+            </if>
+            <if test="param1.q_upTime != null and '' != param1.q_upTime">
+                and P.`up_time`= #{param1.q_upTime}
+            </if>
+            <if test="param1.q_description != null and '' != param1.q_description">
+                and P.`description`= #{param1.q_description}
+            </if>
+            <if test="param1.q_packing != null and '' != param1.q_packing">
+                and P.`packing`= #{param1.q_packing}
+            </if>
+            <if test="param1.q_sellerId != null and '' != param1.q_sellerId">
+                and P.`seller_id`= #{param1.q_sellerId}
+            </if>
+            <if test="param1.q_createId != null and '' != param1.q_createId">
+                and P.`create_id`= #{param1.q_createId}
+            </if>
+            <if test="param1.q_sellerApplyTime != null and '' != param1.q_sellerApplyTime">
+                and DATE_FORMAT(P.`seller_apply_time`,'%Y-%m-%d') = #{param1.q_sellerApplyTime}
+            </if>
+            <if test="param1.q_createTime != null and '' != param1.q_createTime">
+                and DATE_FORMAT(P.`create_time`,'%Y-%m-%d') = #{param1.q_createTime}
+            </if>
+            <if test="param1.q_updateTime != null and '' != param1.q_updateTime">
+                and DATE_FORMAT(P.`update_time`,'%Y-%m-%d')= #{param1.q_updateTime}
+            </if>
+            <if test="param1.q_sellerCateId != null and '' != param1.q_sellerCateId">
+                and P.`seller_cate_id`= #{param1.q_sellerCateId}
+            </if>
+            <if test="param1.q_sellerIsTop != null and '' != param1.q_sellerIsTop">
+                and P.`seller_is_top`= #{param1.q_sellerIsTop}
+            </if>
+            <if test="param1.q_sellerState != null and '' != param1.q_sellerState">
+                and P.`seller_state`= #{param1.q_sellerState}
+            </if>
+            <if test="param1.q_productCateState != null and '' != param1.q_productCateState">
+                and P.`product_cate_state`= #{param1.q_productCateState}
+            </if>
+            <if test="param1.q_isInventedProduct != null and '' != param1.q_isInventedProduct">
+                and P.`is_invented_product`= #{param1.q_isInventedProduct}
+            </if>
+            <if test="param1.q_createStartTime != null and param1.q_createStartTime !=''"  >
+                and DATE_FORMAT(P.`create_time`,'%Y-%m-%d') &gt;= #{param1.q_createStartTime}
+            </if>
+            <if test="param1.q_createEndTime != null and param1.q_createEndTime !=''"  >
+                and DATE_FORMAT(P.`create_time`,'%Y-%m-%d') &lt;= #{param1.q_createEndTime}
+            </if>
+            <if test="param1.q_sellerApplyStartTime != null and param1.q_sellerApplyStartTime !=''"  >
+                and DATE_FORMAT(P.`seller_apply_time`,'%Y-%m-%d') &gt;= #{param1.q_sellerApplyStartTime}
+            </if>
+            <if test="param1.q_sellerApplyEndTime != null and param1.q_sellerApplyEndTime !=''"  >
+                and DATE_FORMAT(P.`seller_apply_time`,'%Y-%m-%d') &lt;= #{param1.q_sellerApplyEndTime}
+            </if>
+            <if test="param1.q_saleType != null  and param1.q_saleType !=''">
+                and ifnull(P.sale_type,0)=#{param1.q_saleType}
+            </if>
+        </where>
+    </sql>
+
+    <update id="updateByIds">
+        update `product`
+        <set>
+            <if test = "param1.state != null and '' != param1.state">`state`= #{param1.state},</if>
+            <if test = "param1.isTop != null and '' != param1.isTop">`is_top`= #{param1.isTop},</if>
+            <if test = "param1.sellerApplyTime != null">`seller_apply_time`= #{param1.sellerApplyTime},</if>
+            `update_user_id` = #{updateUserId},
+            `update_user_type` = #{updateUserType},
+            <choose>
+                <when test="updateTime !=null">
+                    `update_time` = #{updateTime}
+                </when>
+                <otherwise>
+                    `update_time` = now()
+                </otherwise>
+            </choose>
+        </set>
+        where `id` in
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            ${item}
+        </foreach>
+    </update>
+
+
+    <select id="getByIdAndSellerIdAndSpu" resultType="java.lang.Integer">
+        select
+        count(1)
+        from `product`
+        where `seller_id` = #{sellerId}
+        and `product_code` = #{productCode}
+        and `id` != #{productId}
+        and `state` != 5
+    </select>
+
+
+    <update id="updateActualSalesAndStock" >
+        update `product`
+        set `product_stock`= `product_stock` - #{number},
+        `actual_sales` = `actual_sales` + #{number},
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime},
+            </when>
+            <otherwise>
+                `update_time` = now(),
+            </otherwise>
+        </choose>
+        `update_user_id` = #{updateUserId},
+         `update_user_type` = #{updateUserType}
+        where `id` = #{id}
+    </update>
+
+    <update id="updateSaleScale">
+        update `product`
+        set `sale_scale1`= #{saleScale1},
+        `sale_scale2` = #{saleScale2},
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime},
+            </when>
+            <otherwise>
+                `update_time` = now(),
+            </otherwise>
+        </choose>
+        `update_user_id` = #{updateUserId},
+         `update_user_type` = #{updateUserType}
+        where `id` = #{id}
+    </update>
+
+    <update id="updateProductViewNum" >
+        update product set
+        view_num = #{num}
+        ,`update_user_id` = #{updateUserId}
+		,`update_user_type` = #{updateUserType}
+        <choose>
+            <when test="updateTime !=null">
+                ,`update_time` = #{updateTime}
+            </when>
+            <otherwise>
+                ,`update_time` = now()
+            </otherwise>
+        </choose>
+      WHERE  id =#{productId}
+    </update>
+
+
+    <update id="updateDeductionStock">
+        update `product`
+        set `product_stock`= CASE WHEN `product_stock` - #{number} >0 THEN `product_stock` - #{number} ELSE 0 END
+        ,`update_user_id` = #{updateUserId}
+		,`update_user_type` = #{updateUserType}
+        <choose>
+            <when test="updateTime !=null">
+                ,`update_time` = #{updateTime}
+            </when>
+            <otherwise>
+                ,`update_time` = now()
+            </otherwise>
+        </choose>
+       where `id` = #{id}
+    </update>
+
+    <update id="updateAddActualSale">
+        update `product`
+        set `actual_sales` = `actual_sales` + #{number},
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime},
+            </when>
+            <otherwise>
+                `update_time` = now(),
+            </otherwise>
+        </choose>
+         `update_user_id` = #{updateUserId},
+         `update_user_type` = #{updateUserType}
+        where `id` = #{id}
+    </update>
+
+
+    <update id="updateAddStock" >
+        update `product`
+        set `product_stock`= `product_stock` + #{number},
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime},
+            </when>
+            <otherwise>
+                `update_time` = now(),
+            </otherwise>
+        </choose>
+        `update_user_id` = #{updateUserId},
+        `update_user_type` = #{updateUserType}
+        where `id` = #{id}
+    </update>
+
+    <update id="updateDeductionActualSale">
+        update `product`
+        set `actual_sales` = CASE WHEN `actual_sales` - #{number} >0 THEN `actual_sales` - #{number} ELSE 0 END,
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime}
+            </when>
+            <otherwise>
+                `update_time` = now()
+            </otherwise>
+        </choose>
+        ,`update_user_id` = #{updateUserId}
+		,`update_user_type` = #{updateUserType}
+        where `id` = #{id}
+    </update>
+
+    <select id="getProduct" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        *
+        from `product`
+        where `id` = #{id}
+    </select>
+
+
+    <!--审核商品时修改商品状态和更新最终审核人信息-->
+    <update id="updateProductStateAndAudit">
+        update `product`
+        <set>
+            <if test="state != null">`state`= #{state},</if>
+            <if test="auditUserId != null">`audit_user_id`= #{auditUserId},</if>
+            <if test="auditUserName != null">`audit_user_name`= #{auditUserName},</if>
+            <choose>
+                <when test="updateTime !=null">
+                    `update_time` = #{updateTime}
+                </when>
+                <otherwise>
+                    `update_time` = now()
+                </otherwise>
+            </choose>
+            ,`update_user_id` = #{updateUserId}
+            ,`update_user_type` = #{updateUserType}
+        </set>
+        where `id` = #{id}
+    </update>
+
+
+    <update id="updateReturnXbCount" >
+        update `product`
+        set `return_xb_count`= #{returnXbCount},
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime}
+            </when>
+            <otherwise>
+                `update_time` = now()
+            </otherwise>
+        </choose>
+        ,`update_user_id` = #{updateUserId}
+		,`update_user_type` = #{updateUserType}
+        where `id` = #{id}
+    </update>
+
+    <update id="updateReturnVbCount" >
+        update `product`
+        set `return_vb_count`= #{returnVbCount},
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime}
+            </when>
+            <otherwise>
+                `update_time` = now()
+            </otherwise>
+        </choose>
+        ,`update_user_id` = #{updateUserId}
+		,`update_user_type` = #{updateUserType}
+        where `id` = #{id}
+    </update>
+
+    <select id="getAllProduct" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select id,product_cate_id as productCateId,seller_id as sellerId from `product`
+	</select>
+
+    <select id="findProductIdPageByPCIdList" resultType="java.lang.Integer">
+        select id from product p where p.product_cate_id in
+        <foreach index="index" collection="idList" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        limit #{start},100
+    </select>
+
+    <!-- 通过店铺id获取店铺的前N个商品,当前N=4,排序按：创建时间倒序 -->
+    <select id="findSellerTopProductsBySellerId" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+        id, mal_mobile_price AS malMobilePrice, master_img AS masterImg
+        from `product`
+        where seller_id = #{sellerId}
+        and state = 6
+        order by create_time desc
+        limit 0,4;
+    </select>
+
+    <!--查询关乎店铺一周内有多少商家产品-->
+    <select id="countUpProductByTime" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT  IFNULL(count(1),0)
+		FROM product
+		WHERE up_time >=DATE_SUB(NOW(), INTERVAL 7 DAY) <![CDATA[ AND up_time <=NOW() ]]>
+		AND  seller_id =#{sellerId}
+	</select>
+    <update id="updateAuditPassState">
+        update `product`
+        <set>
+            <if test = "null != productCateId">`product_cate_id`= #{productCateId},</if>
+            <if test = "null != productCatePath">`product_cate_path`= #{productCatePath},</if>
+            <if test = "null != name1 and '' != name1">`name1`= #{name1},</if>
+            <if test = "null != name2 and '' != name2">`name2`= #{name2},</if>
+            <if test = "null != keyword and '' != keyword">`keyword`= #{keyword},</if>
+            <if test = "null != productBrandId">`product_brand_id`= #{productBrandId},</if>
+            <if test = "null != isSelf">`is_self`= #{isSelf},</if>
+            <if test = "null != costPrice">`cost_price`= #{costPrice},</if>
+            <if test = "null != protectedPrice">`protected_price`= #{protectedPrice},</if>
+            <if test = "null != marketPrice">`market_price`= #{marketPrice},</if>
+            <if test = "null != mallPcPrice">`mall_pc_price`= #{mallPcPrice},</if>
+            <if test = "null != malMobilePrice">`mal_mobile_price`= #{malMobilePrice},</if>
+            <if test = "null != canUseCurrency">`can_use_currency`= #{canUseCurrency},</if>
+            <if test = "null != saleScale1">`sale_scale1`= #{saleScale1},</if>
+            <if test = "null != supplyPrice">`supply_price`= #{supplyPrice},</if>
+            <if test = "null != settleTransport">`settle_transport`= #{settleTransport},</if>
+            <if test = "null != virtualSales">`virtual_sales`= #{virtualSales},</if>
+            <if test = "null != isNorm">`is_norm`= #{isNorm},</if>
+            <if test = "null != normIds and '' != normIds">`norm_ids`= #{normIds},</if>
+            <if test = "null != normName and '' != normName">`norm_name`= #{normName},</if>
+            state = 3,
+            <if test = "null != isTop">`is_top`= #{isTop},</if>
+            <if test = "null != upTime">`up_time`= #{upTime},</if>
+            <if test = "null != description and '' != description">`description`= #{description},</if>
+            <if test = "null != packing">`packing`= #{packing},</if>
+            <if test = "null != sellerCateId">`seller_cate_id`= #{sellerCateId},</if>
+            <if test = "null != sellerIsTop">`seller_is_top`= #{sellerIsTop},</if>
+            <if test = "null != sellerState">`seller_state`= #{sellerState},</if>
+            <if test = "null != productCateState">`product_cate_state`= #{productCateState},</if>
+            <if test = "null != isInventedProduct">`is_invented_product`= #{isInventedProduct},</if>
+            <if test = "null != productCode and '' != productCode">`product_code`= #{productCode},</if>
+            <if test = "null != masterImg and '' != masterImg">`master_img`= #{masterImg},</if>
+            <if test = "null != videoUrl and '' != videoUrl">`video_url`= #{videoUrl},</if>
+            <if test = "null != transportType and '' != transportType">`transport_type`= #{transportType},</if>
+            <if test = "null != transportId and '' != transportId">`transport_id`= #{transportId},</if>
+            <if test = "null != sellerApplyTime and '' != sellerApplyTime">`seller_apply_time`= #{sellerApplyTime},</if>
+            <if test = "null != showType and '' != showType">`show_type`= #{showType},</if>
+            <if test = "null != purchaseNum and '' != purchaseNum">`purchase_num`= #{purchaseNum},</if>
+            <choose>
+                <when test="updateTime !=null">
+                    `update_time` = #{updateTime}
+                </when>
+                <otherwise>
+                    `update_time` = now()
+                </otherwise>
+            </choose>
+            ,`update_user_id` = #{updateUserId}
+            ,`update_user_type` = #{updateUserType}
+        </set>
+        where `id` = #{id} and state != 6
+    </update>
+
+
+    <update id="updatePutawayState">
+        update product set state = 6,
+               putaway_user_id = #{putawayUserId},
+               putaway_time = now(),
+        putaway_type = #{putawayType},
+        `update_user_id` = #{updateUserId},
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime},
+            </when>
+            <otherwise>
+                `update_time` = now(),
+            </otherwise>
+        </choose>
+        `update_user_type` = #{updateUserType}
+         where `id` in
+        <foreach collection="idList" index="index" item="item" open="(" separator="," close=")">
+            ${item}
+        </foreach>
+        and state = 3
+    </update>
+
+    <update id="updateWaitSetPriceState">
+        update `product`
+        <set>
+            <if test = "null != productCateId">`product_cate_id`= #{productCateId},</if>
+            <if test = "null != productCatePath">`product_cate_path`= #{productCatePath},</if>
+            <if test = "null != name1 and '' != name1">`name1`= #{name1},</if>
+            <if test = "null != name2 and '' != name2">`name2`= #{name2},</if>
+            <if test = "null != keyword and '' != keyword">`keyword`= #{keyword},</if>
+            <if test = "null != productBrandId">`product_brand_id`= #{productBrandId},</if>
+            <if test = "null != isSelf">`is_self`= #{isSelf},</if>
+            <if test = "null != costPrice">`cost_price`= #{costPrice},</if>
+            <if test = "null != protectedPrice">`protected_price`= #{protectedPrice},</if>
+            <if test = "null != saleScale1">`sale_scale1`= #{saleScale1},</if>
+            <if test = "null != supplyPrice">`supply_price`= #{supplyPrice},</if>
+            <if test = "null != settleTransport">`settle_transport`= #{settleTransport},</if>
+            <if test = "null != virtualSales">`virtual_sales`= #{virtualSales},</if>
+            <if test = "null != isNorm">`is_norm`= #{isNorm},</if>
+            <if test = "null != normIds and '' != normIds">`norm_ids`= #{normIds},</if>
+            <if test = "null != normName and '' != normName">`norm_name`= #{normName},</if>
+            state = 8,
+            <if test = "null != isTop">`is_top`= #{isTop},</if>
+            <if test = "null != description and '' != description">`description`= #{description},</if>
+            <if test = "null != packing">`packing`= #{packing},</if>
+            <if test = "null != sellerCateId">`seller_cate_id`= #{sellerCateId},</if>
+            <if test = "null != sellerIsTop">`seller_is_top`= #{sellerIsTop},</if>
+            <if test = "null != sellerState">`seller_state`= #{sellerState},</if>
+            <if test = "null != productCateState">`product_cate_state`= #{productCateState},</if>
+            <if test = "null != isInventedProduct">`is_invented_product`= #{isInventedProduct},</if>
+            <if test = "null != productCode and '' != productCode">`product_code`= #{productCode},</if>
+            <if test = "null != masterImg and '' != masterImg">`master_img`= #{masterImg},</if>
+            <if test = "null != videoUrl and '' != videoUrl">`video_url`= #{videoUrl},</if>
+            <if test = "null != transportType and '' != transportType">`transport_type`= #{transportType},</if>
+            <if test = "null != transportId and '' != transportId">`transport_id`= #{transportId},</if>
+            <if test = "null != sellerApplyTime and '' != sellerApplyTime">`seller_apply_time`= #{sellerApplyTime},</if>
+            <if test = "null != showType and '' != showType">`show_type`= #{showType},</if>
+            <if test = "null != purchaseNum and '' != purchaseNum">`purchase_num`= #{purchaseNum},</if>
+            <choose>
+                <when test="updateTime !=null">
+                    `update_time` = #{updateTime}
+                </when>
+                <otherwise>
+                    `update_time` = now()
+                </otherwise>
+            </choose>
+            ,`update_user_id` = #{updateUserId}
+            ,`update_user_type` = #{updateUserType}
+        </set>
+        where `id` = #{id} and state != 6
+    </update>
+
+    <update id="updateProductToWaitSubmit">
+        update `product`
+        <set>
+            <if test = "null != name1 and '' != name1">`name1`= #{name1},</if>
+            <if test = "null != name2 and '' != name2">`name2`= #{name2},</if>
+            <if test = "null != keyword and '' != keyword">`keyword`= #{keyword},</if>
+            <if test = "null != productBrandId">`product_brand_id`= #{productBrandId},</if>
+            <if test = "null != costPrice">`cost_price`= #{costPrice},</if>
+            <if test = "null != protectedPrice">`protected_price`= #{protectedprice},</if>
+            <if test = "null != marketPrice">`market_price`= #{marketPrice},</if>
+            <if test = "null != mallPcPrice">`mall_pc_price`= #{mallPcPrice},</if>
+            <if test = "null != malMobilePrice">`mal_mobile_price`= #{malMobilePrice},</if>
+            <if test = "null != canUseCurrency">`can_use_currency`= #{canUseCurrency},</if>
+            <if test = "null != saleScale1">`sale_scale1`= #{saleScale1},</if>
+            <if test = "null != supplyPrice">`supply_price`= #{supplyPrice},</if>
+            <if test = "null != settleTransport">`settle_transport`= #{settleTransport},</if>
+            <if test = "null != virtualSales">`virtual_sales`= #{virtualSales},</if>
+            <if test = "null != normIds and '' != normIds">`norm_ids`= #{normIds},</if>
+            <if test = "null != normName and '' != normName">`norm_name`= #{normName},</if>
+            <if test = "null != isTop">`is_top`= #{isTop},</if>
+            <if test = "null != description and '' != description">`description`= #{description},</if>
+            <if test = "null != packing">`packing`= #{packing},</if>
+            <if test = "null != sellerCateId">`seller_cate_id`= #{sellerCateId},</if>
+            <if test = "null != productCateId">`product_cate_id`= #{productCateId},</if>
+            <if test = "null != productCatePath and '' != productCatePath">`product_cate_path`= #{productCatePath},</if>
+            <if test = "null != sellerIsTop">`seller_is_top`= #{sellerIsTop},</if>
+            <if test = "null != sellerState">`seller_state`= #{sellerState},</if>
+            <if test = "null != productCateState">`product_cate_state`= #{productCateState},</if>
+            <if test = "null != isInventedProduct">`is_invented_product`= #{isInventedProduct},</if>
+            <if test = "null != productCode and '' != productCode">`product_code`= #{productCode},</if>
+            <if test = "null != masterImg and '' != masterImg">`master_img`= #{masterImg},</if>
+            <if test = "null != videoUrl and '' != videoUrl">`video_url`= #{videoUrl},</if>
+            <if test = "null != transportType and '' != transportType">`transport_type`= #{transportType},</if>
+            <if test = "null != transportId and '' != transportId">`transport_id`= #{transportId},</if>
+            <if test = "null != sellerApplyTime and '' != sellerApplyTime">`seller_apply_time`= #{sellerApplyTime},</if>
+            <if test = "null != showType and '' != showType">`show_type`= #{showType},</if>
+            <if test = "null != purchaseNum and '' != purchaseNum">`purchase_num`= #{purchaseNum},</if>
+            <if test = "null != activityUrl and '' != activityUrl">`activity_url`= #{activityUrl},</if>
+            <!--  权益商品(type=1)不可动 直接写死 后续需求变更再修改 -->
+            <if test = "null != type"> `type`= if(`type`=1,1,#{type}),</if>
+            `state`= 1,
+            <choose>
+                <when test="updateTime !=null">
+                    `update_time` = #{updateTime},
+                </when>
+                <otherwise>
+                    `update_time` = now(),
+                </otherwise>
+            </choose>
+            `update_user_id` = #{updateUserId},
+            <if test = "null != originalCountryCode">`original_country_code`= #{originalCountryCode},</if>
+            <if test = "null != originalPath and '' != originalPath">`original_path`= #{originalPath},</if>
+            <if test = "null != saleType">`sale_type`= #{saleType},</if>
+            `update_user_type` = #{updateUserType}
+
+        </set>
+        where `id` = #{id} and `state` in (1,4,7)
+    </update>
+
+    <select id="getMaxProductNumBySellerId" parameterType="INTEGER" resultType="LONG">
+        SELECT
+          MAX(product_num)
+        FROM
+          `product`
+        WHERE
+          seller_id = #{sellerId};
+    </select>
+
+    <select id="getAll" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select * from product
+    </select>
+
+    <update id="updateProductNumOldData">
+        update product
+        set
+        product_num = #{productNum},
+        `update_user_id` = #{updateUserId},
+		`update_user_type` = #{updateUserType},
+        <choose>
+            <when test="updateTime !=null">
+                `update_time` = #{updateTime}
+            </when>
+            <otherwise>
+                `update_time` = now()
+            </otherwise>
+        </choose>
+        where
+        id = #{id}
+    </update>
+
+    <update id="updateProductStock">
+        update product set product_stock=#{number}, update_time=now() where id=#{id}
+    </update>
+
+    <select id="findSellerIdForChange" resultType="integer">
+        select DISTINCT seller_id from product
+        where DATE_FORMAT(`update_time`,'%Y-%m-%d') = #{updateTime}
+        limit #{start},#{size}
+    </select>
+
+    <select id="findProductVoByProductType" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+            *
+        from
+            product
+        where
+            type = #{type, jdbcType=INTEGER}
+    </select>
+
+    <select id="getProductResponseListByRequest" resultType="com.sibu.mall.product.response.ProductResponse">
+        select
+            *
+        from
+            product
+        where
+            type = #{type, jdbcType=INTEGER}
+        and state = #{state, jdbcType=INTEGER}
+        limit #{start, jdbcType=INTEGER}, #{size, jdbcType=INTEGER}
+    </select>
+
+    <select id="getProductResponseCountByRequest" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            product
+        where
+            type = #{type, jdbcType=INTEGER}
+        and state = #{state, jdbcType=INTEGER}
+    </select>
+
+    <select id="findIdListByCateId" resultType="integer">
+        select
+            id
+        from
+            product
+        where product_cate_id = #{productCateId}
+        limit #{start},#{size}
+    </select>
+
+    <select id="findProductVoByProductCode" resultType="com.sibu.mall.product.persistence.vo.ProductVo">
+        select
+            *
+        from
+            product
+        <where>
+            product_code like concat(#{productCode, jdbcType=VARCHAR}, '%')
+        </where>
+    </select>
+
+    <update id="updateCateByCate">
+        update product set product_cate_id = #{newProductCateId},product_cate_path = #{newProductCatePath},
+        <!--  权益商品(type=1)不可动 直接写死 后续需求变更再修改 -->
+        `type`= if(`type`=1,1,#{type})   where product_cate_id = #{oldProductCateId}
+    </update>
+    
+
+</mapper>

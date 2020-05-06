@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sibu.mall.activity.persistence.dao.ActFaddishPointProductMapper">
+
+    <resultMap id="BoResultMap" type="com.sibu.mall.activity.persistence.bo.ActFaddishPointProductBo">
+        <id property="id" column="id"/>
+        <result property="faddishPointId" column="faddish_point_id"/>
+        <result property="faddishProductId" column="faddish_product_id"/>
+        <result property="sort" column="sort"/>
+        <result property="state" column="state"/>
+        <association property="actFaddishProduct" javaType="com.sibu.mall.activity.persistence.entity.ActFaddishProduct" >
+            <id property="id" column="afpro.id"/>
+            <result property="sellerId" column="seller_id"/>
+            <result property="sellerName" column="seller_name"/>
+            <result property="faddishSupplyPrice" column="faddish_supply_price"/>
+            <result property="faddishPrice" column="faddish_price"/>
+            <result property="faddishStock" column="faddish_stock"/>
+            <result property="faddishSales" column="faddish_sales"/>
+            <result property="startTime" column="start_time"/>
+            <result property="endTime" column="end_time"/>
+            <result property="likes" column="likes"/>
+            <result property="virtualLikes" column="virtual_likes"/>
+            <result property="virtualSales" column="virtual_sales"/>
+            <result property="productName" column="product_name"/>
+            <result property="malMobilePrice" column="mal_mobile_price"/>
+            <result property="supplyPrice" column="supply_price"/>
+            <result property="masterImg" column="master_img"/>
+            <result property="commissionRatio" column="commission_ratio"/>
+            <result property="productCommission" column="product_commission"/>
+            <result property="marketPrice" column="market_price"/>
+            <result property="productState" column="afpro.product_state"/>
+            <result property="saleState" column="sale_state"/>
+        </association>
+        <association property="actFaddishPoint" javaType="com.sibu.mall.activity.persistence.entity.ActFaddishPoint">
+            <id property="id" column="afp.id"/>
+            <result property="faddishId" column="faddish_id"/>
+            <result property="faddishDate" column="faddish_date"/>
+            <result property="pointTime" column="point_time"/>
+            <result property="buyCloseState" column="buy_close_state"/>
+            <result property="productCount" column="product_count"/>
+            <result property="productStock" column="product_stock"/>
+            <result property="productSales" column="product_sales"/>
+            <result property="faddishType" column="faddish_type"/>
+        </association>
+    </resultMap>
+
+    <!-- 通用连接查询结果列 -->
+    <sql id="Join_Base_Column_List">
+        afpp.id,
+        afpp.create_id,
+        afpp.update_id,
+        afpp.create_time,
+        afpp.update_time,
+        afpp.faddish_point_id, afpp.faddish_product_id, afpp.sort, afpp.state
+    </sql>
+
+    <sql id="productSelect">
+         afpro.id as 'afpro.id', afpro.seller_id, afpro.seller_name, afpro.faddish_supply_price, afpro.faddish_stock, afpro.faddish_sales,
+         afpro.start_time, afpro.end_time,afpro.likes, afpro.virtual_likes,afpro.product_name,afpro.mal_mobile_price, afpro.product_state as 'afpro.product_state',
+         afpro.supply_price, afpro.master_img, afpro.faddish_price, afpro.commission_ratio, afpro.product_commission, afpro.market_price, afpro.virtual_sales,
+         afpro.sale_state
+    </sql>
+
+
+    <select id="selectPageBiz" resultMap="BoResultMap">
+        select <include refid="Join_Base_Column_List"/>,
+         <include refid="productSelect"/>
+         from act_faddish_point_product afpp
+         left join act_faddish_product afpro on afpro.id = afpp.faddish_product_id
+        <where>
+            afpp.faddish_point_id=#{queryMap.q_faddishPointId}
+            <if test="queryMap.q_productNamePoint !=null and queryMap.q_productNamePoint!=''">
+                and afpro.product_name like concat('%',#{queryMap.q_productNamePoint},'%')
+            </if>
+            <if test="queryMap.q_sellerNamePoint !=null and queryMap.q_sellerNamePoint!=''">
+                and afpro.seller_name like concat('%',#{queryMap.q_sellerNamePoint},'%')
+            </if>
+        </where>
+        order by afpp.create_time desc
+    </select>
+
+    <select id="selectProductDetail" resultMap="BoResultMap">
+      select <include refid="Join_Base_Column_List"/>,
+        <include refid="productSelect"/>,
+        afp.id as 'afp.id', afp.faddish_id, afp.faddish_date, afp.point_time, afp.buy_close_state, afp.product_count,
+        afp.product_stock, afp.product_sales, afp.faddish_type
+      from act_faddish_point_product afpp
+      left join act_faddish_point afp on afp.id = afpp.faddish_point_id
+      left join act_faddish_product afpro on afpro.id = afpp.faddish_product_id
+      <where>
+          <if test="effective!=null and effective==1">
+              afpp.state = 1 and afpro.product_state = 6 and afpro.sale_state = 3
+          </if>
+          <if test="dateList!=null and dateList.size()>0">
+              and afp.faddish_date in
+              <foreach collection="dateList" item="item" separator="," open="(" close=")">
+                  #{item}
+              </foreach>
+          </if>
+          <if test="productId!=null and productId!=''">
+              and afpro.product_id = #{productId}
+          </if>
+          <if test="nowDate!=null">
+              and #{nowDate} between start_time and end_time
+          </if>
+      </where>
+      order by afp.faddish_date desc, afp.point_time desc
+    </select>
+
+</mapper>

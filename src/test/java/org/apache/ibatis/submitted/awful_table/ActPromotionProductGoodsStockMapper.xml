@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sibu.mall.marketing.persistence.dao.product.ActPromotionProductGoodsStockMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap"
+               type="com.sibu.mall.marketing.persistence.entity.product.ActPromotionProductGoodsStock">
+        <id column="product_goods_stock_id" property="productGoodsStockId"/>
+        <result column="promotion_product_goods_id" property="promotionProductGoodsId"/>
+        <result column="product_goods_id" property="productGoodsId"/>
+        <result column="promotion_product_id" property="promotionProductId"/>
+        <result column="activity_id" property="activityId"/>
+        <result column="sku_raw_stock" property="skuRawStock"/>
+        <result column="sku_surplus_stock" property="skuSurplusStock"/>
+        <result column="mall_currency" property="mallCurrency"/>
+        <result column="create_user_name" property="createUserName"/>
+        <result column="update_user_name" property="updateUserName"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      `promotion_product_id` as 'promotionProductId',
+      `promotion_product_goods_id` as 'promotionProductGoodsId',
+      `activity_id` as 'activityId',
+      `create_user_name` as 'createUserName',
+      `create_time` as 'createTime',
+      `update_user_name` as 'updateUserName',
+      `update_time` as 'updateTime'
+
+    </sql>
+
+    <insert id="insertByBatch" parameterType="java.util.List">
+        insert into act_promotion_product_goods_stock (
+        `product_goods_stock_id`,
+        `promotion_product_goods_id`,
+        `product_goods_id`,
+        `promotion_product_id`,
+        `activity_id`,
+        `sku_raw_stock`,
+        `sku_surplus_stock`,
+        `mall_currency`,
+        `create_user_name`,
+        `update_user_name`,
+        `create_user_id`,
+        `update_user_id`,
+        `create_time`,
+        `update_time`
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.productGoodsStockId},
+            #{item.promotionProductGoodsId},
+            #{item.productGoodsId},
+            #{item.promotionProductId},
+            #{item.activityId},
+            #{item.skuRawStock},
+            #{item.skuSurplusStock},
+            #{item.mallCurrency},
+            #{item.createUserName},
+            #{item.updateUserName},
+            #{item.createUserId},
+            #{item.updateUserId},
+            #{item.createTime},
+            #{item.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateByBatch" parameterType="java.util.List">
+        update act_promotion_product_goods_stock
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            <set>
+                <if test="item.skuRawStock != null">`sku_raw_stock`= #{item.skuRawStock},</if>
+                <if test="item.skuSurplusStock != null">`sku_surplus_stock`= #{item.skuSurplusStock},</if>
+                <if test="item.activityId != null">`activity_id`= #{item.activityId},</if>
+                <if test="item.deleteFlag != null">`delete_flag`= #{item.deleteFlag},</if>
+                <if test="item.updateUserName != null">`update_user_name`= #{item.updateUserName},</if>
+                <if test="item.updateTime != null">`update_time`= #{item.updateTime},</if>
+                <if test="item.updateUserName != null">`update_user_name`= #{item.updateUserName},</if>
+                <if test="item.updateUserId != null">`update_user_id`= #{item.updateUserId}</if>
+            </set>
+            where
+            promotion_product_id = #{item.promotionProductId, jdbcType=VARCHAR}
+
+            <if test="item.promotionProductGoodsId != null and item.promotionProductGoodsId != ''">
+                and promotion_product_goods_id = #{item.promotionProductGoodsId}
+            </if>
+        </foreach>
+    </update>
+
+    <select id="selectActPromotionProductGoodsStock"
+            resultType="com.sibu.mall.marketing.persistence.entity.product.ActPromotionProductGoodsStock">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        act_promotion_product_goods_stock
+        where
+        promotion_product_id = #{promotionProductId}
+
+        <if test="activityId != null and activityId != ''">
+            and activity_id = #{activityId}
+        </if>
+
+    </select>
+
+    <select id="querySkuSurplusStockByPromotionProductIdAndProductGoodsId" resultType="java.lang.Integer">
+      select   sku_surplus_stock from act_promotion_product_goods_stock where promotion_product_id = #{promotionProductId}
+      and product_goods_id = #{productGoodsId}
+      and activity_id = #{activityId}
+      and delete_flag=0 limit 1
+    </select>
+
+    <update id="abatementSku">
+        UPDATE act_promotion_product_goods_stock SET sku_surplus_stock = sku_surplus_stock-#{number} WHERE promotion_product_id = #{actProId}
+        AND promotion_product_goods_id = #{actGoodsId}  AND sku_surplus_stock-#{number}>=0
+    </update>
+
+    <update id="rollBackSku">
+        UPDATE act_promotion_product_goods_stock SET sku_surplus_stock = sku_surplus_stock+#{number} WHERE promotion_product_id = #{actProId}
+        AND promotion_product_goods_id = #{actGoodsId} AND sku_raw_stock>=sku_surplus_stock+#{number}
+     </update>
+
+    <select id="queryByPromotionProductGoodsId" resultType="java.lang.Integer">
+        select sku_surplus_stock from act_promotion_product_goods_stock where promotion_product_goods_id = #{promotionProductGoodsId} and activity_id = #{activityId} and `delete_flag`= 0
+    </select>
+
+    <update id="deductionSkuStock">
+        update act_promotion_product_goods_stock set sku_surplus_stock = sku_surplus_stock-#{amount}
+        where
+            promotion_product_goods_id = #{promotionProductGoodsId}
+            and  sku_surplus_stock-#{amount}>=0
+            and  promotion_product_id = #{promotionProductId}
+            and activity_id = #{activityId}
+            and `delete_flag`= 0
+    </update>
+
+    <update id="returnSkuStock">
+        update act_promotion_product_goods_stock set sku_surplus_stock = sku_surplus_stock+#{amount} where
+            promotion_product_goods_id = #{promotionProductGoodsId}
+            and sku_raw_stock>=sku_surplus_stock+#{amount}
+            and promotion_product_id = #{promotionProductId}
+            and activity_id = #{activityId} and `delete_flag`= 0
+    </update>
+
+    <select id="querySkuSurplusStockByProductIdAndProductGoodsId" resultType="java.lang.Integer">
+        select   sku_surplus_stock from act_promotion_product_goods_stock
+        where product_id = #{productId}
+        and product_goods_id = #{productGoodsId}
+        and activity_id = #{activityId}
+        and delete_flag=0 limit 1
+    </select>
+
+    <update id="updateByPromotionProductId">
+        update act_promotion_product_goods_stock set activity_id=#{activityId} where promotion_product_id = #{promotionProductId} and `delete_flag`= 0
+    </update>
+
+    <update id="updateByBatchPromotionProductIds" parameterType="java.util.List">
+        update act_promotion_product_goods_stock
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            <set>
+                <if test="item.activityId != null">`activity_id`= #{item.activityId},</if>
+                <if test="item.updateTime != null">`update_time`= #{item.updateTime},</if>
+                <if test="item.updateUserName != null">`update_user_name`= #{item.updateUserName},</if>
+                <if test="item.updateUserId != null">`update_user_id`= #{item.updateUserId}</if>
+            </set>
+            where
+            <if test="item.promotionProductId != null and item.promotionProductId != ''">
+                promotion_product_id = #{item.promotionProductId, jdbcType=VARCHAR}
+            </if>
+        </foreach>
+    </update>
+
+
+
+    <select id="queryByActivityIdAndPromotionProductId" resultType="com.sibu.mall.marketing.persistence.vo.promotion.CollageProductGoodsVO">
+         select
+             product_goods_id as productGoodsId,
+             sku_surplus_stock as skuSurplusStock,
+             activity_id as activityId
+        from act_promotion_product_goods_stock
+        where activity_id=#{activityId}
+              and promotion_product_id = #{promotionProductId}
+              and `delete_flag`= 0
+    </select>
+
+    <update id="deleteByActivityIdAndPromotionProductId">
+          update act_promotion_product_goods_stock set delete_flag=1
+          where activity_id=#{activityId}
+          and promotion_product_id = #{promotionProductId}
+    </update>
+
+    <select id="findByActivityIdAndPromotionProductId" resultMap="BaseResultMap">
+           select * from act_promotion_product_goods_stock
+           where activity_id=#{activityId}
+           and promotion_product_id = #{promotionProductId}
+    </select>
+</mapper>

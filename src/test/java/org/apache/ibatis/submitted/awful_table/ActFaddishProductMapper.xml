@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sibu.mall.activity.persistence.dao.ActFaddishProductMapper">
+
+    <!-- 通用连接查询结果列 -->
+    <sql id="Join_Base_Column_List">
+        afpro.id,
+        afpro.create_time,
+        afpro.update_time,
+        afpro.seller_id, afpro.seller_name, afpro.product_id, afpro.faddish_supply_price, afpro.faddish_supply_price_max, afpro.faddish_price,
+        afpro.faddish_price_max, afpro.faddish_stock, afpro.faddish_sales, afpro.likes, afpro.virtual_likes, afpro.start_time, afpro.end_time,
+        afpro.sale_state, afpro.sale_remark, afpro.review_time, afpro.product_name, afpro.master_img, afpro.faddish_product_img, afpro.mal_mobile_price,
+        afpro.product_state,afpro.mal_mobile_price_max, afpro.supply_price, afpro.supply_price_max, afpro.actual_sales, afpro.commission_ratio,
+        afpro.product_commission, afpro.market_price, afpro.virtual_sales, afpro.faddish_price_seller, afpro.faddish_price_max_seller, afpro.commission_ratio_seller,
+        afpro.faddish_introduce, afpro.faddish_date_auto, afpro.faddish_type
+    </sql>
+
+    <sql id="selectByFaddishDateCommon">
+        /*FORCE_MASTER*/ select <include refid="Join_Base_Column_List"/>
+        <include refid="faddishDateCommon"/>
+    </sql>
+
+    <sql id="faddishDateCommon">
+        from act_faddish_point afp
+        inner join act_faddish_point_product afpp on afpp.faddish_point_id = afp.id
+        inner join act_faddish_product afpro on afpro.id = afpp.faddish_product_id
+        <where>
+            <if test="effective!=null and effective==1">
+                afpp.state = 1 and afpro.product_state = 6 and afpro.sale_state = 3
+            </if>
+            <if test="faddishDate!=null">
+                and afp.faddish_date = #{faddishDate}
+            </if>
+            <if test="faddishPointId!=null and faddishPointId!='' ">
+                and afp.id= #{faddishPointId}
+            </if>
+            <if test="productId!=null and productId!='' ">
+                and afpro.product_id= #{productId}
+            </if>
+        </where>
+        order by afpp.sort desc, afpro.create_time desc
+    </sql>
+
+    <select id="selectByFaddishDate" resultType="com.sibu.mall.activity.persistence.entity.ActFaddishProduct">
+      <include refid="selectByFaddishDateCommon"/>
+    </select>
+
+    <select id="selectPageByFaddishDate" resultType="com.sibu.mall.activity.persistence.entity.ActFaddishProduct">
+        <include refid="selectByFaddishDateCommon"/>
+    </select>
+
+    <select id="selectCountByCondition" resultType="java.lang.Integer">
+        /*FORCE_MASTER*/ select count(1) <include refid="faddishDateCommon"/>
+    </select>
+
+    <select id="selectStockByByFaddishDate" resultType="java.lang.Integer">
+        select sum(a.faddish_stock) from (
+            select afpro.faddish_stock
+            from act_faddish_point afp
+            inner join act_faddish_point_product afpp on afpp.faddish_point_id = afp.id
+            inner join act_faddish_product afpro on afpro.id = afpp.faddish_product_id
+            <where>
+                <if test="faddishDate!=null">
+                    and afp.faddish_date = #{faddishDate}
+                </if>
+                <if test="faddishPointId!=null and faddishPointId!='' ">
+                    and afp.id= #{faddishPointId}
+                </if>
+            </where>
+        ) a
+    </select>
+
+    <select id="selectSalesByByFaddishDate" resultType="java.lang.Integer">
+        select sum(a.faddish_sales) from (
+            select afpro.faddish_sales
+            from act_faddish_point afp
+            inner join act_faddish_point_product afpp on afpp.faddish_point_id = afp.id
+            inner join act_faddish_product afpro on afpro.id = afpp.faddish_product_id
+            <where>
+                <if test="faddishDate!=null">
+                    and afp.faddish_date = #{faddishDate}
+                </if>
+                <if test="faddishPointId!=null and faddishPointId!='' ">
+                    and afp.id= #{faddishPointId}
+                </if>
+            </where>
+        ) a
+    </select>
+
+
+
+</mapper>

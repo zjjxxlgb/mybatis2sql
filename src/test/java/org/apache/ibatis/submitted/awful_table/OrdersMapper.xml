@@ -1,0 +1,2327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sibu.mall.order.persistence.dao.OrdersMapper">
+
+    <resultMap id="OrdersResult" type="com.sibu.mall.order.persistence.entity.Orders">
+        <result property="orderSn" column="order_sn" />
+        <result property="orderPsn" column="order_psn" />
+        <result property="moneyOrder" column="money_order" />
+        <result property="orderType" column="order_type" />
+        <result property="memberId" column="member_id" />
+        <result property="orderState" column="order_state" />
+        <result property="isParent" column="is_parent" />
+        <result property="sellerId" column="seller_id" />
+        <result property="evaluateState" column="evaluate_state" />
+        <result property="paymentStatus" column="payment_status" />
+        <result property="finishTime" column="finish_time" />
+        <result property="logisticsName" column="logistics_name" />
+        <result property="logisticsNumber" column="logistics_number" />
+        <result property="openOrderSn" column="open_order_sn" />
+        <result property="moneyLogistics" column="money_logistics" />
+    </resultMap>
+
+    <resultMap id="OrdersResultErp" type="com.sibu.mall.order.persistence.entity.Orders">
+        <result property="id" column="id" />
+        <result property="uid" column="uid" />
+        <result property="orderSn" column="order_sn" />
+        <result property="orderPsn" column="order_psn" />
+        <result property="name" column="name" />
+        <result property="remark" column="remark" />
+        <result property="tradeSn" column="trade_sn" />
+        <result property="addressAll" column="address_all" />
+        <result property="addressInfo" column="address_info" />
+        <result property="moneyLogistics" column="money_logistics" />
+        <result property="paymentName" column="payment_name" />
+        <result property="mobile" column="mobile" />
+        <result property="paymentName" column="payment_name" />
+        <result property="mobile" column="mobile" />
+        <result property="provinceId" column="province_id" />
+        <result property="cityId" column="city_id" />
+        <result property="areaId" column="area_id" />
+        <result property="couponUserId" column="coupon_user_id" />
+        <result property="moneyCoupon" column="money_coupon" />
+        <result property="createTime" column="create_time" />
+        <result property="payTime" column="pay_time" />
+        <result property="moneyOrder" column="money_order" />
+        <result property="deductionVbCount" column="deduction_vb_count" />
+        <result property="memberId" column="member_id" />
+        <result property="sellerId" column="seller_id" />
+    </resultMap>
+
+    <resultMap id="OrderMemberIdVoResult" type="com.sibu.mall.order.persistence.vo.OrderMemberIdVo">
+        <result property="orderSn" column="order_sn" />
+        <result property="moneyOrder" column="money_order" />
+    </resultMap>
+
+
+
+    <resultMap id="ExportOrdersProductResult" type="com.sibu.mall.order.persistence.vo.ExportOrdersProductVo">
+        <result property="orderPsn" column="orderPsn" />
+        <result property="orderSn" column="orderSn" />
+        <result property="orderState" column="orderState" />
+        <result property="moneyOrder" column="moneyOrder" />
+        <result property="moneyLogistics" column="moneyLogistics" />
+        <result property="moneyDiscount" column="moneyDiscount" />
+        <result property="balanceDiscounted" column="balanceDiscounted" />
+        <result property="deductionVbCount" column="deductionVbCount" />
+        <result property="deductionVbMoney" column="deductionVbMoney" />
+        <result property="redMarketCurrency" column="redMarketCurrency" />
+        <result property="perpetualMarketCurrency" column="perpetualMarketCurrency" />
+        <result property="memberName" column="memberName" />
+        <result property="memberId" column="memberId" />
+        <result property="name" column="name" />
+        <result property="mobile" column="mobile" />
+        <result property="zipCode" column="zipCode" />
+        <result property="address" column="address" />
+        <result property="paymentName" column="paymentName" />
+        <result property="tradeSn" column="tradeSn" />
+        <result property="isImportErp" column="isImportErp" />
+        <result property="createTime" column="createTime" />
+        <result property="payTime" column="payTime" />
+        <result property="finishTime" column="finishTime" />
+        <result property="deliverTime" column="deliverTime" />
+        <result property="productSku" column="productSku" />
+        <result property="productName" column="productName" />
+        <result property="productGoodsId" column="productGoodsId" />
+        <result property="number" column="number" />
+        <result property="moneyPrice" column="moneyPrice" />
+        <result property="moneyPriceSum" column="moneyPriceSum" />
+        <result property="singlePayMoney" column="singlePayMoney" />
+        <result property="payMoney" column="payMoney" />
+        <result property="deductionProductVbCount" column="deductionProductVbCount" />
+        <result property="deductionProductSingleVbCount" column="deductionProductSingleVbCount" />
+        <result property="productCateId" column="productCateId" />
+        <result property="productCode" column="productCode" />
+        <result property="productSku" column="productSku" />
+        <result property="supplyPrice" column="supplyPrice" />
+        <result property="productCommissionRatio" column="productCommissionRatio" />
+        <result property="sellerName" column="sellerName" />
+        <result property="remark" column="remark" />
+        <result property="finishType" column="finishType" />
+        <result property="backCancelTime" column="backCancelTime" />
+        <result property="backCancelStatus" column="backCancelStatus" />
+        <result property="paymentStatus" column="paymentStatus" />
+        <result property="cityId" column="cityId" />
+        <result property="areaId" column="areaId" />
+        <result property="provinceId" column="provinceId" />
+        <result property="ordersProductUid" column="ordersProductUid" />
+        <result property="orderType" column="orderType" />
+        <result property="feature" column="feature" />
+    </resultMap>
+
+    <update id="updateOrderState">
+        update `orders`
+        set `order_state`= #{orderState},
+            version = version + 1
+        where `order_sn` = #{orderSn}
+    </update>
+
+    <update id="updateOrderLogistics">
+        update `orders`
+        set
+          `order_state`= #{orderState},
+          `logistics_id`= #{logisticsId},
+          `logistics_name`= #{logisticsName},
+          `logistics_number`= #{logisticsNumber},
+          `deliver_time`= #{deliverTime},
+          version = version + 1
+        where `order_sn` = #{orderSn}
+    </update>
+
+    <update id="updateOldOrderLogistics">
+        update `orders`
+        set
+          `logistics_id`= #{logisticsId},
+          `logistics_name`= #{logisticsName},
+          `logistics_number`= #{logisticsNumber},
+          version = version + 1
+        where `order_sn` = #{orderSn} and `seller_id` = #{sellerId}
+    </update>
+
+    <update id="updateCancelOrders">
+        update `orders`
+        set
+          `order_state`= #{order.orderState},
+          <if test="order.moneyBack != null and order.moneyBack !=''">
+              `money_back`= #{order.moneyBack},
+          </if>
+          `cancel_time`= #{order.cancelTime},
+          version = version + 1
+        where `order_sn` = #{order.orderSn} and `order_state`=#{lastOrderState}
+    </update>
+
+    <update id="updateConfirmCancelOrders">
+        update `orders`
+        set
+        <if test="order.moneyBack != null and order.moneyBack !=''">
+            `money_back`= #{order.moneyBack},
+        </if>
+        `order_state`= #{order.orderState},
+        version = version + 1
+        where `order_sn` = #{order.orderSn} and `order_state`=#{lastOrderState}
+    </update>
+
+    <update id="cancelByPsn">
+        update `orders`
+        set
+        	`order_state` = 6,
+        	`cancel_time` = now(),
+        	`update_time`= now(),
+        	version = version + 1
+        where `order_psn` = #{orderPsn}
+	</update>
+
+    <update id="updateBackCurrency">
+		update `orders`
+        set
+        	`back_market_currency_status` = #{backMarketCurrencyStatus},
+        	`back_market_currency_time`= now(),
+        	version = version + 1
+        where `order_sn` = #{orderSn}
+	</update>
+
+    <!-- 更新确认或拒绝取消订单信息 -->
+    <update id="updateComfirmCancel">
+		update orders
+		SET   comfirm_cancel_time = now(),
+		      comfirm_cancel_user_name = #{comfirmCancelUserName},
+		      version = version + 1
+		where `order_sn` = #{orderSn}
+	</update>
+
+    <select id="getOrdersCount" resultType="java.lang.Integer">
+        select count(1) from `orders`
+        <include refid="getOrdersCondition"/>
+    </select>
+
+    <select id="getOrderProducrCount" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM  orders o LEFT JOIN`orders_product`op on o.order_sn = op.orders_psn
+        <include refid="getOrdersCondition2"/>
+    </select>
+
+    <select id="getOrders" resultType="com.sibu.mall.order.persistence.entity.Orders">
+        select * from `orders`
+        <include refid="getOrdersCondition"/>
+        <choose>
+            <when test="queryMap.orderByCancelTime != null">
+                order by cancel_time desc
+            </when>
+            <otherwise>
+                order by create_time desc
+            </otherwise>
+        </choose>
+        <if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+    </select>
+
+    <!-- 查询条件 -->
+    <sql id="getOrdersCondition">
+        <where>
+            <if test="queryMap.orderSns != null and queryMap.orderSns.size > 0">
+                AND order_sn IN
+                <foreach collection="queryMap.orderSns" index="index" item="orderSn" open="(" separator="," close=")">
+                    #{orderSn}
+                </foreach>
+            </if>
+            <if test="queryMap.sellerId != null and queryMap.sellerId !=''">
+                and `seller_id`= #{queryMap.sellerId}
+            </if>
+            <if test="queryMap.sellerName != null and queryMap.sellerName !=''">
+                and `seller_name`like CONCAT('%',#{queryMap.sellerName},'%')
+            </if>
+            <if test="queryMap.memberId != null and queryMap.memberId !=''">
+                and `member_id`= #{queryMap.memberId}
+            </if>
+            <if test="queryMap.memberName != null and queryMap.memberName !=''">
+                and `member_name`like CONCAT('%',#{queryMap.memberName},'%')
+            </if>
+            <if test="queryMap.orderSn != null and queryMap.orderSn !=''">
+                and `order_sn` = #{queryMap.orderSn}
+            </if>
+            <if test="queryMap.orderPsn != null and queryMap.orderPsn !=''">
+                and `order_psn` = #{queryMap.orderPsn}
+            </if>
+            <if test="queryMap.orderType != null and queryMap.orderType != ''">
+                and order_type = #{queryMap.orderType}
+            </if>
+            <if test="queryMap.orderGroupType != null and queryMap.orderGroupType != ''">
+                and order_type in (${queryMap.orderGroupType})
+            </if>
+            <if test="queryMap.feature != null and queryMap.feature != ''">
+                and feature = #{queryMap.feature}
+            </if>
+            <if test="queryMap.orderState != null and queryMap.orderState !=''">
+                and `order_state`= #{queryMap.orderState}
+            </if>
+            <if test="queryMap.orderStatus != null and queryMap.orderStatus !=''">
+                and `order_state`in (${queryMap.orderStatus})
+            </if>
+            <if test="queryMap.paymentStatus != null and queryMap.paymentStatus !=''">
+                and `payment_status`= #{queryMap.paymentStatus}
+            </if>
+            <if test="queryMap.isParent != null and queryMap.isParent !=''">
+                and `is_parent` = #{queryMap.isParent}
+            </if>
+            <if test="queryMap.isShow != null and queryMap.isShow !=''">
+                and `is_show`= #{queryMap.isShow}
+            </if>
+            <if test="queryMap.paymentCode != null and queryMap.paymentCode !=''">
+                and `payment_code`= #{queryMap.paymentCode}
+            </if>
+            <if test="queryMap.finishStartTime != null">
+                and `finish_time` &gt;= #{queryMap.finishStartTime}
+            </if>
+            <if test="queryMap.finishEndTime != null">
+                and `finish_time` &lt;= #{queryMap.finishEndTime}
+            </if>
+            <if test="queryMap.evaluateNoState != null and queryMap.evaluateNoState !=''">
+                and `evaluate_state` != #{queryMap.evaluateNoState}
+                and `order_type` != 4
+            </if>
+            <if test="queryMap.year != null">
+                and Year(finish_time) = #{queryMap.year}
+            </if>
+            <if test="queryMap.month != null ">
+                and Year(finish_time) = #{queryMap.year} and Month(finish_time) = #{queryMap.month}
+            </if>
+            <if test="queryMap.startTime != null and queryMap.endTime != null">
+                and DATE_FORMAT(`create_time` , "%Y-%m-%d") BETWEEN STR_TO_DATE(#{queryMap.startTime} , "%Y-%m-%d")
+                AND STR_TO_DATE(#{queryMap.endTime} , "%Y-%m-%d")
+            </if>
+            <if test="queryMap.name != null and queryMap.name !=''">
+                and `name`like CONCAT('%',#{queryMap.name},'%')
+            </if>
+            <if test="queryMap.mobile != null and queryMap.mobile !=''">
+                and `mobile`like CONCAT('%',#{queryMap.mobile},'%')
+            </if>
+            <if test="queryMap.createStartTime != null and queryMap.createStartTime !=''">
+                and DATE_FORMAT(`create_time`,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.createStartTime}
+            </if>
+            <if test="queryMap.createEndTime != null and queryMap.createEndTime !=''">
+                and DATE_FORMAT(`create_time`,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.createEndTime}
+            </if>
+            <if test="queryMap.backCancelStatus != null and queryMap.backCancelStatus !=''">
+                and `back_cancel_status`= #{queryMap.backCancelStatus}
+            </if>
+            <if test="queryMap.backCancelStartTime != null and queryMap.backCancelStartTime !=''">
+                and DATE_FORMAT(`back_cancel_time`,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.backCancelStartTime}
+            </if>
+            <if test="queryMap.backCancelEndTime != null and queryMap.backCancelEndTime !=''">
+                and DATE_FORMAT(`back_cancel_time`,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.backCancelEndTime}
+            </if>
+            <if test="queryMap.cancelStartTime != null and queryMap.cancelStartTime !=''">
+                and DATE_FORMAT(`cancel_time`,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.cancelStartTime}
+            </if>
+            <if test="queryMap.cancelEndTime != null and queryMap.cancelEndTime !=''">
+                and DATE_FORMAT(`cancel_time`,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.cancelEndTime}
+            </if>
+            <if test="queryMap.payStartTime != null and queryMap.payStartTime !=''">
+                and DATE_FORMAT(`pay_time`,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.payStartTime}
+            </if>
+            <if test="queryMap.payEndTime != null and queryMap.payEndTime !=''">
+                and DATE_FORMAT(`pay_time`,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.payEndTime}
+            </if>
+            <if test="queryMap.backDeductionVbStartTime != null and queryMap.backDeductionVbStartTime !=''">
+                and DATE_FORMAT(`back_deduction_vb_time`,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.backDeductionVbStartTime}
+            </if>
+            <if test="queryMap.backDeductionVbEndTime != null and queryMap.backDeductionVbEndTime !=''">
+                and DATE_FORMAT(`back_deduction_vb_time`,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.backDeductionVbEndTime}
+            </if>
+            <if test="queryMap.comfirmStartCancelTime != null and queryMap.comfirmStartCancelTime !=''">
+                and DATE_FORMAT(`comfirm_cancel_time`,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.comfirmStartCancelTime}
+            </if>
+            <if test="queryMap.comfirmEndCancelTime != null and queryMap.comfirmEndCancelTime !=''">
+                and DATE_FORMAT(`comfirm_cancel_time`,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.comfirmEndCancelTime}
+            </if>
+        </where>
+    </sql>
+    <sql id="getOrdersCondition2">
+        <where>
+            <if test="queryMap.orderSns != null and queryMap.orderSns.size > 0">
+                AND o.order_sn IN
+                <foreach collection="queryMap.orderSns" index="index" item="orderSn" open="(" separator="," close=")">
+                    #{orderSn}
+                </foreach>
+            </if>
+            <if test="queryMap.sellerId != null and queryMap.sellerId !=''">
+                and o.seller_id= #{queryMap.sellerId}
+            </if>
+            <if test="queryMap.sellerName != null and queryMap.sellerName !=''">
+                and o.seller_name like CONCAT('%',#{queryMap.sellerName},'%')
+            </if>
+            <if test="queryMap.memberId != null and queryMap.memberId !=''">
+                and o.member_id= #{queryMap.memberId}
+            </if>
+            <if test="queryMap.memberName != null and queryMap.memberName !=''">
+                and o.member_name like CONCAT('%',#{queryMap.memberName},'%')
+            </if>
+            <if test="queryMap.orderSn != null and queryMap.orderSn !=''">
+                and o.order_sn  = #{queryMap.orderSn}
+            </if>
+            <if test="queryMap.orderPsn != null and queryMap.orderPsn !=''">
+                and o.order_psn = #{queryMap.orderPsn}
+            </if>
+            <if test="queryMap.orderType != null and queryMap.orderType != ''">
+                and o.order_type = #{queryMap.orderType}
+            </if>
+            <if test="queryMap.orderGroupType != null and queryMap.orderGroupType != ''">
+                and o.order_type in (${queryMap.orderGroupType})
+            </if>
+            <!-- 注意这个地方是json类型的。feature是json，传入的chargeAccount也是序列化后的json -->
+            <if test="queryMap.chargeAccount != null and queryMap.chargeAccount != ''">
+                and o.feature = #{queryMap.chargeAccount}
+            </if>
+            <if test="queryMap.orderState != null and queryMap.orderState !=''">
+                and o.order_state = #{queryMap.orderState}
+            </if>
+            <if test="queryMap.orderStatus != null and queryMap.orderStatus !=''">
+                and o.order_state in (${queryMap.orderStatus})
+            </if>
+            <if test="queryMap.paymentStatus != null and queryMap.paymentStatus !=''">
+                and o.payment_status= #{queryMap.paymentStatus}
+            </if>
+            <if test="queryMap.isParent != null and queryMap.isParent !=''">
+                and o.is_parent = #{queryMap.isParent}
+            </if>
+            <if test="queryMap.isShow != null and queryMap.isShow !=''">
+                and o.is_show= #{queryMap.isShow}
+            </if>
+            <if test="queryMap.paymentCode != null and queryMap.paymentCode !=''">
+                and o.payment_code= #{queryMap.paymentCode}
+            </if>
+            <if test="queryMap.finishStartTime != null">
+                and o.finish_time &gt;= #{queryMap.finishStartTime}
+            </if>
+            <if test="queryMap.finishEndTime != null">
+                and o.finish_time &lt;= #{queryMap.finishEndTime}
+            </if>
+            <if test="queryMap.evaluateNoState != null and queryMap.evaluateNoState !=''">
+                and o.evaluate_state != #{queryMap.evaluateNoState}
+                and o.order_type != 4
+            </if>
+            <if test="queryMap.year != null">
+                and Year(o.finish_time) = #{queryMap.year}
+            </if>
+            <if test="queryMap.month != null ">
+                and Year(o.finish_time) = #{queryMap.year} and Month(o.finish_time) = #{queryMap.month}
+            </if>
+            <if test="queryMap.startTime != null and queryMap.endTime != null">
+                and DATE_FORMAT(o.create_time , '%Y-%m-%d %H:%i:%s') BETWEEN STR_TO_DATE(#{queryMap.startTime} ,'%Y-%m-%d %H:%i:%s')
+                AND STR_TO_DATE(#{queryMap.endTime} ,'%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test="queryMap.name != null and queryMap.name !=''">
+                and o.name like CONCAT('%',#{queryMap.name},'%')
+            </if>
+            <if test="queryMap.mobile != null and queryMap.mobile !=''">
+                and o.mobile like CONCAT('%',#{queryMap.mobile},'%')
+            </if>
+            <if test="queryMap.createStartTime != null and queryMap.createStartTime !=''">
+                and DATE_FORMAT(o.create_time,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.createStartTime}
+            </if>
+            <if test="queryMap.createEndTime != null and queryMap.createEndTime !=''">
+                and DATE_FORMAT(o.create_time,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.createEndTime}
+            </if>
+            <if test="queryMap.backCancelStatus != null and queryMap.backCancelStatus !=''">
+                and o.back_cancel_status= #{queryMap.backCancelStatus}
+            </if>
+            <if test="queryMap.backCancelStartTime != null and queryMap.backCancelStartTime !=''">
+                and DATE_FORMAT(o.back_cancel_time,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.backCancelStartTime}
+            </if>
+            <if test="queryMap.backCancelEndTime != null and queryMap.backCancelEndTime !=''">
+                and DATE_FORMAT(o.back_cancel_time,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.backCancelEndTime}
+            </if>
+            <if test="queryMap.cancelStartTime != null and queryMap.cancelStartTime !=''">
+                and DATE_FORMAT(o.cancel_time,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.cancelStartTime}
+            </if>
+            <if test="queryMap.cancelEndTime != null and queryMap.cancelEndTime !=''">
+                and DATE_FORMAT(o.cancel_time,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.cancelEndTime}
+            </if>
+            <if test="queryMap.payStartTime != null and queryMap.payStartTime !=''">
+                and DATE_FORMAT(o.pay_time,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.payStartTime}
+            </if>
+            <if test="queryMap.payEndTime != null and queryMap.payEndTime !=''">
+                and DATE_FORMAT(o.pay_time,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.payEndTime}
+            </if>
+            <if test="queryMap.backDeductionVbStartTime != null and queryMap.backDeductionVbStartTime !=''">
+                and DATE_FORMAT(o.back_deduction_vb_time,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.backDeductionVbStartTime}
+            </if>
+            <if test="queryMap.backDeductionVbEndTime != null and queryMap.backDeductionVbEndTime !=''">
+                and DATE_FORMAT(o.back_deduction_vb_time,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.backDeductionVbEndTime}
+            </if>
+        </where>
+    </sql>
+
+    <update id="updateDeductionVbStatusByOrderPsn">
+        update orders
+        <set>
+            <if test="params.orderState !=null and params.orderState !=''">
+                order_state = #{params.orderState},
+            </if>
+            <if test="params.payTimeFlag !=null and params.payTimeFlag !=''">
+                pay_time = now(),
+            </if>
+            <if test="params.payStatus !=null and params.payStatus !=''">
+                payment_status = #{params.payStatus},
+            </if>
+            <if test="params.paymentName !=null and params.paymentName !=''">
+                payment_name = #{params.paymentName},
+            </if>
+            <if test="params.paymentCode !=null and params.paymentCode !=''">
+                payment_code = #{params.paymentCode},
+            </if>
+            <if test="params.isShow !=null and params.isShow !=''">
+                is_show = #{params.isShow},
+            </if>
+            <if test="params.xwsMemberId !=null and params.xwsMemberId !=''">
+                deduction_vb_xws_member_id = #{params.xwsMemberId},
+            </if>
+            deduction_vb_status = 2,deduction_vb_time = NOW(),version = version + 1
+        </set>
+        WHERE order_sn = #{params.orderPsn} AND is_parent = 1
+    </update>
+
+
+    <update id="updateDeductionVbStatusByorderSn" parameterType="java.util.Map">
+        update orders
+        <set>
+            <if test="params.orderState !=null and params.orderState !=''">
+                order_state = #{params.orderState},
+            </if>
+            <if test="params.payTimeFlag !=null and params.payTimeFlag !=''">
+                pay_time = now(),
+            </if>
+            <if test="params.payStatus !=null and params.payStatus !=''">
+                payment_status = #{params.payStatus},
+            </if>
+            <if test="params.paymentName !=null and params.paymentName !=''">
+                payment_name = #{params.paymentName},
+            </if>
+            <if test="params.paymentCode !=null and params.paymentCode !=''">
+                payment_code = #{params.paymentCode},
+            </if>
+            <if test="params.isShow !=null and params.isShow !=''">
+                is_show = #{params.isShow},
+            </if>
+            <if test="params.xwsMemberId !=null and params.xwsMemberId !=''">
+                deduction_vb_xws_member_id = #{params.xwsMemberId},
+            </if>
+            deduction_vb_status = 2,
+            deduction_vb_time = NOW(),
+            version = version + 1
+        </set>
+        WHERE order_sn IN
+        <foreach collection="params.list" index="index" item="orderSn" open="(" separator="," close=")">
+            #{orderSn}
+        </foreach>
+        AND is_parent = 0
+    </update>
+
+    <update id="updateOrderStateByActCollageRecordId" parameterType="java.util.Map">
+		UPDATE  orders
+		SET
+		  order_state = #{newOrderState},
+		  version = version + 1
+		WHERE  act_collage_record_id = #{actCollageRecordId}
+		and order_state = #{oldOrderState}
+	</update>
+
+    <update id="updateOrderStatusByCancel" parameterType="java.lang.String">
+		UPDATE  orders
+		SET order_state = 6,
+		    cancel_time = NOW(),
+		    act_collage_cancel_type = 1,
+		    version = version + 1
+		WHERE  order_sn = #{orderSn} AND  order_state != 6
+	</update>
+
+    <update id="recoveryCancelOrder" parameterType="java.util.Map">
+		UPDATE  orders
+		SET order_state = #{params.orderState},
+		    cancel_time = #{params.cancelTime},
+		    act_collage_cancel_type = #{params.actCollageCancelType},
+		    version = version + 1
+		WHERE  order_sn = #{params.orderSn} and order_state = 6 and act_collage_cancel_type = 1
+	</update>
+
+    <update id="updateOrdersStatusByWait" parameterType="java.util.Map">
+        UPDATE  orders
+        SET order_state = #{newOrderState},
+            version = version + 1
+        WHERE  order_sn IN
+        <foreach collection="list" index="index" item="orderSn" open="(" separator="," close=")">
+            #{orderSn}
+        </foreach>
+        and order_state = #{oldOrderState}
+    </update>
+
+    <update id="updateMoneyBack">
+        update `orders`
+        set
+        	money_back = money_back + #{moneyBack},
+        	`update_time`= now(),
+        	version = version + 1
+        where `order_sn` = #{orderSn}
+	</update>
+
+
+    <update id="updateBackCancelStatus">
+        update `orders`
+        set
+        	`back_cancel_status` = #{backCancelStatus},
+        	`back_cancel_time`= now(),
+        	version = version + 1
+        where `order_sn` = #{orderSn}
+	</update>
+
+    <select id="getOrdersByStatusAndCollageRecordId"  parameterType="java.util.Map" resultType="com.sibu.mall.order.persistence.entity.Orders">
+		SELECT  * FROM  orders WHERE   act_collage_record_id = #{params.id}
+		and order_state = #{params.status}
+	</select>
+
+    <update id="updateOrderPayStatus" parameterType="java.util.Map">
+        update orders
+        <set>
+            <if test="params.orderState !=null and params.orderState !=''">
+                order_state = #{params.orderState},
+            </if>
+            <if test="params.updatePayTimeFlag !=null and params.updatePayTimeFlag !=''">
+                pay_time = now(),
+            </if>
+            <if test="params.payStatus !=null and params.payStatus !=''">
+                payment_status = #{params.payStatus},
+            </if>
+            <if test="params.paymentName !=null and params.paymentName !=''">
+                payment_name = #{params.paymentName},
+            </if>
+            <if test="params.paymentCode !=null and params.paymentCode !=''">
+                payment_code = #{params.paymentCode},
+            </if>
+            <if test="params.isShow !=null and params.isShow !=''">
+                is_show = #{params.isShow},
+            </if>
+            version = version + 1
+        </set>
+        WHERE order_sn IN
+        <foreach collection="params.list" index="index" item="orderSn" open="(" separator="," close=")">
+            #{orderSn}
+        </foreach>
+    </update>
+
+    <!--ERP执行订单下载操作时，锁表 -->
+    <update id="lockErpImportByNew" parameterType="java.util.Map">
+		UPDATE orders
+		SET is_import_erp=101,
+		    version = version + 1
+		where order_sn=#{orderCode} and is_import_erp in (2,101)  and order_state = 3 limit 1
+	</update>
+
+    <!-- 更新订单的erp导入状态 -->
+    <update id="updateErpImportStatus" parameterType="map" >
+		UPDATE orders
+		SET is_import_erp =1,
+		    import_erp_time=#{importDt},
+		    version = version + 1
+		where order_sn=#{orderSn}
+	</update>
+
+    <!-- 更新订单的发货信息 -->
+    <update id="updateOrderShipMessage" parameterType="map">
+        UPDATE orders
+        SET order_state =#{orderStatus},
+        version = version + 1
+        <if test="expressName!=null and expressName!=''">
+            ,logistics_name=#{expressName}
+        </if>
+        <if test="expressCode!=null and expressCode!=''">
+            ,logistics_number=#{expressCode}
+        </if>
+        <if test="logisticsId!=null and logisticsId!=''">
+            ,logistics_id = #{logisticsId}
+        </if>
+        <if test="shipDt!=null and shipDt!=''">
+            ,deliver_time=#{shipDt}
+        </if>
+        where order_sn=#{orderSn} and order_state = 3 limit 1
+    </update>
+
+    <!-- 查询导出订单的数据 -->
+    <select id="getExportedOrders" resultType="java.util.Map">
+        SELECT
+        o.order_psn AS orderPsn,
+        o.order_sn AS 'orderSn',
+        o.order_state AS 'orderState',
+        o.money_order AS 'moneyOrder',
+        o.money_logistics AS 'moneyLogistics',
+        o.money_discount AS 'moneyDiscount',
+        o.balance_discounted AS 'balanceDiscounted',
+        o.deduction_vb_count AS 'deductionVbCount',
+        o.deduction_vb_money AS 'deductionVbMoney',
+        o.red_market_currency AS 'redMarketCurrency',
+        o.perpetual_market_currency AS 'perpetualMarketCurrency',
+        o.member_name AS 'memberName',
+        o.member_id AS 'memberId',
+        o.NAME AS 'name',
+        o.mobile AS 'mobile',
+        o.zip_code AS 'zipCode',
+        CONCAT( o.address_all, o.address_info ) AS 'address',
+        o.payment_name AS 'paymentName',
+        o.trade_sn AS 'tradeSn',
+        o.is_import_erp AS 'isImportErp',
+        DATE_FORMAT(o.create_time, '%Y-%m-%d %H:%i:%s') AS 'createTime',
+        DATE_FORMAT(o.pay_time, '%Y-%m-%d %H:%i:%s') AS 'payTime',
+        DATE_FORMAT(o.finish_time, '%Y-%m-%d %H:%i:%s') AS 'finishTime',
+        DATE_FORMAT(o.deliver_time, '%Y-%m-%d %H:%i:%s') AS 'deliverTime',
+        op.product_sku AS 'productSku',
+        op.product_name AS 'productName',
+        op.product_goods_id AS 'productGoodsId',
+        op.number AS 'number',
+        op.money_price AS 'moneyPrice',
+        op.money_price * op.number AS 'moneyPriceSum',
+        op.single_pay_money AS 'singlePayMoney',
+        op.pay_money AS 'payMoney',
+        op.deduction_product_vb_count AS 'deductionProductVbCount',
+        op.deduction_product_single_vb_count AS 'deductionProductSingleVbCount',
+        op.product_cate_id AS 'productCateId',
+        op.product_code AS 'productCode',
+        op.supply_price AS 'supplyPrice',
+        op.product_commission_ratio AS 'productCommissionRatio',
+        o.seller_name AS 'sellerName',
+        o.remark as 'remark',
+        o.finish_type as 'finishType',
+        DATE_FORMAT(o.back_cancel_time, '%Y-%m-%d %H:%i:%s') as 'backCancelTime',
+        IFNULL(o.back_cancel_status,0) AS backCancelStatus,
+        IFNULL(o.payment_status,-1) AS paymentStatus
+        FROM
+        orders_product op
+        INNER JOIN orders o ON op.orders_sn = o.order_sn
+        <include refid="getExportedCondition"/>
+        <choose>
+            <when test="queryMap.orderByCancelTime != null">
+                order by o.cancel_time desc
+            </when>
+            <otherwise>
+                order by o.create_time desc
+            </otherwise>
+        </choose>
+        limit #{pageIndex},#{size}
+    </select>
+
+    <!-- 查询取消订单订单的数据 -->
+    <select id="getExportedCancelOrders" resultType="java.util.Map">
+        select
+        o.order_psn AS orderPsn,
+        o.order_sn AS 'orderSn',
+        o.order_state AS 'orderState',
+        o.money_order AS 'moneyOrder',
+        o.money_logistics AS 'moneyLogistics',
+        o.money_discount AS 'moneyDiscount',
+        o.balance_discounted AS 'balanceDiscounted',
+        o.deduction_vb_count AS 'deductionVbCount',
+        o.deduction_vb_money AS 'deductionVbMoney',
+        o.red_market_currency AS 'redMarketCurrency',
+        o.perpetual_market_currency AS 'perpetualMarketCurrency',
+        o.member_id AS 'memberId',
+        o.member_name AS 'memberName',
+        o.NAME AS 'name',
+        o.mobile AS 'mobile',
+        o.zip_code AS 'zipCode',
+        CONCAT( o.address_all, o.address_info ) AS 'address',
+        o.payment_name AS 'paymentName',
+        o.trade_sn AS 'tradeSn',
+        o.is_import_erp AS 'isImportErp',
+        DATE_FORMAT(o.create_time, '%Y-%m-%d %H:%i:%s') AS 'createTime',
+        DATE_FORMAT(o.pay_time, '%Y-%m-%d %H:%i:%s') AS 'payTime',
+        DATE_FORMAT(o.cancel_time, '%Y-%m-%d %H:%i:%s') AS 'cancelTime',
+        DATE_FORMAT(o.finish_time, '%Y-%m-%d %H:%i:%s') AS 'finishTime',
+        DATE_FORMAT(o.deliver_time, '%Y-%m-%d %H:%i:%s') AS 'deliverTime',
+        o.seller_name AS 'sellerName',
+        o.remark as 'remark',
+        o.finish_type as 'finishType',
+        o.cancel_reason as 'cancelReason',
+        DATE_FORMAT(o.back_cancel_time, '%Y-%m-%d %H:%i:%s') as 'backCancelTime',
+        DATE_FORMAT(o.back_deduction_vb_time, '%Y-%m-%d %H:%i:%s') as 'backDeductionVbTime',
+        IFNULL(o.back_cancel_status,0) AS backCancelStatus,
+        IFNULL(o.payment_status,-1) AS paymentStatus,
+        o.order_type AS orderType
+        from `orders` o
+        <include refid="getExportedCondition"/>
+        <choose>
+            <when test="queryMap.orderByCancelTime != null">
+                order by o.cancel_time desc
+            </when>
+            <otherwise>
+                order by o.create_time desc
+            </otherwise>
+        </choose>
+        limit #{pageIndex},#{size}
+    </select>
+
+    <!-- 导出订单查询条件 -->
+    <sql id="getExportedCondition">
+        <where>
+            <if test="queryMap.sellerId != null and queryMap.sellerId !=''">
+                and o.`seller_id`= #{queryMap.sellerId}
+            </if>
+            <if test="queryMap.sellerName != null and queryMap.sellerName !=''">
+                and o.`seller_name`like CONCAT('%',#{queryMap.sellerName},'%')
+            </if>
+            <if test="queryMap.memberId != null and queryMap.memberId !=''">
+                and o.`member_id`= #{queryMap.memberId}
+            </if>
+            <if test="queryMap.memberName != null and queryMap.memberName !=''">
+                and o.`member_name`like CONCAT('%',#{queryMap.memberName},'%')
+            </if>
+            <if test="queryMap.orderSn != null and queryMap.orderSn !=''">
+                and o.`order_sn` = #{queryMap.orderSn}
+            </if>
+            <if test="queryMap.orderPsn != null and queryMap.orderPsn !=''">
+                and o.`order_psn` = #{queryMap.orderPsn}
+            </if>
+            <if test="queryMap.orderType != null and queryMap.orderType != ''">
+                and o.order_type = #{queryMap.orderType}
+            </if>
+            <if test="queryMap.orderGroupType != null and queryMap.orderGroupType != ''">
+                and o.order_type in (${queryMap.orderGroupType})
+            </if>
+            <if test="queryMap.feature != null and queryMap.feature != ''">
+                and o.feature = #{queryMap.feature}
+            </if>
+            <if test="queryMap.orderState != null and queryMap.orderState !=''">
+                and o.`order_state`= #{queryMap.orderState}
+            </if>
+            <if test="queryMap.orderStatus != null and queryMap.orderStatus !=''">
+                and o.`order_state`in (${queryMap.orderStatus})
+            </if>
+            <if test="queryMap.paymentStatus != null and queryMap.paymentStatus !=''">
+                and o.`payment_status`= #{queryMap.paymentStatus}
+            </if>
+            <if test="queryMap.isParent != null and queryMap.isParent !=''">
+                and o.`is_parent` = #{queryMap.isParent}
+            </if>
+            <if test="queryMap.isShow != null and queryMap.isShow !=''">
+                and o.`is_show`= #{queryMap.isShow}
+            </if>
+            <if test="queryMap.paymentCode != null and queryMap.paymentCode !=''">
+                and o.`payment_code`= #{queryMap.paymentCode}
+            </if>
+            <if test="queryMap.finishStartTime != null">
+                and o.`finish_time` &gt;= #{queryMap.finishStartTime}
+            </if>
+            <if test="queryMap.finishEndTime != null">
+                and o.`finish_time` &lt;= #{queryMap.finishEndTime}
+            </if>
+            <if test="queryMap.evaluateNoState != null and queryMap.evaluateNoState !=''">
+                and o.`evaluate_state` != #{queryMap.evaluateNoState}
+                and o.`order_type` != 4
+            </if>
+            <if test="queryMap.year != null">
+                and Year(o.finish_time) = #{queryMap.year}
+            </if>
+            <if test="queryMap.month != null ">
+                and Year(o.finish_time) = #{queryMap.year} and Month(o.finish_time) = #{queryMap.month}
+            </if>
+            <if test="queryMap.startTime != null and queryMap.endTime != null">
+                and DATE_FORMAT(o.`create_time` , "%Y-%m-%d") BETWEEN STR_TO_DATE(#{queryMap.startTime} , "%Y-%m-%d")
+                AND STR_TO_DATE(#{queryMap.endTime} , "%Y-%m-%d")
+            </if>
+            <if test="queryMap.name != null and queryMap.name !=''">
+                and o.`name`like CONCAT('%',#{queryMap.name},'%')
+            </if>
+            <if test="queryMap.mobile != null and queryMap.mobile !=''">
+                and o.`mobile`like CONCAT('%',#{queryMap.mobile},'%')
+            </if>
+            <if test="queryMap.createStartTime != null and queryMap.createStartTime !=''">
+                and DATE_FORMAT(o.`create_time`,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.createStartTime}
+            </if>
+            <if test="queryMap.createEndTime != null and queryMap.createEndTime !=''">
+                and DATE_FORMAT(o.`create_time`,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.createEndTime}
+            </if>
+            <if test="queryMap.backCancelStatus != null and queryMap.backCancelStatus !=''">
+                and o.`back_cancel_status`= #{queryMap.backCancelStatus}
+            </if>
+            <if test="queryMap.backCancelStartTime != null and queryMap.backCancelStartTime !=''">
+                and DATE_FORMAT(o.`back_cancel_time`,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.backCancelStartTime}
+            </if>
+            <if test="queryMap.backCancelEndTime != null and queryMap.backCancelEndTime !=''">
+                and DATE_FORMAT(o.`back_cancel_time`,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.backCancelEndTime}
+            </if>
+            <if test="queryMap.orderState_cancel != null and queryMap.orderState_cancelConfirm !=null">
+                and (o.`order_state`= #{queryMap.orderState_cancel} or o.`order_state`=
+                #{queryMap.orderState_cancelConfirm})
+            </if>
+            <if test="queryMap.cancelStartTime != null and queryMap.cancelStartTime !=''">
+                and DATE_FORMAT(o.`cancel_time`,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.cancelStartTime}
+            </if>
+            <if test="queryMap.cancelEndTime != null and queryMap.cancelEndTime !=''">
+                and DATE_FORMAT(o.`cancel_time`,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.cancelEndTime}
+            </if>
+            <if test="queryMap.payStartTime != null and queryMap.payStartTime !=''">
+                and DATE_FORMAT(o.`pay_time`,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.payStartTime}
+            </if>
+            <if test="queryMap.payEndTime != null and queryMap.payEndTime !=''">
+                and DATE_FORMAT(o.`pay_time`,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.payEndTime}
+            </if>
+            <if test="queryMap.backDeductionVbStartTime != null and queryMap.backDeductionVbStartTime !=''">
+                and DATE_FORMAT(o.`back_deduction_vb_time`,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.backDeductionVbStartTime}
+            </if>
+            <if test="queryMap.backDeductionVbEndTime != null and queryMap.backDeductionVbEndTime !=''">
+                and DATE_FORMAT(o.`back_deduction_vb_time`,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.backDeductionVbEndTime}
+            </if>
+            <if test="queryMap.comfirmStartCancelTime != null and queryMap.comfirmStartCancelTime !=''">
+                and DATE_FORMAT(o.`comfirm_cancel_time`,'%Y-%m-%d %H:%i:%s') &gt;= #{queryMap.comfirmStartCancelTime}
+            </if>
+            <if test="queryMap.comfirmEndCancelTime != null and queryMap.comfirmEndCancelTime !=''">
+                and DATE_FORMAT(o.`comfirm_cancel_time`,'%Y-%m-%d %H:%i:%s') &lt;= #{queryMap.comfirmEndCancelTime}
+            </if>
+        </where>
+    </sql>
+
+    <select id="getWaitConfirmOrderCountBySellerId" resultType="java.lang.Integer">
+		select count(1) from orders
+		where seller_id = #{sellerId} and order_state = 2 and is_parent=0
+	</select>
+    <select id="getWaitDeliverOrderCountBySellerId" resultType="java.lang.Integer">
+		select count(1) from orders
+		where seller_id = #{sellerId} and order_state = 3 and is_parent=0
+	</select>
+
+    <select id="getOrderRefund" resultType="java.util.Map">
+        select
+          sum(money_order) totalRefundAmount,
+          count(1)       refundCount
+        from
+          orders
+        WHERE
+          order_state = 6
+        and
+          payment_status=1
+        and
+          back_cancel_status = 2
+        and
+          `back_cancel_time` &gt;= #{startTime}
+        and
+          `back_cancel_time` &lt;= #{endTime}
+    </select>
+
+    <select id="getOrderVbRefund" resultType="java.util.Map">
+        select
+          sum(deduction_vb_count) refundVbCount,
+          sum(deduction_vb_money) totalRefundVbMoney
+        from
+          orders
+        WHERE
+          back_deduction_vb_status = 1
+        and
+          `back_deduction_vb_time` &gt;= #{startTime}
+        and
+          `back_deduction_vb_time` &lt;= #{endTime}
+    </select>
+
+    <!-- 每日订单统计 -->
+    <select id="getOrderCountByTime" resultType="java.util.Map">
+        select
+        sum(money_order) as moneyOrder,
+        sum(deduction_vb_money) deductionVbMoney,
+        count(1) as count
+        from
+        orders
+        where
+        `is_parent` = 0
+        and `pay_time` &gt;= #{startTime}
+        and `pay_time` &lt;= #{endTime}
+    </select>
+
+    <select id="getOrderOverviewData" resultType="java.util.Map">
+        select order_state orderState, count(*) count from orders
+        where DATE_FORMAT(`create_time` , "%Y-%m-%d") BETWEEN STR_TO_DATE(#{queryMap.startTime} , "%Y-%m-%d") AND STR_TO_DATE(#{queryMap.endTime} , "%Y-%m-%d")
+        <if test="queryMap.sellerId != null and queryMap.sellerId != ''">
+            and seller_id= #{queryMap.sellerId}
+        </if>
+        and `is_parent` = 0
+        group by order_state
+    </select>
+
+    <select id="searchCancelOrders" resultType="com.sibu.mall.order.persistence.entity.Orders">
+        SELECT *  FROM orders WHERE order_state = 7 AND  is_parent = 0  AND  ishow = 1 WHERE cancel_time  &lt;= #{time}
+    </select>
+
+    <select id="getUnPaiedOrders" resultType="com.sibu.mall.order.persistence.entity.Orders">
+        select
+        order_sn AS "orderSn",payment_status AS "paymentStatus"
+        from `orders`
+        where `order_state` = 1
+        and (`payment_status` = 0 or `payment_status` = 2)
+        and `create_time` &lt;= #{cancelTime}
+        and `is_parent` = 1
+        and order_type IN (1,8,9,10,11,12)
+        limit #{pageIndex},#{size}
+    </select>
+
+    <select id="getUnPaiedOrdersV2" resultType="com.sibu.mall.order.persistence.entity.Orders">
+        select
+        order_sn AS "orderSn",payment_status AS "paymentStatus"
+        from `orders`
+        where `order_state` = 1
+        and (`payment_status` = 0 or `payment_status` = 2)
+        and `create_time` &lt;= #{cancelTime}
+        and `is_parent` = 1
+        and order_type IN (1,8,9,10,11,12)
+        limit #{pageIndex},#{size}
+    </select>
+
+    <select id="searchUnPaiedOrders" resultType="java.lang.Integer">
+        select
+        count(1)
+        from `orders`
+        where `order_state` = 1
+        and (`payment_status` = 0 or `payment_status` = 2)
+        and `create_time` &lt;= #{cancelTime}
+        and `is_parent` = 1
+        and order_type IN (1,8,9,10,11,12)
+    </select>
+
+
+    <select id="findMyOrders" resultType="com.sibu.mall.order.persistence.entity.Orders">
+        select * from `orders`
+
+        <where>
+            <if test="queryMap.q_orderType != null and queryMap.q_orderType !=''">
+                and order_type !=7
+            </if>
+            <if test="queryMap.q_evaluateNoState != null and queryMap.q_evaluateNoState !=''">
+                and `evaluate_state` != #{queryMap.q_evaluateNoState}
+                and order_state = 5
+                and `order_type` != 4
+            </if>
+            <if test="queryMap.q_memberId != null and queryMap.q_memberId !=''">
+                and `member_id`= #{queryMap.q_memberId}
+            </if>
+            <if test="queryMap.q_orderState != null and queryMap.q_orderState !=''">
+                and `order_state`= #{queryMap.q_orderState}
+            </if>
+            <if test="queryMap.q_isShow != null and queryMap.q_isShow !=''">
+                and `is_show`= #{queryMap.q_isShow}
+            </if>
+            <if test="queryMap.s_status != null and queryMap.s_status.size > 0">
+                and `order_state` in
+                <foreach item="item" index="index" collection="queryMap.s_status" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+
+    <select id="checkBackOrders" parameterType="java.util.List" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM orders
+        WHERE
+        order_sn IN
+        <foreach collection="list" index="index" item="orderSn"
+                 separator="," open="(" close=")">
+            #{orderSn}
+        </foreach>
+    </select>
+
+
+    <select id="getUnfinishedOrders" resultType="com.sibu.mall.order.persistence.entity.Orders">
+        select
+        order_sn AS "orderSn",
+        return_vb_count AS "returnVbCount",
+        seller_id AS sellerId,
+        seller_name AS sellerName,
+        order_psn AS orderPsn,
+        order_type AS orderType,
+        member_uid AS memberUid,
+        member_id AS memberId,
+        member_name AS memberName,
+        trade_sn AS tradeSn,
+        payment_name AS paymentName,
+        payment_code AS paymentCode,
+        pay_time AS payTime,
+        `name` AS "name",
+        province_id AS provinceId,
+        city_id AS cityId,
+        area_id AS areaId,
+        address_all AS addressAll,
+        address_info AS addressInfo,
+        zip_code AS zipCode,
+        mobile AS mobile
+        from `orders`
+        where `order_state` = 4
+        and `deliver_time` &lt;= #{deliverTime}
+        and `is_parent` = 0
+        limit #{pageIndex},#{size}
+    </select>
+
+    <select id="getUnfinishedOrdersCount" resultType="java.lang.Integer">
+        select
+        count(1)
+        from `orders`
+        where `order_state` = 4
+        and `deliver_time` &lt;= #{deliverTime}
+        and `is_parent` = 0
+    </select>
+
+    <update id="upateOrdersIsShow" >
+        update orders
+        SET is_show = #{isShow},
+            version = version + 1
+        WHERE  order_sn = #{orderSn} AND is_parent = 1
+    </update>
+
+    <update id="payNotifyUpdateOrders" parameterType="java.util.Map" >
+        UPDATE orders
+        <set>
+             <if test="params.orderState !=null and params.orderState !=''">
+                 `order_state`= #{params.orderState},
+             </if>
+            `pay_time`= #{params.payTime},
+            `payment_status`= #{params.paymentStatus},
+            `payment_name`= #{params.paymentName},
+            `payment_code`= #{params.paymentCode},
+            `is_show`= #{params.isShow},
+            `trade_sn`= #{params.tradeSn},
+            `open_id`= #{params.openId},
+            version = version + 1
+        </set>
+        WHERE order_sn =#{params.orderSn}
+        <if test="params.status != null">AND `order_state`= #{params.status}</if>
+    </update>
+
+
+    <select id="getSaleStatisticsByYear" resultType="java.util.Map">
+        select Month(create_time) period,count(0) orderNum, sum(money_order) orderMoney from orders
+        where order_state in(${queryMap.orderState}) and is_parent=#{queryMap.isParent}
+        and Year(create_time) = #{queryMap.year}
+        <if test="queryMap.sellerId != null and queryMap.sellerId != ''">
+            and seller_id= #{queryMap.sellerId}
+        </if>
+        group by Month(create_time)
+    </select>
+
+
+    <select id="getSaleStatisticsByMonth" resultType="java.util.Map">
+        select Day(create_time) period,count(0) orderNum, sum(money_order) orderMoney from orders
+        where order_state in(${queryMap.orderState}) and is_parent=#{queryMap.isParent}
+        and Year(create_time) = #{queryMap.year} and Month(create_time) = #{queryMap.month}
+        <if test="queryMap.sellerId != null and queryMap.sellerId != ''">
+            and seller_id= #{queryMap.sellerId}
+        </if>
+        group by Day(create_time)
+    </select>
+
+    <select id="getSaleCountByYear" resultType="java.util.Map">
+        select Month(create_time) period,count(0) orderNum from orders
+        where order_state = #{queryMap.orderState} and is_parent=#{queryMap.isParent}
+        and Year(create_time) = #{queryMap.year}
+        <if test="queryMap.sellerId != null and queryMap.sellerId != ''">
+            and seller_id= #{queryMap.sellerId}
+        </if>
+        group by Month(create_time)
+    </select>
+
+
+    <select id="getSaleCountByMonth" resultType="java.util.Map">
+        select Day(create_time) period,count(0) orderNum from orders
+        where order_state = #{queryMap.orderState} and is_parent=#{queryMap.isParent}
+        and Year(create_time) = #{queryMap.year} and Month(create_time) = #{queryMap.month}
+        <if test="queryMap.sellerId != null and queryMap.sellerId != ''">
+            and seller_id= #{queryMap.sellerId}
+        </if>
+        group by Day(create_time)
+    </select>
+
+
+    <select id="getCPIstatisticsByYear" resultType="java.util.Map">
+        select Month(create_time) period, count(distinct member_id) memberNum,sum(money_order) orderMoney from orders
+        where order_state in(${queryMap.orderState}) and is_parent=#{queryMap.isParent}
+        and Year(create_time) = #{queryMap.year}
+        <if test="queryMap.sellerId != null and queryMap.sellerId != ''">
+            and seller_id= #{queryMap.sellerId}
+        </if>
+        group by Month(create_time)
+    </select>
+
+    <select id="getCPIstatisticsByMonth" resultType="java.util.Map">
+        select Day(create_time) period, count(distinct member_id) memberNum,sum(money_order) orderMoney from orders
+        where order_state in(${queryMap.orderState}) and is_parent=#{queryMap.isParent}
+        and Year(create_time) = #{queryMap.year} and Month(create_time) = #{queryMap.month}
+        <if test="queryMap.sellerId != null and queryMap.sellerId != ''">
+            and seller_id= #{queryMap.sellerId}
+        </if>
+        group by Day(create_time)
+    </select>
+
+    <select id="findDayPayOrderList" resultType="com.sibu.mall.order.persistence.dao.result.StatPerDayOrderResult">
+        select
+            left(pay_time,10)  orderDay,
+            seller_id sellerId,
+            count(*) orderCount,
+            sum(money_product - money_discount + deduction_vb_money)  totalSales,
+            sum(money_order)  orderMoney,
+            sum(deduction_vb_count) deductionVbCount,
+            sum(deduction_vb_money) deductionVbMoney,
+            sum(money_logistics)  moneyLogistics,
+            sum(money_discount - deduction_vb_money)   moneyPreferential
+        from
+        orders
+        <where>
+            is_parent = 0
+            and
+            payment_status = 1
+            <if test="startDate != null and startDate !=''"  >
+                and `pay_time` &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate !=''"  >
+                and `pay_time` &lt;= #{endDate}
+            </if>
+        </where>
+        group by orderDay,seller_id
+    </select>
+
+    <select id="findDayCancelOrderList" resultType="com.sibu.mall.order.persistence.dao.result.StatPerDayOrderResult">
+        select
+            left(back_cancel_time,10)  orderDay,
+            seller_id sellerId,
+            sum(money_order) cancelTotalRefund,
+            count(*) cancelRefundCount,
+            sum(money_logistics) cancelTotalLogistics
+        from
+        orders
+        <where>
+            order_state = 6
+            and
+            `is_parent` = 0
+            and
+            payment_status = 1
+            and
+            back_cancel_status = 2
+            <if test="startDate != null and startDate !=''"  >
+                and `back_cancel_time` &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate !=''"  >
+                and `back_cancel_time` &lt;= #{endDate}
+            </if>
+        </where>
+        group by orderDay,seller_id
+    </select>
+
+    <select id="findDayUnpaidOrderList" resultType="com.sibu.mall.order.persistence.dao.result.StatPerDayOrderResult">
+        select
+        left(create_time,10)  orderDay,
+        seller_id sellerId,
+        count(*) unpaidCount
+        from
+        orders
+        <where>
+            order_state = 1
+            and
+            `is_parent` = 1
+            <if test="startDate != null and startDate !=''" >
+                and `create_time` &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate !=''" >
+                and `create_time` &lt;= #{endDate}
+            </if>
+        </where>
+        group by orderDay,seller_id
+    </select>
+
+    <select id="findDayCancelOrderVBList" resultType="com.sibu.mall.order.persistence.dao.result.StatPerDayOrderResult">
+        select
+            left(back_deduction_vb_time,10)  orderDay,
+            seller_id sellerId,
+            sum(deduction_vb_count) backDeductionVbCount,
+            sum(deduction_vb_money) backDeductionVbMoney
+        from
+        orders
+        <where>
+            order_state = 6
+            and
+            `is_parent` = 0
+            and
+            payment_status = 1
+            and
+            back_deduction_vb_status=1
+            <if test="startDate != null and startDate !=''"  >
+                and `back_deduction_vb_time` &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate !=''"  >
+                and `back_deduction_vb_time` &lt;= #{endDate}
+            </if>
+        </where>
+        group by orderDay,seller_id
+    </select>
+
+
+    <select id="getThirdApiOrdersCount" resultType="java.lang.Integer">
+        select count(1) from `orders` o
+        WHERE o.is_parent = 0
+        AND o.seller_id = #{queryMap.sellerId}
+        <if test="queryMap.orderState!=null">
+            AND o.order_state in
+            <foreach collection="queryMap.orderState" item="state" open="(" close=")"  separator=",">
+                #{state}
+            </foreach>
+        </if>
+        <if test="queryMap.orderSn!=null and queryMap.orderSn!=''">
+            AND o.order_sn = #{queryMap.orderSn}
+        </if>
+        <if test="queryMap.startTime!=null and queryMap.startTime!=''">
+            <if test="queryMap.timeType==2">
+                AND o.create_time >= #{queryMap.startTime}
+            </if>
+            <if test="queryMap.timeType==1">
+                AND o.update_time >= #{queryMap.startTime}
+            </if>
+        </if>
+        <if test="queryMap.endTime!=null and queryMap.endTime!=''">
+            <if test="queryMap.timeType==2">
+                <![CDATA[AND  o.create_time <= #{queryMap.endTime}]]>
+            </if>
+            <if test="queryMap.timeType==1">
+                <![CDATA[AND  o.update_time <= #{queryMap.endTime}]]>
+            </if>
+        </if>
+    </select>
+
+    <select id="getThirdApiOrdersList" resultType="com.sibu.mall.order.persistence.entity.Orders">
+        select * from `orders` o
+        WHERE o.is_parent = 0
+        AND o.seller_id = #{queryMap.sellerId}
+        <if test="queryMap.orderState!=null">
+            AND o.order_state in
+            <foreach collection="queryMap.orderState" item="state" open="(" close=")"  separator=",">
+                #{state}
+            </foreach>
+        </if>
+        <if test="queryMap.orderSn!=null and queryMap.orderSn!=''">
+            AND o.order_sn = #{queryMap.orderSn}
+        </if>
+        <if test="queryMap.startTime!=null and queryMap.startTime!=''">
+            <if test="queryMap.timeType==2">
+                AND o.create_time >= #{queryMap.startTime}
+            </if>
+            <if test="queryMap.timeType==1">
+                AND o.update_time >= #{queryMap.startTime}
+            </if>
+        </if>
+        <if test="queryMap.endTime!=null and queryMap.endTime!=''">
+            <if test="queryMap.timeType==2">
+                <![CDATA[AND  o.create_time <= #{queryMap.endTime}]]>
+            </if>
+            <if test="queryMap.timeType==1">
+                <![CDATA[AND  o.update_time <= #{queryMap.endTime}]]>
+            </if>
+        </if>
+        ORDER BY
+        <if test="queryMap.timeType==2">
+            o.create_time DESC
+        </if>
+        <if test="queryMap.timeType==1">
+           o.update_time DESC
+        </if>
+        limit ${start}, ${size}
+    </select>
+
+    <!-- 订单发货-->
+    <!-- 验证该订单下指定的物流单号是否已存在-->
+    <select id="checkLogisticsNumber" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(*) from orders o
+		LEFT JOIN `logistics_order` lo ON o.`order_sn` = lo.`order_sn`
+		where  o.order_sn = #{orderSn}
+		AND o.seller_id = #{sellerId}
+		and (
+                o.logistics_number = #{logisticsNumber}
+            or
+                lo.logistics_number = #{logisticsNumber}
+		)
+	</select>
+
+    <!--更改订单状态、电话、地址、发货时间、收货人姓名，快递单号,备注 -->
+    <update id="updateOrders">
+        UPDATE orders
+        <set>
+            <if test="params.name !=null and params.name !=''">
+                name = #{params.name},
+            </if>
+            <if test="params.addressInfo !=null and params.addressInfo !=''">
+                address_info = #{params.addressInfo},
+            </if>
+            <if test="params.logisticsNumber !=null and params.logisticsNumber !=''">
+                logistics_number = #{params.logisticsNumber},
+            </if>
+            <if test="params.mobile !=null and params.mobile !=''">
+                mobile = #{params.mobile},
+            </if>
+            <if test="params.addressAll !=null and params.addressAll !=''">
+                address_all = #{params.addressAll},
+            </if>
+            <if test="params.orderState !=null and params.orderState !=''">
+                order_state = #{params.orderState},
+            </if>
+            <if test="params.provinceId !=null and params.provinceId !=''">
+                province_id = #{params.provinceId},
+            </if>
+            <if test="params.areaId !=null and params.areaId !=''">
+                area_id = #{areaId},
+            </if>
+            <if test="params.cityId !=null and params.cityId !=''">
+                city_id = #{params.cityId},
+            </if>
+            <if test="params.deliverTime !=null and params.deliverTime !=''">
+                deliver_time = now(),
+            </if>
+            <if test="params.logisticsName !=null and params.logisticsName !=''">
+                logistics_name = #{params.logisticsName},
+            </if>
+            <if test="params.logisticsId !=null and params.logisticsId !=''">
+                logistics_id = #{params.logisticsId},
+            </if>
+            <if test="params.remark !=null and params.remark != ''">
+                remark = #{params.remark},
+            </if>
+            update_time = now(),
+            version = version + 1
+        </set>
+        WHERE order_sn = #{params.orderSn} AND seller_id = #{params.sellerId}
+    </update>
+
+    <!--查询网单商品数量-->
+    <select id="countOrderProductNum" resultType="java.lang.Integer">
+		SELECT  number FROM  orders_product where orders_sn = #{ordersSn} and uid = #{ordersProductUid}
+	</select>
+
+
+
+    <select id="getWaitPayOrderCount" resultType="java.lang.Integer">
+        select count(*) from orders
+        where member_id = #{memberId} and order_state =1 and is_show =1 and order_type IN (1,2,7,8,9,10,11,12)
+    </select>
+    <select id="getWaitDeliverOrderCount" resultType="java.lang.Integer">
+        select count(*) from orders
+        where member_id = #{memberId} and order_state =3 and is_show =1
+    </select>
+    <select id="getWaitReceiveOrderCount" resultType="java.lang.Integer">
+        select count(*) from orders
+        where member_id = #{memberId} and order_state =4 and is_show =1
+    </select>
+    <select id="getWaitEvaluateOrderCount" resultType="java.lang.Integer">
+        select count(*) from orders
+        where member_id = #{memberId} and evaluate_state in (1,2) and order_state =5 and is_show =1 and order_type IN (1,2,7,8,9,11)
+    </select>
+
+    <select id="selectMemberCollage"  resultType="com.sibu.mall.order.persistence.vo.ApiMemberCollageVo">
+        SELECT
+        o.seller_name,o.create_time,o.order_state,o.id AS  orderId,o.order_sn,o.seller_id,o.is_parent,
+        o.order_psn,o.money_order-o.money_logistics money_order,o.act_collage_id,o.act_collage_record_id,
+        o.act_collage_member_type,o.act_collage_order_sn,o.payment_status
+        FROM
+        orders o
+        WHERE
+        o.order_type =7  and o.member_id=#{memberId}
+        AND is_show = 1
+        <if test="type !=null and type !='' and type == 2">
+            AND  o.order_state = 8
+        </if>
+        <if test="type !=null and type !='' and type == 3">
+            AND  o.order_state IN (3,4,5)
+        </if>
+        order by o.create_time desc
+    </select>
+
+
+    <select id="checkCancelOrders" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM orders
+        <where>
+                and member_id = #{params.memberId}
+                and cancel_time >= #{params.firstDayOfWeek}
+                <![CDATA[
+					and  cancel_time  <= #{params.lastDayOfWeek}
+					]]>
+            AND is_parent = 0
+            and order_state IN (6,7)
+            AND  payment_status = 1
+            and order_type = 7
+        </where>
+    </select>
+
+
+
+    <!--符合条件的订单总金额-->
+    <select id="getOrdersSumMoney" resultType="java.math.BigDecimal">
+        select SUM(money_product) from `orders`
+        <include refid="getOrdersCondition"/>
+    </select>
+
+    <!--已完成专属礼包订单数量-->
+    <select id="getOrderCount2ExcBag" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM  orders o LEFT JOIN`orders_product`op on o.order_sn = op.orders_psn
+        WHERE o.member_id=#{memberId}
+        AND o.order_type = 8
+        AND o.order_state = 5
+        AND op.product_id  IN
+        <foreach collection="productIdList" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+    </select>
+
+    <!--团队时间段内销售金额-->
+    <select id="countSellMoneyByIds" resultType="java.math.BigDecimal">
+        SELECT sum(o.money_product+o.money_logistics)
+        FROM orders_product op
+        LEFT JOIN  orders o ON op.orders_sn = o.order_sn
+        WHERE  op.share_dis_sale_seller_id IN
+        <foreach collection="disSellerIdList" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test ="isTest">
+            AND o.payment_status = 1
+        </if>
+        <if test ="!isTest">
+            AND  o.order_state = 5
+        </if>
+        <if test="assStratTime !=null and assEndTime !=null">
+            AND o.finish_time BETWEEN #{assStratTime} AND #{assEndTime}
+        </if>
+
+    </select>
+
+    <select id="getCancelOrderCodesCount" resultType="java.lang.Integer">
+        SELECT
+        count(order_sn)
+        FROM
+        orders
+        where
+        `order_state` = 6
+        and
+        `is_parent` = 0
+        AND
+        `back_cancel_status` = 2
+    </select>
+
+    <select id="pageCancelOrderCodes" resultType="java.lang.String">
+        SELECT
+        order_sn
+        FROM
+        orders
+        where
+        `order_state` = 6
+        and
+        `is_parent` = 0
+        AND
+        `back_cancel_status` = 2
+        ORDER BY create_time desc
+        <if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+    </select>
+
+
+    <select id="checkCollageOrders" resultType="java.lang.Integer">
+        SELECT  count(1)  FROM  orders WHERE act_collage_record_id = #{actCollageRecordId} AND  member_id = #{memberId}
+        AND  order_state != 6
+    </select>
+
+    <update id="updateOrdersReturnBalaneStatus">
+        UPDATE  orders
+        SET back_discounted_balance_status = 1,
+            back_discounted_balance_time = now(),
+            version = version + 1
+        WHERE  order_sn IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and  back_discounted_balance_status != 1
+    </update>
+
+    <select id="calculateEveryDayOrderMoney" resultType="java.math.BigDecimal">
+        SELECT  sum(money_product) FROM  orders WHERE  member_id = #{memberId}
+        and payment_status = 1
+        and order_state != 6
+        and pay_time >= now()
+        <![CDATA[
+                and  pay_time  <=  now()
+                ]]>
+
+    </select>
+
+    <select id="checkProductPurchaseNum" resultType="java.lang.Integer">
+        SELECT sum(o1.number) FROM  orders o
+        LEFT JOIN orders_product o1
+        on  o.order_sn = o1.orders_sn
+          where
+            o.is_show = 1
+            and o.order_type = 1
+            and o.payment_status = 1
+            and o.member_id = #{memberId}
+            and o1.product_id = #{productId}
+    </select>
+
+    <!-- 每日网单产品数量统计 -->
+    <select id="getOrderProductNumCountByTime" resultType="java.math.BigDecimal">
+        select
+        sum(a.number)
+        from orders_product a left join
+        orders b on a.orders_sn = b.order_sn
+        where
+        b.`is_parent` = 0
+        and b.`pay_time` &gt;= #{startTime}
+        and b.`pay_time` &lt;= #{endTime}
+    </select>
+
+
+    <!-- 商品流量统计 start-->
+    <!-- 商品总数(支付成功)、销售总额 -->
+    <resultMap id="orderProductSumaryMap" type="com.sibu.mall.order.persistence.dao.result.OrderProductSumaryResult">
+            <result column="product_id" property="productId"/>
+            <result column="order_product_num" property="orderProductNum"/>
+            <result column="order_product_money" property="orderProductMoney"/>
+    </resultMap>
+    <select id="getOrderProductSumaryByTimeAndIds" resultMap="orderProductSumaryMap">
+        select a.product_id,
+        sum(a.number) as order_product_num,
+        sum(a.money_amount) as order_product_money
+        from orders_product a join
+        orders b on a.orders_sn = b.order_sn
+        where
+        b.`is_parent` = 0
+        and b.`pay_time` &gt;= #{startTime}
+        and b.`pay_time` &lt;= #{endTime}
+        and a.product_id in
+        <foreach close=")" collection="productIds" item="listItem" open="(" separator=",">
+            #{listItem}
+        </foreach>
+        group by a.product_id
+    </select>
+
+    <!--订单总数(支付成功)-->
+    <resultMap id="pcbOrderProductMap" type="com.sibu.mall.order.persistence.dao.result.PCBOrderProductResult">
+        <result column="product_id" property="productId"/>
+        <result column="amount" property="amount"/>
+    </resultMap>
+    <select id="getSuccessPayOrderProduct" resultMap="pcbOrderProductMap">
+        SELECT b.product_id,count(1) as amount
+        from orders_product b
+        left join orders a on a.order_sn = b.orders_sn
+        where b.product_id in
+        <foreach close=")" collection="productIds" item="listItem" open="(" separator=",">
+            #{listItem}
+        </foreach>
+        and a.`is_parent` = 0
+        and a.`pay_time` &gt;= #{startTime}
+        and a.`pay_time` &lt;= #{endTime}
+        group by b.product_id
+    </select>
+
+    <!--取消订单数-->
+    <select id="getCancelOrderProduct" resultMap="pcbOrderProductMap">
+        SELECT b.product_id,count(1) as amount
+        from orders_product b
+        left join orders a on a.order_sn = b.orders_sn
+        where b.product_id in
+        <foreach close=")" collection="productIds" item="listItem" open="(" separator=",">
+            #{listItem}
+        </foreach>
+        and a.`is_parent` = 0
+        and a.order_state = 6
+        and a.comfirm_cancel_time &gt;= #{startTime}
+        and a.comfirm_cancel_time &lt;= #{endTime}
+        GROUP BY b.product_id
+    </select>
+    <!-- 商品流量统计 end-->
+
+    <!-- 店铺流量统计 start-->
+    <resultMap id="shopOrderProductSumaryMap" type="com.sibu.mall.order.persistence.dao.result.ShopOrderProductSumaryResult">
+        <result column="seller_id" property="sellerId"/>
+        <result column="order_product_num" property="orderProductNum"/>
+        <result column="order_product_money" property="orderProductMoney"/>
+    </resultMap>
+    <select id="getShopOrderProductSumaryByTimeAndIds" resultMap="shopOrderProductSumaryMap">
+        select a.seller_id,
+        sum(b.number) as order_product_num,
+        sum(b.money_amount) as order_product_money
+        from  orders a LEFT JOIN
+        orders_product b on b.orders_sn = a.order_sn
+        where a.`is_parent` = 0
+        and a.`pay_time` &gt;= #{startTime}
+        and a.`pay_time` &lt;= #{endTime}
+        and a.seller_id in
+        <foreach close=")" collection="sellerIds" item="listItem" open="(" separator=",">
+            #{listItem}
+        </foreach>
+        GROUP BY a.seller_id
+    </select>
+
+    <resultMap id="pcbShopOrderProductMap" type="com.sibu.mall.order.persistence.dao.result.PCBShopOrderProductResult">
+        <result column="seller_id" property="sellerId"/>
+        <result column="amount" property="amount"/>
+    </resultMap>
+    <select id="getShopSuccessPayOrderProduct" resultMap="pcbShopOrderProductMap">
+        SELECT seller_id,COUNT(1) as amount
+        from orders
+        where `is_parent` = 0
+        and `pay_time` &gt;= #{startTime}
+        and `pay_time` &lt;= #{endTime}
+        and seller_id in
+        <foreach close=")" collection="sellerIds" item="listItem" open="(" separator=",">
+            #{listItem}
+        </foreach>
+        GROUP BY seller_id
+    </select>
+
+    <select id="getShopCancelOrderProduct" resultMap="pcbShopOrderProductMap">
+        SELECT seller_id,COUNT(1) as amount
+        from orders
+        where `is_parent` = 0
+        and order_state = 6
+        and comfirm_cancel_time &gt;= #{startTime}
+        and comfirm_cancel_time &lt;= #{endTime}
+        and seller_id in
+        <foreach close=")" collection="sellerIds" item="listItem" open="(" separator=",">
+            #{listItem}
+        </foreach>
+        GROUP BY seller_id
+    </select>
+    <!-- 店铺流量统计 end-->
+
+    <!-- 分类流量统计 start-->
+    <resultMap id="cateOrderProductSumaryMap" type="com.sibu.mall.order.persistence.dao.result.CateOrderProductSumaryResult">
+        <result column="product_cate_id" property="cateId"/>
+        <result column="order_product_num" property="orderProductNum"/>
+        <result column="order_product_money" property="orderProductMoney"/>
+    </resultMap>
+    <select id="getCateOrderProductSumaryByTimeAndIds" resultMap="cateOrderProductSumaryMap">
+        select a.product_cate_id,
+        sum(a.number) as order_product_num,
+        sum(a.money_amount) as order_product_money
+        from orders_product a join
+        orders b on a.orders_sn = b.order_sn
+        where
+        b.`is_parent` = 0
+        and b.`pay_time` &gt;= #{startTime}
+        and b.`pay_time` &lt;= #{endTime}
+        and a.product_cate_id in
+        <foreach close=")" collection="cateIds" item="listItem" open="(" separator=",">
+            #{listItem}
+        </foreach>
+        group by a.product_cate_id
+    </select>
+
+    <resultMap id="pcbCateOrderProductMap" type="com.sibu.mall.order.persistence.dao.result.PCBCateOrderProductResult">
+        <result column="product_cate_id" property="cateId"/>
+        <result column="amount" property="amount"/>
+    </resultMap>
+    <select id="getCateSuccessPayOrderProduct" resultMap="pcbCateOrderProductMap">
+        SELECT b.product_cate_id,count(1) as amount
+        from orders_product b
+        left join orders a on a.order_sn = b.orders_sn
+        where b.product_cate_id in
+        <foreach close=")" collection="cateIds" item="listItem" open="(" separator=",">
+            #{listItem}
+        </foreach>
+        and a.`is_parent` = 0
+        and a.`pay_time` &gt;= #{startTime}
+        and a.`pay_time` &lt;= #{endTime}
+        group by b.product_cate_id
+    </select>
+
+    <select id="getCateCancelOrderProduct" resultMap="pcbCateOrderProductMap">
+        SELECT b.product_cate_id,count(1) as amount
+        from orders_product b
+        left join orders a on a.order_sn = b.orders_sn
+        where b.product_cate_id in
+        <foreach close=")" collection="cateIds" item="listItem" open="(" separator=",">
+            #{listItem}
+        </foreach>
+        and a.`is_parent` = 0
+        and a.order_state = 6
+        and a.comfirm_cancel_time &gt;= #{startTime}
+        and a.comfirm_cancel_time &lt;= #{endTime}
+        GROUP BY b.product_cate_id
+    </select>
+    <!-- 分类流量统计 end-->
+
+    <!--销售订单统计-->
+    <select id="getPlatSaleData" resultType="java.util.Map">
+        SELECT
+        COUNT(1) AS orderCount,
+        COALESCE(SUM(money_order), 0) AS moneyOrder,
+        COALESCE(SUM(money_logistics), 0) AS moneyLogistics,
+        COALESCE(
+        SUM(deduction_vb_money),
+        0
+        ) AS deductionVbMoney
+        FROM
+        orders
+        WHERE
+        is_parent = 0
+        AND pay_time &gt;= #{startTime}
+        AND pay_time &lt;= #{endTime}
+    </select>
+
+    <!--取消订单统计-->
+    <select id="getPlatSaleCancelData" resultType="java.util.Map">
+        SELECT COUNT(1) AS orderCount,
+	COALESCE(SUM(money_order), 0) AS moneyOrder,
+	COALESCE(
+		SUM(deduction_vb_money),
+		0
+	) AS deductionVbMoney
+        from orders
+        where `is_parent` = 0
+        and order_state = 6
+        and comfirm_cancel_time &gt;= #{startTime}
+        and comfirm_cancel_time &lt;= #{endTime}
+    </select>
+
+    <select id="getBuyGift58Count" resultType="java.lang.Integer">
+        select count(1) from orders where gift_type = 1 and is_show = 1 and  payment_status = 1 and member_id = #{memberId}
+    </select>
+
+    <select id="getBuyGift399Count" resultType="java.lang.Integer">
+      select count(1) from orders where gift_type = 2 and is_show = 1 and  payment_status = 1 and member_id = #{memberId}
+    </select>
+
+
+    <select id="checkGiftBy58Count" resultType="java.lang.Integer">
+        select count(1) from orders
+        where is_show=1
+        and member_id = #{memberId}
+        and order_state IN (1,3,4,5)
+    </select>
+
+    <select id="checkGiftBy399Count" resultType="java.lang.Integer">
+        select count(1) from orders
+        where is_show=1
+        and member_id = #{memberId}
+        and (order_state IN (1,3,4,5,7)  or payment_status = 1)
+        and order_type IN (8,10)
+    </select>
+
+    <select id="memberOrderList" resultMap="OrdersResult">
+        select order_sn,order_psn,money_order,order_type,order_state,is_parent,seller_id,
+        payment_status,evaluate_state,finish_time,logistics_name,logistics_number,open_order_sn,money_logistics  from `orders`
+        <where>
+            <if test="queryMap.q_evaluateNoState != null and queryMap.q_evaluateNoState !=''">
+                and `evaluate_state` != #{queryMap.q_evaluateNoState}
+            </if>
+            <if test="queryMap.q_memberId != null and queryMap.q_memberId !=''">
+                and `member_id`= #{queryMap.q_memberId}
+            </if>
+              and `is_show`= 1
+            <if test="queryMap.s_status != null and queryMap.s_status.size > 0">
+                and `order_state` in
+                <foreach item="item" index="index" collection="queryMap.s_status" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <update id="updateOrderByFinish">
+        update orders
+        set order_state = 5,
+        finish_time = now(),
+        version = version + 1
+        where order_sn = #{orderSn} and order_state = 4
+    </update>
+
+    <update id="updateOrderByFinishByNew">
+        update orders
+        set order_state = 5,
+            finish_time = now(),
+            version = version + 1
+        <if test="type !=null and type !=''">
+            ,finish_type = #{type}
+        </if>
+        where order_sn = #{orderSn} and order_state = 4
+    </update>
+
+
+    <update id="updateCancelOrderByPaid">
+        update orders
+        set order_state = #{orderState},
+            cancel_reason = #{cancelReason},
+            cancel_time = now(),
+            version = version + 1
+        where order_state = 3 and order_sn = #{orderSn}
+    </update>
+
+    <update id="updateCancelOrderForOrderType9ByOrderSn">
+        update orders
+        set order_state = #{orderState},
+        cancel_reason = #{cancelReason},
+        cancel_time = #{nowTime},
+        back_cancel_status=2,
+        back_cancel_time=#{nowTime},
+        version = version + 1
+        where order_state = 3 and order_sn = #{orderSn}
+    </update>
+
+    <update id="updateCancelOrderByNonPayment">
+        update orders set
+        <if test="paymentStatus !=null">
+            payment_status= #{paymentStatus},
+        </if>
+        order_state = #{orderState},
+        cancel_time = now(),
+        version = version + 1
+        where order_state = 1
+        and  order_sn IN
+        <foreach collection="list" index="index" item="orderSn" open="(" separator="," close=")">
+            #{orderSn}
+        </foreach>
+    </update>
+
+    <select id="searchOrdersByMemberId" resultMap="OrderMemberIdVoResult">
+        select min(pay_time),order_sn,money_order  from orders  where member_id = #{memberId} and is_parent = 1
+    </select>
+
+
+    <update id="confirmCancelOrder">
+         update `orders`
+        set
+        	`order_state` = #{orderState},
+        	`update_time`= now(),
+        	`comfirm_cancel_time` = now(),
+        	`comfirm_cancel_user_name` = #{operatorUserName},
+        	version = version + 1
+        where `order_sn` = #{orderSn}
+        and `order_state` = 7
+    </update>
+
+    <select id="getDisSellerSaleMemberMoney" resultType="java.math.BigDecimal">
+        SELECT sum(op.money_price*op.number) FROM orders_product op
+        LEFT JOIN orders o ON o.order_sn=op.orders_sn
+        WHERE op.share_member_id=#{memberId}
+        and o.order_type!=8
+        and o.order_state in (3,4,5,6,7)
+        and op.commission_status=2
+        and o.is_parent=0
+    </select>
+
+    <select id="getDisSellerSaleMemberOrderCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM
+        (
+        SELECT o.order_sn FROM orders_product op
+        LEFT JOIN orders o ON o.order_sn=op.orders_sn
+        WHERE op.share_member_id=#{memberId}
+        and o.order_type!=8
+        and o.order_state in (3,4,5,6,7)
+        and op.commission_status=2
+        and o.is_parent=0
+        GROUP BY o.order_sn
+        ) aa
+    </select>
+
+    <select id="getDisSellerSaleMemberMoneyLimitDate" resultType="java.math.BigDecimal">
+        SELECT sum(op.money_price*op.number) FROM orders_product op
+        LEFT JOIN orders o ON o.order_sn=op.orders_sn
+        WHERE op.share_member_id=#{memberId}
+        and o.order_type!=8
+        and o.order_state in (3,4,5,6,7)
+        and op.commission_status=2
+        and o.pay_time between #{startDate} and #{endDate}
+        and o.is_parent=0
+    </select>
+
+    <select id="getDisSellerSaleMemberOrderCountLimitDate" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM
+        (
+        SELECT o.order_sn FROM orders_product op
+        LEFT JOIN orders o ON o.order_sn=op.orders_sn
+        WHERE op.share_member_id=#{memberId}
+        and o.order_type!=8
+        and o.order_state in (3,4,5,6,7)
+        and op.commission_status=2
+        and o.pay_time between #{startDate} and #{endDate}
+        and o.is_parent=0
+        GROUP BY o.order_sn
+        ) aa
+    </select>
+
+    <update id="updateOrdersEvaluateStatus">
+        update orders
+        set evaluate_state = #{evaluateStatus},
+            version = version + 1
+        where order_sn = #{orderSn}
+    </update>
+
+    <update id="updateCollageOrdersStatus">
+        update orders
+        <set>
+            <if test="status == 6">
+                cancel_time = now(),
+            </if>
+            order_state= #{status},
+            version = version + 1
+        </set>
+        where order_sn = #{orderSn} and  order_state = 8
+    </update>
+
+    <update id="updateOrdersActCollageRecordId" >
+        update orders
+        set act_collage_record_id = #{actCollageRecordId},
+            version = version + 1
+        where order_sn = #{orderSn} and  act_collage_record_id is null
+    </update>
+
+    <!--更改订单状态、电话、地址、发货时间、收货人姓名，快递单号,备注 -->
+    <update id="updateOrderLogisticInfo">
+        UPDATE orders
+        <set>
+            <if test="params.orderState !=null and params.orderState !=''">
+                order_state = 4,
+                deliver_time = now(),
+            </if>
+            <if test="params.logisticsName !=null and params.logisticsName !=''">
+                logistics_name = #{params.logisticsName},
+            </if>
+            <if test="params.logisticsId !=null and params.logisticsId !=''">
+                logistics_id = #{params.logisticsId},
+            </if>
+            <if test="params.logisticsNumber !=null and params.logisticsNumber !=''">
+                logistics_number = #{params.logisticsNumber},
+            </if>
+            update_time = now(),
+            version = version + 1
+        </set>
+        WHERE order_sn = #{params.orderSn} AND seller_id = #{params.sellerId}
+        <if test="params.orderState !=null and params.orderState !=''">
+            AND order_state = 3
+        </if>
+    </update>
+
+
+    <select id="checkGiftBy399CountByAccountPaid" resultType="java.lang.Integer">
+        select count(1) from orders
+        where is_show=1
+        and member_id = #{memberId}
+        and order_state IN (3,4,5)
+        and order_type = 8
+    </select>
+
+    <select id="acquireConvertApiOrdersResponse" resultMap="OrdersResult">
+            select order_sn,order_psn,order_type,order_state,is_parent,member_id
+            from orders
+            where create_time &gt;= #{startTime}
+            and create_time&lt;= #{endTime}
+            and payment_status=1
+            and order_state IN (3,4,5)
+            and money_product = 399
+            and is_parent = 0
+            and order_type = 1
+    </select>
+    <select id="selectErpOrderPage" resultMap="OrdersResultErp">
+        SELECT
+        o.id,
+        o.uid,
+        o.order_sn,
+        o.order_psn,
+        o.NAME,
+        o.remark,
+        o.trade_sn,
+        o.address_all,
+        o.address_info,
+        o.money_logistics,
+        o.payment_name,
+        o.mobile,
+        o.payment_name,
+        o.province_id,
+        o.city_id,
+        o.area_id,
+        o.coupon_user_id,
+        o.money_coupon,
+        o.create_time,
+        o.pay_time,
+        o.money_order,
+        o.deduction_vb_count,
+        o.member_id,
+        o.seller_id
+        FROM
+        orders o
+        LEFT JOIN orders_product op ON o.order_sn = op.orders_sn
+        WHERE
+        o.order_state = 3
+        AND o.is_parent = 0
+        AND o.is_import_erp IN(2,101)
+        AND o.seller_id IN
+        <foreach collection="queryMap.seller_id" index="index" item="sellerId" open="(" separator="," close=")">
+            #{sellerId}
+        </foreach>
+        <if test="queryMap.productId !=null">
+            and op.product_id !=#{queryMap.productId}
+        </if>
+        GROUP BY o.order_sn order by o.pay_time desc
+        <if test="queryMap.pageIndex !=null">
+            LIMIT #{queryMap.pageIndex},#{queryMap.pageSize}
+        </if>
+
+    </select>
+
+    <update id="updateOrderType">
+        update orders
+        set order_type = #{params.orderType},
+            gift_type = 2,
+            version = version + 1
+        where order_sn in
+        <foreach collection="params.list" index="index" item="orderSn" open="(" separator="," close=")">
+            #{orderSn}
+        </foreach>
+        and order_type = 1;
+    </update>
+
+    <select id="getExportPlatFormOrdersProductsByNum" resultType="java.lang.Integer">
+        SELECT
+        count(1)
+        FROM
+        orders_product op
+        left JOIN orders o ON op.orders_sn = o.order_sn
+        <include refid="getExportedCondition"/>
+    </select>
+
+    <!-- 查询导出订单的数据 -->
+    <select id="getExportedOrdersByNew" resultMap="ExportOrdersProductResult">
+        SELECT
+        o.order_psn AS orderPsn,
+        o.order_sn AS 'orderSn',
+        o.order_state AS 'orderState',
+        o.money_order AS 'moneyOrder',
+        o.money_logistics AS 'moneyLogistics',
+        o.money_discount AS 'moneyDiscount',
+        o.balance_discounted AS 'balanceDiscounted',
+        o.deduction_vb_count AS 'deductionVbCount',
+        o.deduction_vb_money AS 'deductionVbMoney',
+        o.red_market_currency AS 'redMarketCurrency',
+        o.perpetual_market_currency AS 'perpetualMarketCurrency',
+        o.member_name AS 'memberName',
+        o.member_id AS 'memberId',
+        o.NAME AS 'name',
+        o.mobile AS 'mobile',
+        o.zip_code AS 'zipCode',
+        o.city_id AS 'cityId',
+        o.area_id AS 'areaId',
+        o.province_id AS 'provinceId',
+        o.address_info  AS 'address',
+        o.payment_name AS 'paymentName',
+        o.trade_sn AS 'tradeSn',
+        o.is_import_erp AS 'isImportErp',
+        o.create_time AS 'createTime',
+        o.pay_time AS 'payTime',
+        o.finish_time AS 'finishTime',
+        o.deliver_time AS 'deliverTime',
+        op.product_sku AS 'productSku',
+        op.product_name AS 'productName',
+        op.product_goods_id AS 'productGoodsId',
+        op.number AS 'number',
+        op.money_price AS 'moneyPrice',
+        op.money_price * op.number AS 'moneyPriceSum',
+        op.single_pay_money AS 'singlePayMoney',
+        op.pay_money AS 'payMoney',
+        op.deduction_product_vb_count AS 'deductionProductVbCount',
+        op.deduction_product_single_vb_count AS 'deductionProductSingleVbCount',
+        op.product_cate_id AS 'productCateId',
+        op.product_code AS 'productCode',
+        op.supply_price AS 'supplyPrice',
+        op.uid AS 'ordersProductUid',
+        op.product_commission_ratio AS 'productCommissionRatio',
+        o.seller_name AS 'sellerName',
+        o.remark as 'remark',
+        o.finish_type as 'finishType',
+        o.back_cancel_time as 'backCancelTime',
+        o.back_cancel_status AS backCancelStatus,
+        o.payment_status AS paymentStatus,
+        o.order_type AS orderType,
+        o.seller_name AS sellerName,
+        o.feature AS feature
+        FROM
+        orders_product op
+        left JOIN orders o ON op.orders_sn = o.order_sn
+        <include refid="getExportedCondition"/>
+        <choose>
+            <when test="queryMap.orderByCancelTime != null">
+                order by o.cancel_time desc
+            </when>
+            <otherwise>
+                order by o.create_time desc
+            </otherwise>
+        </choose>
+        limit #{pageIndex},#{size}
+    </select>
+
+    <!-- 更新订单支付状态为支付中 -->
+    <update id="updatePaymentStatusToPaying" >
+        UPDATE orders
+        SET payment_status= #{paymentStatus},
+            version = version + 1
+        WHERE order_state = #{orderState}
+        AND  order_sn IN
+        <foreach collection="list" index="index" item="orderSn" open="(" separator="," close=")">
+            #{orderSn}
+        </foreach>
+    </update>
+
+    <update id="updateOrdersDeliverAddress">
+        update orders
+        set address_info = #{addressInfo},
+            version = version + 1
+        where order_sn = #{orderSn}
+    </update>
+
+    <select id="listMoneyAmountAndMarketCurrencyByOrdersSns"
+            resultType="com.sibu.mall.order.persistence.dao.result.GetOrdersMoneyAmountAndMarketCurrencyResult">
+        SELECT `order_sn` AS `order_sn`, `money_order` AS `money_amount`, `market_currency` FROM `orders`
+        WHERE `order_sn` IN
+        <foreach collection="ordersSns" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+    </select>
+
+    <select id="listCommissionSettleOrderInfoByOrdersSns"
+            resultType="com.sibu.mall.order.persistence.dao.result.CommissionSettleOrderInfoResult">
+        SELECT `order_sn` AS `order_sn`, `money_order` AS `money_amount`, `market_currency`, `create_time` FROM `orders`
+        WHERE `order_sn` IN
+        <foreach collection="ordersSns" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+    </select>
+
+    <update id="payMentNotifyUpdateOrdersStatus">
+        UPDATE orders
+        <set>
+            `order_state`= #{params.orderState},
+            `pay_time`= #{params.payTime},
+            `payment_status`= #{params.paymentStatus},
+            `payment_name`= #{params.paymentName},
+            `payment_code`= #{params.paymentCode},
+            `is_show`= #{params.isShow},
+            `trade_sn`= #{params.tradeSn},
+            `open_id`= #{params.openId},
+            version = version + 1
+        </set>
+        WHERE order_sn =#{params.orderSn}
+        AND `order_state`= #{params.optimisticLockingStatus}
+    </update>
+
+    <update id="payMentNotifyUpdateOrdersStatusByList">
+        UPDATE orders
+        <set>
+            `order_state`= #{params.orderState},
+            `pay_time`= #{params.payTime},
+            `payment_status`= #{params.paymentStatus},
+            `payment_name`= #{params.paymentName},
+            `payment_code`= #{params.paymentCode},
+            `is_show`= #{params.isShow},
+            `trade_sn`= #{params.tradeSn},
+            `open_id`= #{params.openId},
+            version = version + 1
+        </set>
+        WHERE order_psn =#{params.orderPsn}
+        AND `order_state`= #{params.optimisticLockingStatus}
+    </update>
+
+    <select id="searchWaitOrderByMemberId" resultType="java.lang.String">
+        select order_sn from orders where member_id =#{memberId} and order_state = 4  and is_show = 1 ORDER BY create_time desc
+    </select>
+
+    <select id="getOrderSns" resultType="java.lang.String">
+        select o.order_sn from `orders` o
+        <include refid="getOrdersCondition2"/>
+    </select>
+
+    <!--更新订单至已发货状态-->
+    <update id="updateOrderDeliveryStatus">
+        UPDATE orders
+        <set>
+            `deliver_time` = IFNULL(`deliver_time`, #{params.deliverTime}),
+            `order_state` = #{params.orderState},
+            version = version + 1
+        </set>
+        WHERE order_sn = #{params.orderSn}
+        AND `order_state`= #{params.oldState}
+    </update>
+    <!--平台后台-取消未发货订单-->
+    <update id="cancelNotShippedOrder">
+        update orders
+        set order_state = 6,
+            payment_status = 1,
+            cancel_time= now(),
+            version = version + 1
+        where order_sn = #{orderSn} and order_state = 3
+    </update>
+
+    <!--平台后台-取消已发货订单-->
+    <update id="cancelShippedOrder">
+        update orders
+        set order_state = 6,
+            payment_status = 1,
+            cancel_time= now(),
+            version = version + 1
+        where order_sn = #{orderSn} and order_state = 4
+    </update>
+
+    <!--平台后台-取消已完成订单-->
+    <update id="cancelFinishOrder">
+        update orders
+        set order_state = 6,
+            payment_status = 1,
+            cancel_time= now(),
+            version = version + 1
+        where order_sn = #{orderSn} and order_state = 5
+    </update>
+
+    <!-- 拒绝取消订单 -->
+    <update id="updateRejectCancelOrders">
+        UPDATE `orders`
+        SET `order_state`= #{newOrderState},
+        `comfirm_cancel_time` = now(),
+        `comfirm_cancel_user_name` = #{comfirmCancelUserName},
+        version = version + 1
+        WHERE `order_sn` = #{orderSn}
+    </update>
+
+    <!-- 根据时间范围查询取消订单，但未退还集市币的orderSn列表 -->
+    <select id="findCurrencyNotBackList" resultType="java.lang.String">
+        select order_sn from orders
+        where
+        create_time >= #{startDate}
+        and create_time &lt; #{endDate}
+        and payment_status = 0
+        and order_type = 1
+        and order_state= 6
+        and market_currency > 0
+        and is_show = 1
+        and back_market_currency_status = 0
+        <if test="lastOrderSn != null and lastOrderSn !=''">
+            and order_sn > #{lastOrderSn}
+        </if>
+        order by order_sn
+        limit #{pageSize}
+    </select>
+
+    <!-- 根据时间范围查询取消订单，但未退还优惠券的orderSn列表 -->
+    <select id="findCouponNotBackList" resultType="java.lang.String">
+        select order_sn from orders
+        where
+        create_time >= #{startDate}
+        and create_time &lt; #{endDate}
+        and order_type = 1
+        and order_state= 6
+        and is_show = 1
+        and payment_status = 0
+        and (platform_cash_coupon_sum_discounts > 0 or seller_cash_coupon_sum_discounts>0)
+        <if test="lastOrderSn != null and lastOrderSn !=''">
+            and order_sn > #{lastOrderSn}
+        </if>
+        order by order_sn
+        limit #{pageSize}
+    </select>
+
+    <!-- 根据主订单或者子订单id查询version信息 -->
+    <select id="getVersion" resultType="java.lang.Long">
+        select version from orders
+        where 1=1
+        <if test="queryMap.orderSn != null and queryMap.orderSn !=''">
+            and order_sn = #{queryMap.orderSn}
+        </if>
+        <if test="queryMap.orderPsn != null and queryMap.orderPsn !=''">
+            and order_psn = #{queryMap.orderPsn}
+        </if>
+    </select>
+</mapper>

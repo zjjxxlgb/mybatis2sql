@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sibu.mall.product.persistence.dao.ProductCateMapper">
+	   
+	<!-- 查询条件 -->
+	<sql id="Where_Clause">
+		where 1=1
+		<trim  suffixOverrides="," >
+			<if test="id != null and id !=''"  > and `id`= #{id}</if>
+			<if test="productTypeId != null and productTypeId !=''"  > and `product_type_id`= #{productTypeId}</if>
+			<if test="pid != null and pid !=''"  > and `pid`= #{pid}</if>
+			<if test="name != null and name !=''"  > and `name`= #{name}</if>
+			<if test="path != null and path !=''"  > and `path`= #{path}</if>
+			<if test="scaling != null and scaling !=''"  > and `scaling`= #{scaling}</if>
+			<if test="createId != null and createId !=''"  > and `create_id`= #{createId}</if>
+			<if test="updateId != null and updateId !=''"  > and `update_id`= #{updateId}</if>
+			<if test="createTime != null and createTime !=''"  > and `create_time`= #{createTime}</if>
+			<if test="updateTime != null and updateTime !=''"  > and `update_time`= #{updateTime}</if>
+			<if test="sort != null and sort !=''"  > and `sort`= #{sort}</if>
+			<if test="status != null and status !=''"  > and `status`= #{status}</if>
+			<if test="saleType != null"> and ifnull(`sale_type`,0) = #{saleType} </if>
+			<if test="status2 != null"  > and `status` in
+				<foreach collection="status2" item="item" separator="," close=")" open="(">
+					#{item}
+				</foreach>
+			 </if>
+		</trim>
+	</sql>
+
+	<select id="get2" resultType="com.sibu.mall.product.persistence.vo.ProductCateVo">
+		select
+		<include refid="selectColumn"/>
+		from `product_cate`
+		where `id` = #{id} and `status` in (1,4)
+	</select>
+
+	<select id="getProductCateByName" parameterType="String"
+			resultType="com.sibu.mall.product.persistence.vo.ProductCateVo">
+		select
+		   *
+		from `product_cate`
+		where `name` = #{name}
+		and status in (1,4)
+		limit 1
+	</select>
+	
+	<!-- 商品分类 列表总数-->
+	<select id="queryCount" resultType="java.lang.Integer"  parameterType="map">
+		select count(1) from product_cate
+		<include refid="Where_Clause"/>
+	</select>
+	  	
+	<!-- 查询商品分类列表 -->
+	<select id="queryList"  parameterType="map"
+			resultType="com.sibu.mall.product.persistence.vo.ProductCateVo">
+		select 
+		  * 
+		from product_cate 
+		<include refid="Where_Clause"/>
+		<if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+	</select>
+
+
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into `product_cate`(
+		`product_type_id`,
+		`pid`,
+		`name`,
+		`path`,
+		`scaling`,
+		`create_id`,
+		`update_id`,
+		`create_time`,
+		`update_time`,
+		`sort`,
+		`status`,
+		service_charge_rate,
+		cate_attr,
+		sale_type
+		)
+		values(
+		#{productTypeId},
+		#{pid},
+		#{name},
+		#{path},
+		#{scaling},
+		#{createId},
+		#{updateId},
+		now(),
+		now(),
+		#{sort},
+		#{status},
+		#{serviceChargeRate},
+		#{cateAttr},
+		#{saleType}
+		)
+	</insert>
+	<update id="update">
+		update `product_cate`
+		<set>
+			<if test = "id != null and id != ''">`id`= #{id},</if>
+			<if test = "productTypeId != null and productTypeId != ''">`product_type_id`= #{productTypeId},</if>
+			<if test = "pid != null">`pid`= #{pid},</if>
+			<if test = "name != null and name != ''">`name`= #{name},</if>
+			<if test = "path != null and path != ''">`path`= #{path},</if>
+			<if test = "scaling != null">`scaling`= #{scaling},</if>
+			<if test = "createId != null">`create_id`= #{createId},</if>
+			<if test = "updateId != null">`update_id`= #{updateId},</if>
+			<if test = "sort != null and sort != ''">`sort`= #{sort},</if>
+			<if test = "status != null">`status`= #{status},</if>
+			<if test = "serviceChargeRate != null">`service_charge_rate`= #{serviceChargeRate},</if>
+			<if test = "cateAttr != null">`cate_attr`= #{cateAttr},</if>
+			<if test="saleType != null"> ifnull(`sale_type`,0) = #{saleType}, </if>
+			`update_time`=now()
+		</set>
+		where `id` = #{id}
+	</update>
+	<delete id="del">
+		delete from `product_cate` where `id` = #{id}
+	</delete>
+
+	<select id="get" resultType="com.sibu.mall.product.persistence.vo.ProductCateVo">
+		select
+		<include refid="selectColumn"/>
+		from `product_cate`
+		where `id` = #{id}
+	</select>
+
+	<select id="getByTypeId" resultType="com.sibu.mall.product.persistence.vo.ProductCateVo">
+		select
+		<include refid="selectColumn"/>
+		from `product_cate`
+		where `product_type_id` = #{typeId} limit 1
+	</select>
+
+	<select id="page" resultType="com.sibu.mall.product.persistence.vo.ProductCateVo">
+		select
+		seller_cate.id,
+		cate.product_type_id,
+		cate.pid,
+		cate.name,
+		cate.path,
+		cate.scaling,
+		cate.create_id,
+		cate.update_id,
+		cate.update_time,
+		cate.sort,
+		seller.name seller,
+		seller.seller_name,
+		seller_cate.create_time,
+		seller_cate.state as status
+        from
+        product_cate cate
+		join seller_manage_cate seller_cate on cate.id = seller_cate.product_cate_id
+		join seller seller on seller_cate.seller = seller.id
+		where 1=1
+		<if test="q_state != null and q_state!=''">and seller_cate.state = #{q_state}</if>
+		<if test="q_name != null and q_name!=''">and cate.name like CONCAT('%',#{q_name},'%')</if>
+		<if test="q_sellerId != null and q_sellerId!=''">and seller.id = #{q_sellerId}</if>
+		<if test="q_sellerName != null and q_sellerName!=''">and seller.seller_name like CONCAT('%',#{q_sellerName},'%')</if>
+		<if test="q_createTime != null and q_createTime!='' ">and DATE_FORMAT(seller_cate.`create_time`,'%Y-%m-%d') = #{q_createTime}</if>
+		<if test="q_saleType != null"> and ifnull(cate.sale_type,0) = #{q_saleType} </if>
+		order by sort desc,cate.id desc
+		<if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+	</select>
+
+	<select id="pageManage" resultType="com.sibu.mall.product.persistence.vo.ProductCateVo">
+		select
+		cate.product_type_id,
+		cate.pid,
+		cate.name,
+		cate.path,
+		cate.scaling,
+		cate.create_id,
+		cate.update_id,
+		cate.update_time,
+		cate.sort,
+        cate.sale_type
+        from
+
+        <!-- 		( -->
+        <!-- 		select * from product_cate A where A.status!=4 and not EXISTS(select B.id from product_cate B where B.status=4 and FIND_IN_SET(B.id, REPLACE(A.path, '/', ',')))  -->
+        <!--  		)   -->
+
+        product_cate cate
+        where 1=1
+        <if test="q_name != null and q_name!=''">and cate.name like CONCAT('%',#{q_name},'%')</if>
+        <if test="q_saleType != null"> and ifnull(cate.sale_type,0) = #{q_saleType} </if>
+        order by sort desc,cate.id desc
+        <if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+    </select>
+
+    <select id="getByPids" resultType="com.sibu.mall.product.persistence.vo.ProductCateVo">
+        select
+        if((select count(1) from `product_cate` where pid = t1.`id`
+
+        and `status` in (1,2,4)
+
+
+        )=0,'open','closed') state,
+        <include refid="selectColumn"/>
+        from `product_cate` t1
+        where pid in
+        <foreach collection="pids" item="item" separator="," close=")" open="(">
+            #{item}
+        </foreach>
+
+		<choose>
+			<when test="status != null">
+				and `status` = #{status}
+			</when>
+			<otherwise>
+				and `status` in (1,2,4)
+			</otherwise>
+		</choose>
+
+
+        order by t1.`sort` desc
+    </select>
+
+    <!--根据关联id查询分类-->
+	<select id="getFinalIdsByPid" resultType="com.sibu.mall.product.persistence.vo.ProductCateVo">
+		select
+		<include refid="selectColumn"/>
+		from `product_cate`
+		where pid = #{pid}
+	</select>
+
+	<!--根据关联ids查询所有对应的后台分类-->
+	<select id="getProductCatesByIds" parameterType="java.util.Map" resultType="com.sibu.mall.product.persistence.vo.ProductCateVo">
+		select
+		<include refid="selectColumn" />
+        from
+        <!-- 		( -->
+        <!-- 		select * from product_cate A where A.status!=4 and not EXISTS(select B.id from product_cate B where B.status=4 and FIND_IN_SET(B.id, REPLACE(A.path, '/', ',')))  -->
+        <!--  		)   -->
+
+        product_cate cate
+		where id in
+		<foreach collection="ids" item="item" separator="," close=")" open="(">
+			#{item}
+		</foreach>
+	</select>
+
+	<select id="getBySellerId" resultType="com.sibu.mall.product.persistence.vo.ProductCateVo">
+		select
+		<include refid="selectColumn"/>
+		from product_cate
+		where status = 1
+		and id in
+		<foreach collection="ids" item="item" separator="," close=")" open="(">
+			#{item}
+		</foreach>
+		<!-- (select product_cate_id from seller_manage_cate where seller = #{sellerId} and state=2)-->
+	</select>
+
+	<select id="count" resultType="java.lang.Integer">
+		select count(1)
+        from
+        <!-- 		( -->
+        <!-- 		select * from product_cate A where A.status!=4 and not EXISTS(select B.id from product_cate B where B.status=4 and FIND_IN_SET(B.id, REPLACE(A.path, '/', ',')))  -->
+        <!--  		)   -->
+        product_cate cate
+		join seller_manage_cate seller_cate on cate.id = seller_cate.product_cate_id
+		join seller seller on seller_cate.seller= seller.id
+		where 1=1
+		<if test="q_state != null and q_state!=''">and seller_cate.state = #{q_state}</if>
+		<if test="q_name != null and q_name!=''">and cate.name like CONCAT('%',#{q_name},'%')</if>
+		<if test="q_sellerId != null and q_sellerId!=''">and seller.id = #{q_sellerId}</if>
+		<if test="q_sellerName != null and q_sellerName!=''">and seller.seller_name like CONCAT('%',#{q_sellerName},'%')</if>
+		<if test="q_createTime != null and q_createTime!='' ">and DATE_FORMAT(seller_cate.`create_time`,'%Y-%m-%d') = #{q_createTime}</if>
+		<if test="q_saleType != null"> and ifnull(cate.sale_type,0) = #{q_saleType} </if>
+	</select>
+
+	<select id="countManage" resultType="java.lang.Integer">
+		select count(1)
+        from
+        <!-- 		( -->
+        <!-- 		select * from product_cate A where A.status!=4 and not EXISTS(select B.id from product_cate B where B.status=4 and FIND_IN_SET(B.id, REPLACE(A.path, '/', ',')))  -->
+        <!--  		)   -->
+        product_cate cate
+		where 1=1
+		<if test="q_name != null and q_name!=''">and cate.name like CONCAT('%',#{q_name},'%')</if>
+		<if test="q_saleType != null"> and ifnull(cate.sale_type,0) = #{q_saleType} </if>
+	</select>
+
+	<sql id="selectColumn">
+		`id`,
+		`product_type_id`,
+		`pid`,
+		`name`,
+		`path`,
+		`scaling`,
+		`create_id`,
+		`update_id`,
+		`create_time`,
+		`update_time`,
+		`sort`,
+		`status`,
+		`service_charge_rate`,
+        `cate_attr`,
+		`sale_type`
+	</sql>
+	<sql id="whereConditions">
+		<where>
+			<if test="id != null and '' != id">
+				and `id`= #{id}
+			</if>
+			<if test="productTypeId != null and '' != productTypeId">
+				and `product_type_id`= #{productTypeId}
+			</if>
+			<if test="pid != null and '' != pid">
+				and `pid`= #{pid}
+			</if>
+			<if test="name != null and '' != name">
+				and `name`= #{name}
+			</if>
+			<if test="path != null and '' != path">
+				and `path`= #{path}
+			</if>
+			<if test="scaling != null and '' != scaling">
+				and `scaling`= #{scaling}
+			</if>
+			<if test="createId != null and '' != createId">
+				and `create_id`= #{createId}
+			</if>
+			<if test="updateId != null and '' != updateId">
+				and `update_id`= #{updateId}
+			</if>
+			<if test="createTime != null and '' != createTime">
+				and `create_time`= #{createTime}
+			</if>
+			<if test="updateTime != null and '' != updateTime">
+				and `update_time`= #{updateTime}
+			</if>
+			<if test="sort != null and '' != sort">
+				and `sort`= #{sort}
+			</if>
+            <if test="status != null">
+				and `status`= #{status}
+			</if>
+			<if test="serviceChargeRate != null and '' != serviceChargeRate">
+				and `service_charge_rate`= #{serviceChargeRate}
+			</if>
+			<if test="saleType != null">
+				and ifnull(sale_type,0) = #{saleType}
+			</if>
+		</where>
+	</sql>
+
+	<!-- 通过分类idList查询下级分类idList -->
+	<select id="findNextLevelIdListByIdList" resultType="java.lang.Integer">
+		select id from product_cate pc where pc.pid in
+		<foreach  index="index" collection="idList" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+	<select id="getProductCateByIds" resultType="com.sibu.mall.cate.response.ProductCateResponse">
+		select
+		`id`,
+		`product_type_id` as productTypeId,
+		`pid`,
+		`name`,
+		`path`,
+		`scaling`,
+		`create_id` as createId,
+		`update_id` as updateId,
+		`create_time` as createTime,
+		`update_time` as updateTime,
+		`sort`,
+		`status`,
+		`service_charge_rate` as serviceChargeRate
+		from `product_cate` where id in
+		<foreach collection="ids" index="index" item="item"
+				 open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<!-- 根据名称模糊查询商品分类 -->
+	<select id="searchProductCateByName"  parameterType="com.sibu.mall.cate.request.CommonSearchByNameRequest"
+			resultType="com.sibu.mall.cate.response.ProductCateResponse">
+		select * from product_cate
+		where 1=1
+		<if test="name != null and '' != name">
+			and `name` like concat('%',#{name},'%')
+		</if>
+		and  `status` in (1,2,4) order by `sort` desc
+	</select>
+
+
+	<select id="findByCateAttr" resultType="com.sibu.mall.product.persistence.vo.ProductCateVo" >
+		select
+		<include refid="selectColumn"/>
+		 from product_cate where cate_attr = #{cateAttr}
+	</select>
+
+
+	<select id="getForFirst" resultType="com.sibu.mall.product.persistence.vo.ProductCateVo">
+		select
+        if((select count(1) from `product_cate` where pid = t1.`id`
+        and `status` in (1,2,4)
+       )=0,'open','closed') state,
+		<include refid="selectColumn"/>
+		from product_cate t1 where
+		1=1
+
+		and id in (
+		    select IF(replace(SUBSTRING_INDEX(`path`,'/',2),'/','')='',id,replace(SUBSTRING_INDEX(`path` ,'/',2),'/','')) from product_cate
+		    where
+		<choose>
+			<when test="status != null">
+				 `status` = #{status}
+			</when>
+			<otherwise>
+				 `status` in (1,2,4)
+			</otherwise>
+		</choose>
+
+		<if test="cateAttr !=null ">
+			and
+			<!-- 只针对三级类目 -->
+            ifnull(cate_attr,0) = if((LENGTH(`path`) - LENGTH( REPLACE(`path`,'/','')))=2,#{cateAttr},-1)
+		</if>
+		)
+		order by t1.`sort` desc
+	</select>
+
+</mapper>

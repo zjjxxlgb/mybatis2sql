@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sibu.mall.order.persistence.dao.OrdersOptimizeMapper">
+
+    <!-- 根据订单号查询订单(优化过字段) -->
+    <select id="getOrdersByOrdersSn" resultType="com.sibu.mall.order.persistence.entity.Orders">
+        select
+        uid,order_sn,order_psn,is_parent,is_show,order_type,seller_id,seller_name,member_id,member_name,
+        order_state,pay_time,payment_status,money_product,money_logistics,money_order,money_discount,payment_name,
+        payment_code,name,province_id,city_id,area_id,address_all,address_info,mobile,remark,deliver_time,finish_time,
+        trade_sn,logistics_id,logistics_name,logistics_number,create_time,evaluate_state,back_cancel_status,back_cancel_time,
+        cancel_time,comfirm_cancel_time,comfirm_cancel_user_name,cancel_reason,market_currency,perpetual_market_currency,red_market_currency,
+        head_img,gift_type,finish_type,open_order_sn,seller_cash_coupon_sum_discounts,platform_cash_coupon_sum_discounts,
+        seller_of_settlement_price,back_market_currency_status,back_market_currency_time,act_collage_member_type,act_collage_record_id,certification_name,certification_card,feature
+        ,commissiom_immediately
+        from orders
+        where
+        order_sn = #{orderSn}
+    </select>
+
+    <!-- 根据父订单号查询订单(优化过字段) -->
+    <select id="getOrdersByOrdersPsn" resultType="com.sibu.mall.order.persistence.entity.Orders">
+         select
+        uid,order_sn,order_psn,is_parent,is_show,order_type,seller_id,seller_name,member_id,member_name,
+        order_state,pay_time,payment_status,money_product,money_logistics,money_order,money_discount,payment_name,
+        payment_code,name,province_id,city_id,area_id,address_all,address_info,mobile,remark,deliver_time,finish_time,
+        trade_sn,logistics_id,logistics_name,logistics_number,create_time,evaluate_state,back_cancel_status,back_cancel_time,
+        cancel_time,comfirm_cancel_time,comfirm_cancel_user_name,cancel_reason,market_currency,perpetual_market_currency,red_market_currency,
+        head_img,gift_type,finish_type,open_order_sn,seller_cash_coupon_sum_discounts,platform_cash_coupon_sum_discounts,
+        seller_of_settlement_price,back_market_currency_status,back_market_currency_time,act_collage_member_type,act_collage_record_id,certification_name,certification_card,feature
+        ,commissiom_immediately
+        from orders
+        where
+        order_psn = #{orderPsn}
+    </select>
+
+    <!-- 查询七鱼客服系统订单数量 -->
+    <select id="getSevenFishOrdersCount" resultType="java.lang.Integer">
+        select count(1) from `orders`
+        <include refid="getQueryPageOrdersCondition"/>
+    </select>
+
+    <!-- 分页查询七鱼客服系统订单列表 -->
+    <select id="getSevenFishOrdersPage" resultType="com.sibu.mall.order.persistence.entity.Orders">
+        select order_sn,order_psn,money_order,order_type,order_state,is_parent,seller_id,seller_name,
+        payment_status,evaluate_state,finish_time,logistics_name,logistics_number,open_order_sn,create_time  from `orders`
+        <include refid="getQueryPageOrdersCondition"/>
+        <choose>
+            <when test="queryMap.cancelFlag != null">
+                order by cancel_time desc
+            </when>
+            <otherwise>
+                order by create_time desc
+            </otherwise>
+        </choose>
+        limit #{offSet},#{limit}
+    </select>
+
+    <!-- 组装查询条件 -->
+    <sql id="getQueryPageOrdersCondition">
+        <where>
+            `member_id`= #{queryMap.memberId}
+            and `is_show`= 1
+            <if test="queryMap.orderState != null and queryMap.orderState.size > 0">
+                and `order_state` in
+                <foreach item="item" index="index" collection="queryMap.orderState" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="queryMap.orderSn">
+                and `order_sn` = #{orderSn}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 已支付的取消订单 -->
+    <update id="updateCancelOrderByPaid">
+        update orders set order_state = #{orderState},
+        cancel_reason = #{cancelReason},
+        cancel_time = now(),
+        update_time = now(),
+        version = version + 1
+        where order_state = 3 and order_sn = #{orderSn}
+    </update>
+
+    <!-- 未支付的取消订单 -->
+    <update id="updateCancelOrderByNonPayment">
+        update orders set
+        <if test="paymentStatus !=null">
+            payment_status= #{paymentStatus},
+        </if>
+        order_state = #{orderState},
+        cancel_time = now(),
+        version = version + 1
+        where order_state = 1
+        and  order_sn IN
+        <foreach collection="list" index="index" item="orderSn" open="(" separator="," close=")">
+            #{orderSn}
+        </foreach>
+    </update>
+
+    <!-- 订单完成 -->
+    <update id="updateFinishOrder">
+        update orders
+        set order_state = 5,
+            finish_time = now(),
+            finish_type = #{type},
+            update_time = now(),
+            version = version + 1
+        where order_sn = #{orderSn} and order_state = 4
+    </update>
+
+    <!-- 支付成功更改状态 -->
+    <update id="payMentNotifyUpdateOrdersStatus">
+        UPDATE orders
+        <set>
+            <if test="params.orderState !=null and params.orderState == 5">
+                finish_time = #{params.payTime},
+            </if>
+            <if test="params.orderState !=null and (params.orderState == 3 or params.orderState == 5)">
+                cancel_time = null,
+            </if>
+            <if test="params.orderState !=null">
+                `order_state`= #{params.orderState},
+            </if>
+            `pay_time`= #{params.payTime},
+            `payment_status`= #{params.paymentStatus},
+            `payment_name`= #{params.paymentName},
+            `payment_code`= #{params.paymentCode},
+            `is_show`= #{params.isShow},
+            `trade_sn`= #{params.tradeSn},
+            `open_id`= #{params.openId},
+             version = version + 1
+        </set>
+        WHERE order_sn =#{params.orderSn}
+        AND `order_state`= #{params.optimisticLockingStatus}
+    </update>
+
+    <!-- 支付成功更改状态(子订单)-->
+    <update id="payMentNotifyUpdateOrdersStatusByList">
+        UPDATE orders
+        <set>
+            <if test="params.orderState !=null and params.orderState == 5">
+                finish_time = #{params.payTime},
+            </if>
+            <if test="params.orderState !=null and (params.orderState == 3 or params.orderState == 5)">
+                cancel_time = null,
+            </if>
+            <if test="params.orderState !=null">
+                `order_state`= #{params.orderState},
+            </if>
+            `pay_time`= #{params.payTime},
+            `payment_status`= #{params.paymentStatus},
+            `payment_name`= #{params.paymentName},
+            `payment_code`= #{params.paymentCode},
+            `is_show`= #{params.isShow},
+            `trade_sn`= #{params.tradeSn},
+            `open_id`= #{params.openId},
+             version = version + 1
+        </set>
+        WHERE order_psn =#{params.orderPsn}
+        AND `order_state`= #{params.optimisticLockingStatus}
+    </update>
+
+    <!-- 拒绝取消订单 -->
+    <update id="updateRejectCancelOrders">
+        UPDATE `orders`
+        SET `order_state`= 3,
+        `comfirm_cancel_time` = now(),
+        `comfirm_cancel_user_name` = #{comfirmCancelUserName},
+        update_time = now(),
+        version = version + 1
+        WHERE `order_sn` = #{orderSn}
+        and `order_state` = 7
+    </update>
+
+    <!-- 更新订单状态 -->
+    <update id="updateOrdersStatus">
+        update orders
+        set order_state = #{orderState},
+            update_time = now(),
+            version = version + 1
+        where order_state = #{optimisticLockStatus}
+        and order_sn = #{orderSn}
+    </update>
+
+    <!-- 清除订单物流信息 -->
+    <update id="updateOrdersLogistics">
+         update orders
+        set logistics_id = null,
+            logistics_name = null,
+            logistics_number = 0,
+            update_time = now(),
+            version = version + 1
+        where order_state = #{optimisticLockStatus}
+        and order_sn = #{orderSn}
+    </update>
+
+    <!-- 更新老的物流信息-->
+    <update id="updateOldOrderLogistics">
+        update `orders`
+        set
+          `logistics_id`= #{logisticsId},
+          `logistics_name`= #{logisticsName},
+          `logistics_number`= #{logisticsNumber},
+          update_time = now(),
+          version = version + 1
+        where `order_sn` = #{orderSn}
+    </update>
+
+    <!-- 订单发货-->
+    <update id="deliveryOrders">
+        update orders
+        set order_state = 4,
+            deliver_time = #{deliverTime},
+            update_time = now(),
+            version = version + 1
+        where order_sn = #{orderSn} and order_state = 3
+    </update>
+
+    <!-- 根据用户ID查询用户已支付的权益礼包订单数量 -->
+    <select id="getPayedGiftOrderByMemberId" resultType="com.sibu.mall.order.persistence.entity.Orders">
+        select order_sn,order_state,payment_status from orders where member_id=#{memberId} and order_type in(8,10) and order_state IN (1,3,4,5,6,7) and is_show = 1
+    </select>
+
+    <!-- 订单集市币退还成功更改状态-->
+    <update id="updateReturnMarketCurrency">
+        update orders
+        set back_market_currency_status = 1,
+        back_market_currency_time = now(),
+        update_time = now(),
+        version = version + 1
+        where order_sn =#{orderSn} and back_market_currency_status = 0
+    </update>
+
+    <!--平台后台-取消未发货订单-->
+    <update id="cancelNotShippedOrder">
+        update orders
+        set order_state = 6,
+        payment_status = 1,
+        cancel_time= now(),
+        update_time = now(),
+        version = version + 1
+        where order_sn = #{orderSn} and order_state = 3
+    </update>
+
+    <!--平台后台-取消已发货订单-->
+    <update id="cancelShippedOrder">
+        update orders
+        set order_state = 6,
+        payment_status = 1,
+        cancel_time= now(),
+        update_time = now(),
+        version = version + 1
+        where order_sn = #{orderSn} and order_state = 4
+    </update>
+
+    <!--平台后台-取消已完成订单-->
+    <update id="cancelFinishOrder">
+        update orders
+        set order_state = 6,
+        payment_status = 1,
+        cancel_time= now(),
+        update_time = now(),
+        version = version + 1
+        where order_sn = #{orderSn} and order_state = 5
+    </update>
+
+
+    <!-- 商家更新订单商家备注 -->
+    <update id="updateOrdersAddress">
+        update orders
+        set province_id = #{provinceId},
+        city_id = #{cityId},
+        area_id = #{areaId},
+        address_all = #{addressAll},
+        address_info = #{addressInfo},
+        version = version + 1
+        where order_sn = #{orderSn} where order_state = 3
+    </update>
+
+    <select id="getOrdersByMemberIdAndOrderType" resultType="com.sibu.mall.order.persistence.entity.Orders">
+        select
+        uid,order_sn,order_psn,order_state
+        from orders
+        where
+        member_id = #{memberId} and order_type=#{orderType} and order_state not in (6,7)
+        and is_parent=0
+        limit 1
+    </select>
+
+    <update id="autoCancelGiftOrder">
+        update orders
+        set order_state=6,back_cancel_status=2,cancel_time=now(),cancel_reason=#{cancelReason},back_cancel_time=now(),update_time=now(),version = version + 1
+        where order_sn =#{orderSn} and order_state in(4,5)
+    </update>
+
+    <!-- 获取用户三个月内已完成的订单的售价总和 -->
+    <select id="getUserFinishOrderAmount" resultType="java.math.BigDecimal">
+        select
+        sum(money_order) AS "orderAmount"
+        from orders
+        where
+        member_id = #{memberId} and order_state=5 and is_parent=0 and pay_time between #{startDate} and #{endDate}
+    </select>
+
+    <update id="updateOrdersAuthentication">
+        update orders set certification_name = #{certificationName},certification_card = #{certificationCard},version = version + 1
+        where
+        order_sn IN
+        <foreach collection="list" index="index" item="orderSn" open="(" separator="," close=")">
+            #{orderSn}
+        </foreach>
+        and order_state IN (1,3)
+    </update>
+
+    <!-- 获取用户三个月内已完成的订单的售价总和 -->
+    <select id="getUserFinishOrderAmount" resultType="java.math.BigDecimal">
+        select
+        sum(money_order) AS "orderAmount"
+        from orders
+        where
+        member_id = #{memberId} and order_state=5 and is_parent=0 and pay_time between #{startDate} and #{endDate}
+    </select>
+
+    <!-- 充值订单从待发货更新成已完成 -->
+    <update id="updateTopUpOrdersByWait">
+        update orders
+        set
+        order_state =  5,
+        finish_time = now(),
+        update_time=now(),
+        version = version + 1
+        where order_state = 3
+        and order_sn = #{orderSn}
+    </update>
+
+    <update id="updateTopUpOrdersByCancel">
+        update orders
+        set
+        order_state =  6,
+        cancel_time = now(),
+        update_time=now(),
+        version = version + 1
+        where order_state = 3
+        and order_sn = #{orderSn}
+    </update>
+
+    <update id="updateTopUpOrdersByRefund">
+        update orders
+        set
+        back_cancel_status =  2,
+        back_cancel_time = now(),
+        update_time=now(),
+        version = version + 1
+        where order_state = 6
+        and order_sn = #{orderSn}
+    </update>
+
+    <!-- 获取用户已支付未取消的订单数量 -->
+    <select id="getUserPayedOrdersCount" resultType="java.lang.Integer">
+        select
+        count(1)
+        from orders
+        where
+        member_id = #{params.memberId} and order_state IN (3,4,5) and is_parent=0 and pay_time between #{params.startPayedDate} and #{params.endPayedDate}
+        <if test="params.orderTypes != null">
+            and order_type not in
+            <foreach collection="params.orderTypes" open="(" separator="," close=")" item="orderType">
+                #{orderType}
+            </foreach>
+        </if>
+    </select>
+
+    <!-- 获取用户已支付未取消的订单号（分页获取） -->
+    <select id="getUserPayedOrders" resultType="java.lang.String">
+        select
+        order_sn
+        from orders
+        where
+        member_id = #{params.memberId} and order_state IN (3,4,5) and is_parent=0 and pay_time between #{params.startPayedDate} and #{params.endPayedDate}
+        <if test="params.orderTypes != null">
+            and order_type not in
+            <foreach collection="params.orderTypes" open="(" separator="," close=")" item="orderType">
+                #{orderType}
+            </foreach>
+        </if>
+        limit #{offSet},#{limit}
+    </select>
+
+</mapper>

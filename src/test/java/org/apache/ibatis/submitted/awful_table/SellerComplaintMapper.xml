@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sibu.mall.seller.persistence.dao.SellerComplaintMapper">
+	<resultMap id="SellerComplaintResult" type="com.sibu.mall.seller.persistence.entity.SellerComplaint">
+			<result property="id" column="id" />
+			<result property="userId" column="user_id" />
+			<result property="userName" column="user_name" />
+			<result property="orderId" column="order_id" />
+			<result property="orderProductId" column="order_product_id" />
+			<result property="productBackId" column="product_back_id" />
+			<result property="productExchangeId" column="product_exchange_id" />
+			<result property="content" column="content" />
+			<result property="image" column="image" />
+			<result property="complaintTime" column="complaint_time" />
+			<result property="sellerId" column="seller_id" />
+			<result property="sellerComplaintTime" column="seller_complaint_time" />
+			<result property="sellerCompContent" column="seller_comp_content" />
+			<result property="sellerCompImage" column="seller_comp_image" />
+			<result property="state" column="state" />
+			<result property="optId" column="opt_id" />
+			<result property="optContent" column="opt_content" />
+			<result property="userContent" column="user_content" />
+			<result property="createTime" column="create_time" />
+			<result property="optTime" column="opt_time" />
+			<result property="mobile" column="mobile" />
+	</resultMap>
+	
+	
+	   
+	<!-- 查询条件 -->
+	<sql id="Where_Clause">
+		where 1=1
+		<trim  suffixOverrides="," >
+			<if test="id != null and id !=''"  > and SC.`id`= #{id}</if>
+			<if test="userId != null and userId !=''"  > and SC.`user_id`= #{userId}</if>
+			<if test="userName != null and userName !=''"  > and SC.`user_name`= #{userName}</if>
+			<if test="q_name != null and q_name !=''"  > and SC.`user_name`= #{q_name}</if>
+			<if test="orderId != null and orderId !=''"  > and SC.`order_id`= #{orderId}</if>
+			<if test="orderProductId != null and orderProductId !=''"  > and SC.`order_product_id`= #{orderProductId}</if>
+			<if test="productBackId != null and productBackId !=''"  > and SC.`product_back_id`= #{productBackId}</if>
+			<if test="productExchangeId != null and productExchangeId !=''"  > and SC.`product_exchange_id`= #{productExchangeId}</if>
+			<if test="content != null and content !=''"  > and SC.`content`= #{content}</if>
+			<if test="image != null and image !=''"  > and SC.`image`= #{image}</if>
+			<if test="complaintTime != null and complaintTime !=''"  > and SC.`complaint_time`= #{complaintTime}</if>
+			<if test="sellerId != null and sellerId !=''"  > and SC.`seller_id`= #{sellerId}</if>
+			<if test="sellerComplaintTime != null and sellerComplaintTime !=''"  > and SC.`seller_complaint_time`= #{sellerComplaintTime}</if>
+			<if test="sellerCompContent != null and sellerCompContent !=''"  > and SC.`seller_comp_content`= #{sellerCompContent}</if>
+			<if test="sellerCompImage != null and sellerCompImage !=''"  > and SC.`seller_comp_image`= #{sellerCompImage}</if>
+			<if test="state != null and state !=''"  > and SC.`state`= #{state}</if>
+			<if test="q_state != null and q_state !=''"  > and SC.`state`= #{q_state}</if>
+			<if test="optId != null and optId !=''"  > and SC.`opt_id`= #{optId}</if>
+			<if test="optContent != null and optContent !=''"  > and SC.`opt_content`= #{optContent}</if>
+			<if test="userContent != null and userContent !=''"  > and SC.`user_content`= #{userContent}</if>
+			<if test="createTime != null and createTime !=''"  > and SC.`create_time`= #{createTime}</if>
+			<if test="optTime != null and optTime !=''"  > and SC.`opt_time`= #{optTime}</if>
+			<if test="q_orderSn != null and q_orderSn !=''"  > and SC.`order_sn` = #{q_orderSn}</if>
+			<if test="q_createStartTime != null and q_createStartTime !=''"  >
+				and DATE_FORMAT(`create_time`,'%Y-%m-%d') &gt;= #{q_createStartTime}
+			</if>
+			<if test="q_createEndTime != null and q_createEndTime !=''"  >
+				and DATE_FORMAT(`create_time`,'%Y-%m-%d') &lt;= #{q_createEndTime}
+			</if>
+		</trim>
+	</sql>
+	
+	
+	<select id="getByOrderId" parameterType="Integer" resultMap="SellerComplaintResult">
+		select
+		*
+		from `seller_complaint`
+		where `order_id` = #{id}
+	</select>
+
+	<select id="getByOrderSn" parameterType="java.lang.String" resultMap="SellerComplaintResult">
+		select
+		*
+		from `seller_complaint`
+		where `order_sn` = #{id}
+	</select>
+
+	<select id="getByOrderProductUId" parameterType="string" resultMap="SellerComplaintResult">
+		select
+		*
+		from `seller_complaint`
+		where `orders_product_uid` = #{id}
+	</select>
+
+	<select id="getByMemberProductBackId" parameterType="Integer" resultMap="SellerComplaintResult">
+		select
+		*
+		from `seller_complaint`
+		where `product_back_id` = #{id}
+	</select>
+	
+	<!-- 商家投诉管理 列表总数-->
+	<select id="queryCount" resultType="java.lang.Integer"  parameterType="map">
+		select count(0) from (
+		select id from seller_complaint SC
+		<include refid="Where_Clause"/>
+		<if test="q_memberIdList!=null and q_memberIdList.size()>0">
+			and SC.user_id in
+			<foreach collection="q_memberIdList" item="item" open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		group by SC.act_promotion_package_select_id
+		) A
+	</select>
+	  	
+	<!-- 查询商家投诉管理列表 -->
+	<select id="queryList" resultMap="SellerComplaintResult"  parameterType="map">
+		select 
+		  SC.*
+		from seller_complaint SC
+		<include refid="Where_Clause"/>
+		<if test="q_memberIdList!=null and q_memberIdList.size()>0">
+			and SC.user_id in
+			<foreach collection="q_memberIdList" item="item" open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		group by SC.act_promotion_package_select_id order by SC.create_time desc
+		<if test="size != null and size &gt; 0">limit #{start},#{size}</if>
+	</select>
+	<select id="getCountBySellerId" resultType="java.lang.Integer">
+		select ifnull(count(*),0) from seller_complaint where seller_id=#{sellerId}
+	</select>
+
+
+	<select id="getSellerComplaintByActPromotionPackageSelectId" parameterType="string" resultMap="SellerComplaintResult">
+		SELECT
+		*
+		FROM
+		`seller_complaint`
+		WHERE
+		act_promotion_package_select_id=#{id}
+	</select>
+
+	<!-- 查询投诉导出列表 -->
+	<select id="getExportData" resultType="java.util.Map">
+		<!--select SC.*, S.seller_name AS sellerName, PB.member_back_code AS memberBackCode,-->
+		<!--PB.question pbQuestion, PB.logistics_number pbLogisticsNumber, PB.logistics_name pbLogisticsName,-->
+		<!--PE.member_product_exchange_code AS memberProductExchangeCode, PE.question peQuestion,-->
+		<!--PE.logistics_number2 peLogisticsNumber, PE.logistics_name2 peLogisticsName,-->
+		<!--PB.product_name AS pbProductName, PE.product_name AS peProductName,-->
+		<!--PC.member_back_code AS pcMemberBackCode, PC.question pcQuestion, PC.logistics_number pcLogisticsNumber,-->
+		<!--PC.logistics_name pcLogisticsName, PC.product_name AS pcProductName-->
+		<!--from (-->
+			<!--select-->
+			<!--SC.ID AS id,-->
+			<!--SC.user_name AS userName,-->
+			<!--SC.content AS content,-->
+			<!--SC.image AS image,-->
+			<!--SC.seller_id AS sellerId,-->
+			<!--DATE_FORMAT(SC.complaint_time, '%Y-%m-%d %H:%i:%s') AS complaintTime,-->
+			<!--DATE_FORMAT(SC.pay_time, '%Y-%m-%d %H:%i:%s') AS payTime,-->
+			<!--ifnull(SC.state,0) AS state,-->
+			<!--SC.order_sn AS orderSn,-->
+			<!--SC.product_back_id AS productBackId,-->
+			<!--SC.product_exchange_id AS productExchangeId,-->
+			<!--SC.product_compensate_id AS productCompensateId-->
+			<!--from seller_complaint SC-->
+			<!--<include refid="Where_Clause"/>-->
+		<!--) SC-->
+		<!--join seller S on S.id=SC.sellerId-->
+		<!--left join member_product_back PB on SC.productBackId=PB.id-->
+		<!--left join member_product_exchange PE on SC.productExchangeId=PE.id-->
+		<!--left join member_product_compensate PC on SC.productCompensateId=PC.id-->
+		<!--order by SC.id desc-->
+		select 1
+	</select>
+
+	<!-- 查询投诉导出列表 -->
+	<select id="getExportDataBySeller" resultType="com.sibu.mall.seller.persistence.entity.SellerComplaint">
+		select
+		S.seller_name,
+		SC.ID AS id,
+		SC.user_name AS userName,
+		SC.content AS content,
+		SC.image AS image,
+		SC.seller_id AS sellerId,
+		DATE_FORMAT(SC.complaint_time, '%Y-%m-%d %H:%i:%s') AS complaintTime,
+		DATE_FORMAT(SC.pay_time, '%Y-%m-%d %H:%i:%s') AS payTime,
+		ifnull(SC.state,0) AS state,
+		SC.order_sn AS orderSn,
+		SC.product_back_id AS productBackId,
+		SC.product_exchange_id AS productExchangeId,
+		SC.product_compensate_id AS productCompensateId
+		from seller_complaint SC
+		join seller S on S.id=SC.sellerId
+		<include refid="Where_Clause"/>
+	</select>
+
+	<select id="get" parameterType="Integer" resultMap="SellerComplaintResult">
+		select
+		   *
+		from `seller_complaint`
+		where `id` = #{id}
+	</select>
+
+	<update id="update" parameterType="com.sibu.mall.seller.persistence.entity.SellerComplaint">
+		update `seller_complaint`
+		<set>
+			<trim  suffixOverrides="," >
+				<if test="id != null">`id`= #{id},</if>
+				<if test="userId != null">`user_id`= #{userId},</if>
+				<if test="userName != null">`user_name`= #{userName},</if>
+				<if test="orderId != null">`order_id`= #{orderId},</if>
+				<if test="orderProductId != null">`order_product_id`= #{orderProductId},</if>
+				<if test="productBackId != null">`product_back_id`= #{productBackId},</if>
+				<if test="productExchangeId != null">`product_exchange_id`= #{productExchangeId},</if>
+				<if test="content != null">`content`= #{content},</if>
+				<if test="image != null">`image`= #{image},</if>
+				<if test="complaintTime != null">`complaint_time`= #{complaintTime},</if>
+				<if test="sellerId != null">`seller_id`= #{sellerId},</if>
+				<if test="sellerComplaintTime != null">`seller_complaint_time`= #{sellerComplaintTime},</if>
+				<if test="sellerCompContent != null">`seller_comp_content`= #{sellerCompContent},</if>
+				<if test="sellerCompImage != null">`seller_comp_image`= #{sellerCompImage},</if>
+				<if test="state != null">`state`= #{state},</if>
+				<if test="optId != null">`opt_id`= #{optId},</if>
+				<if test="optContent != null">`opt_content`= #{optContent},</if>
+				<if test="userContent != null">`user_content`= #{userContent},</if>
+				<if test="optTime != null">`opt_time`= #{optTime}</if>
+			</trim>
+		</set>
+
+		where `id` = #{id}
+	</update>
+
+	<insert id="save" parameterType="com.sibu.mall.seller.persistence.entity.SellerComplaint" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into
+		`seller_complaint`
+		(
+
+			`user_id`,
+			`user_name`,
+			`order_id`,
+			`order_product_id`,
+			`product_back_id`,
+			`product_exchange_id`,
+			`product_compensate_id`,
+			`content`,
+			`image`,
+			`complaint_time`,
+			`seller_id`,
+			`seller_complaint_time`,
+			`seller_comp_content`,
+			`seller_comp_image`,
+			`state`,
+			`opt_id`,
+			`opt_content`,
+			`user_content`,
+			`create_time`,
+			`opt_time`,
+			`pay_time`,
+			`order_sn`,
+			`orders_product_uid`,
+			`act_promotion_package_select_id`
+		)
+		values
+		(
+
+			#{userId},
+			#{userName},
+			#{orderId},
+			#{orderProductId},
+			#{productBackId},
+			#{productExchangeId},
+			#{productCompensateId},
+			#{content},
+			#{image},
+			now(),
+			#{sellerId},
+			#{sellerComplaintTime},
+			#{sellerCompContent},
+			#{sellerCompImage},
+			#{state},
+			#{optId},
+			#{optContent},
+			#{userContent},
+			now(),
+			now(),
+			#{payTime},
+			#{orderSn},
+			#{ordersProductUid},
+			#{actPromotionPackageSelectId}
+		)
+	</insert>
+
+	<!--TODO member-->
+	<select id="getPromotionPackageBackSellerComplaint" parameterType="Integer" resultMap="SellerComplaintResult">
+		select
+		sc.*
+		from seller_complaint sc
+		LEFT JOIN member_product_back mb
+		ON mb.id=sc.product_back_id
+		where
+		mb.act_promotion_package_select_id
+		IN ( SELECT mb1.act_promotion_package_select_id FROM `member_product_back` mb1  WHERE mb1.id=#{id})
+	</select>
+
+	<select id="getActPromotionPackageSellerComplaint" parameterType="Integer" resultMap="SellerComplaintResult">
+		select
+		sc.*
+		from seller_complaint sc
+		where
+		sc.act_promotion_package_select_id
+		IN ( SELECT sc1.act_promotion_package_select_id FROM `seller_complaint` sc1  WHERE sc1.id=#{id})
+	</select>
+
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+       Copyright ${license.git.copyrightYears} the original author or authors.
+
+       Licensed under the Apache License, Version 2.0 (the "License");
+       you may not use this file except in compliance with the License.
+       You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+       Unless required by applicable law or agreed to in writing, software
+       distributed under the License is distributed on an "AS IS" BASIS,
+       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+       See the License for the specific language governing permissions and
+       limitations under the License.
+
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.apache.ibatis.submitted.awful_table.AwfulTableMapper" >
+  <resultMap id="BaseResultMap" type="org.apache.ibatis.submitted.awful_table.AwfulTable3" >
+    <id column="A_CuStOmEr iD" property="customerId" jdbcType="INTEGER" />
+    <result column="A_first name" property="firstFirstName" jdbcType="VARCHAR" />
+    <result column="A_FIRST_NAME" property="secondFirstName" jdbcType="VARCHAR" />
+    <result column="A_FIRSTNAME" property="thirdFirstName" jdbcType="VARCHAR" />
+    <result column="A_last name" property="lastName" jdbcType="VARCHAR" />
+    <result column="A_E_MAIL" property="eMail" jdbcType="VARCHAR" />
+    <result column="A__id1" property="id1" jdbcType="INTEGER" />
+    <result column="A_$id2" property="id2" jdbcType="INTEGER" />
+    <result column="A_id5_" property="id5" jdbcType="INTEGER" />
+    <result column="A_id6$" property="id6" jdbcType="INTEGER" />
+    <result column="A_id7$$" property="id7" jdbcType="INTEGER" />
+    <result column="A_EMAILADDRESS" property="emailaddress" jdbcType="VARCHAR" />
+    <result column="A_from" property="from" jdbcType="VARCHAR" />
+    <result column="A_ACTIVE" property="active" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    A."CuStOmEr iD" as "A_CuStOmEr iD", A."first name" as "A_first name", A.FIRST_NAME as A_FIRST_NAME,
+    A.FIRSTNAME as A_FIRSTNAME, A."last name" as "A_last name", A.E_MAIL as A_E_MAIL,
+    A."_id1" as "A__id1", A."$id2" as "A_$id2", A."id5_" as "A_id5_", A."id6$" as "A_id6$",
+    A."id7$$" as "A_id7$$", A.EMAILADDRESS as A_EMAILADDRESS, A."from" as "A_from", A.ACTIVE as A_ACTIVE
+  </sql>
+  <update id="updateByPrimaryKey" parameterType="org.apache.ibatis.submitted.awful_table.AwfulTable" >
+    update "awful table"
+    set "first name" = #{firstFirstName,jdbcType=VARCHAR},
+    FIRST_NAME = #{secondFirstName,jdbcType=VARCHAR},
+    FIRSTNAME = #{thirdFirstName,jdbcType=VARCHAR},
+    "last name" = #{lastName,jdbcType=VARCHAR},
+    E_MAIL = #{eMail,jdbcType=VARCHAR},
+    "_id1" = #{id1,jdbcType=INTEGER},
+    "$id2" = #{id2,jdbcType=INTEGER},
+    "id5_" = #{id5,jdbcType=INTEGER},
+    "id6$" = #{id6,jdbcType=INTEGER},
+    "id7$$" = #{id7,jdbcType=INTEGER},
+    EMAILADDRESS = #{emailaddress,jdbcType=VARCHAR},
+    "from" = #{from,jdbcType=VARCHAR},
+    ACTIVE = #{active,jdbcType=BIT}
+    <where>
+      <choose>
+        <when test="id != null" >
+          <if test="ids != null">
+             id IN
+            <foreach item="item_id" index="index" open="(" close=")" separator="," collection="ids">#{ids[${index}]}
+            </foreach>
+          </if>
+        </when>
+      </choose>
+    </where>
+
+  </update>
+</mapper>

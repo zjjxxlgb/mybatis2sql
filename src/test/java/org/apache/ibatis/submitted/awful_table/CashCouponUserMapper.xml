@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sibu.mall.coupon.persistence.dao.CashCouponUserMapper" >
+  <resultMap id="BaseResultMap" type="com.sibu.mall.coupon.persistence.entity.CashCouponUser" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="member_id" property="memberId" jdbcType="INTEGER" />
+    <result column="source_id" property="sourceId" jdbcType="INTEGER" />
+    <result column="seller_id" property="sellerId" jdbcType="INTEGER" />
+    <result column="coupon_id" property="couponId" jdbcType="VARCHAR" />
+    <result column="coupon_name" property="couponName" jdbcType="VARCHAR" />
+    <result column="coupon_type" property="couponType" jdbcType="TINYINT" />
+    <result column="coupon_value" property="couponValue" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="use_start_time" property="useStartTime" jdbcType="TIMESTAMP" />
+    <result column="use_end_time" property="useEndTime" jdbcType="TIMESTAMP" />
+    <result column="min_amount" property="minAmount" jdbcType="DECIMAL" />
+    <result column="use_type" property="useType" jdbcType="TINYINT" />
+    <result column="use_type_value" property="useTypeValue" jdbcType="BIGINT" />
+    <result column="use_limit_num" property="useLimitNum" jdbcType="INTEGER" />
+    <result column="saller_overlay" property="sallerOverlay" jdbcType="TINYINT" />
+    <result column="platform_overlay" property="platformOverlay" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="equity_order_sn" property="equityOrderSn" jdbcType="VARCHAR" />
+    <result column="is_more_product" property="isMoreProduct" jdbcType="BIGINT" />
+    <result column="product_json_list" property="productJsonList" typeHandler="com.sibu.mall.coupon.common.plugin.handler.ArrayJsonHandler"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, member_id,source_id, seller_id, coupon_id, coupon_name, coupon_type, coupon_value,
+    `status`, use_start_time, use_end_time, min_amount, use_type, use_type_value, use_limit_num, 
+    saller_overlay, platform_overlay, create_time, update_time,equity_order_sn,is_more_product,product_json_list
+  </sql>
+
+
+
+  <resultMap id="PageCouponUserResult" type="com.sibu.mall.coupon.persistence.entity.CashCouponUser">
+    <result property="id" column="id" />
+    <result property="memberId" column="member_id" />
+    <result property="sellerId" column="seller_id" />
+    <result property="couponId" column="coupon_id" />
+    <result property="status" column="status" />
+    <result property="createTime" column="create_time" />
+    <result property="useTime" column="use_time"/>
+  </resultMap>
+
+  <resultMap id="CashCouponGiftReceivedNum" type="com.sibu.mall.coupon.persistence.entity.CashCouponGiftReceivedNum">
+    <result property="couponId" column="coupon_id" />
+    <result property="receivedNum" column="receivedNum" />
+  </resultMap>
+  <resultMap id="CashCouponGiftUseNum" type="com.sibu.mall.coupon.persistence.entity.CashCouponGiftUseNum">
+    <result property="couponId" column="coupon_id" />
+    <result property="useNum" column="useNum" />
+  </resultMap>
+
+    <sql id="pageSql">
+        id, member_id, seller_id, coupon_id,coupon_name, status, create_time,order_sn
+    </sql>
+    <sql id="pageGiftSql">
+        coupon_id,coupon_name
+    </sql>
+    <sql id="pageCondition">
+        <where>
+            <if test="couponId != null and couponId !=''">
+                and `coupon_id` = #{couponId}
+            </if>
+            <if test="orderSn != null and orderSn !=''">
+               and `order_sn` like #{orderSn}
+            </if>
+            <if test="status != null and status !=''">
+               and `status` = #{status}
+            </if>
+            <if test="startReceivedTime != null">
+              and `create_time` &gt;= #{startReceivedTime}
+            </if>
+            <if test="endReceivedTime != null">
+              and `create_time` &lt;= #{endReceivedTime}
+            </if>
+            <if test="memberId != null and memberId !=''">
+              and `member_id` = #{memberId}
+            </if>
+        </where>
+    </sql><sql id="pageConditionExcel">
+        <where>
+            <if test="couponId != null and couponId !=''">
+                and `coupon_id` = #{couponId}
+            </if>
+            <if test="orderSn != null and orderSn !=''">
+               and `order_sn` like #{orderSn}
+            </if>
+            <if test="status != null and status !=''">
+               and `status` = #{status}
+            </if>
+            <if test="startReceivedTime != null">
+              and `create_time` &gt;= #{startReceivedTime}
+            </if>
+            <if test="endReceivedTime != null">
+              and `create_time` &lt;= #{endReceivedTime}
+            </if>
+        </where>
+    </sql>
+    <sql id="pageConditionGift">
+        <where>
+            <if test="couponName != null and couponName !=''">
+              and `coupon_name` like #{couponName}
+            </if>
+            <if test="couponGiftId != null and couponGiftId !=''">
+              and `gift_id` = #{couponGiftId}
+            </if>
+        </where>
+    </sql>
+
+  <select id="findCashCouponByMemberIdAndCouponUserId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from `cash_coupon_user`
+    where `member_id` = #{memberId}
+    AND id in
+    <foreach collection="couponUserIdList" item="couponUserId" index="index" open="(" close=")" separator=",">
+      #{couponUserId}
+    </foreach>
+    AND `status`=1
+    AND `use_start_time` &lt;= NOW()
+    AND `use_end_time` &gt;= NOW()
+  </select>
+
+  <select id="findAllCashCouponByMemberId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from `cash_coupon_user`
+    where `member_id` = #{memberId}
+    AND `status`=1
+    AND `use_start_time` &lt;= NOW()
+    AND `use_end_time` &gt;= NOW()
+  </select>
+
+    <select id="page" parameterType="com.sibu.mall.coupon.persistence.request.PageCashCouponUserCondition"
+            resultMap="PageCouponUserResult">
+        select
+        <include refid="pageSql"/>
+        from `cash_coupon_user`
+        <include refid="pageCondition"/>
+        order by `create_time` desc
+    </select>
+
+    <select id="pageGift" parameterType="com.sibu.mall.coupon.persistence.request.PageCashCouponGiftUserCondition"
+            resultMap="BaseResultMap">
+        select
+        <include refid="pageGiftSql"/>
+        from `cash_coupon_user`
+        <include refid="pageConditionGift"/>
+        group by coupon_id
+    </select>
+
+    <!--<select id="pageGift" parameterType="com.sibu.mall.coupon.persistence.request.PageCashCouponGiftUserCondition"-->
+            <!--resultType="HashMap">-->
+      <!--select-->
+      <!--coupon_id as couponId,coupon_name as couponName,SUM (IF (status=2,1,0)) as-->
+      <!--userUseNum,count(id) as userReceivedNum-->
+      <!--from cash_coupon_user-->
+      <!--where gift_id = #{couponGiftId}-->
+      <!--<if test="couponName != null and couponName !=''">-->
+        <!--and `coupon_name` like #{couponName}-->
+      <!--</if>-->
+      <!--group by coupon_id-->
+    <!--</select>-->
+
+  <update id="useCouponByOrder" parameterType="com.sibu.mall.coupon.persistence.request.UseCouponByOrderCondition">
+    update `cash_coupon_user`
+    set `status` = 2 ,
+    `update_time`= now(),
+    use_time = now(),
+    order_sn = #{orderSn}
+    where `member_id` = #{memberId} AND `id` = #{couponUserId} and `status` = 1 and `order_sn` is null
+     AND `use_start_time` &lt;= NOW()
+    AND `use_end_time` &gt;= NOW()
+
+  </update>
+
+  <update id="backCouponToMember" parameterType="com.sibu.mall.coupon.persistence.request.BackCouponToMemberCondition">
+    update `cash_coupon_user`
+    set `status` = 1 ,
+    `use_time` = null,
+    `order_sn` = null,
+    `update_time`= now()
+    where `member_id` = #{memberId} AND `id` = #{couponUserId} and `status` = 2 and order_sn = #{orderSn}
+  </update>
+
+  <insert id="save" parameterType="com.sibu.mall.coupon.persistence.entity.CashCouponUser">
+    insert into cash_coupon_user (id, member_id,source_id, seller_id,
+      coupon_id, coupon_name,
+      coupon_type, coupon_value, `status`,
+      use_start_time, use_end_time, min_amount,
+      use_type, use_type_value, use_limit_num,
+      saller_overlay, platform_overlay,gift_id,equity_type,create_time,
+      update_time,equity_order_sn,is_more_product,product_json_list)
+    values (#{id,jdbcType=BIGINT}, #{memberId,jdbcType=INTEGER},#{sourceId,jdbcType=INTEGER}, #{sellerId,jdbcType=INTEGER},
+      #{couponId,jdbcType=BIGINT}, #{couponName,jdbcType=VARCHAR},
+      #{couponType,jdbcType=TINYINT}, #{couponValue,jdbcType=DECIMAL}, #{status,jdbcType=TINYINT},
+      #{useStartTime,jdbcType=TIMESTAMP}, #{useEndTime,jdbcType=TIMESTAMP}, #{minAmount,jdbcType=DECIMAL},
+      #{useType,jdbcType=TINYINT}, #{useTypeValue,jdbcType=BIGINT}, #{useLimitNum,jdbcType=INTEGER},
+      #{sallerOverlay,jdbcType=TINYINT}, #{platformOverlay,jdbcType=TINYINT},#{giftId},#{equityType},#{createTime,jdbcType=TIMESTAMP},
+      #{updateTime,jdbcType=TIMESTAMP},#{equityOrderSn},#{isMoreProduct},
+      #{productJsonList,jdbcType=OTHER,typeHandler=com.sibu.mall.coupon.common.plugin.handler.ArrayJsonHandler})
+  </insert>
+
+  <select id="pageMemberCouponByMemberId" parameterType="com.sibu.mall.coupon.persistence.request.PageMemberCouponCondition" resultMap="BaseResultMap">
+    select id, member_id, seller_id,
+    coupon_id, coupon_name,
+    coupon_type, coupon_value, `status`,
+    use_start_time, use_end_time, min_amount,
+    use_type, use_type_value, use_limit_num,
+    saller_overlay, platform_overlay, create_time,
+    update_time
+    from cash_coupon_user
+    where member_id = #{memberId}
+    <if test="type == 1">
+      AND `status`=1
+      AND use_end_time >= NOW()
+    </if>
+    <if test="type == 2">
+       AND `status`=2
+    </if>
+    <if test="type == 3">
+      AND `status`=1
+      AND use_end_time &lt; NOW()
+    </if>
+    order by create_time desc
+  </select>
+
+  <select id="listMemberCouponByMemberId" parameterType="com.sibu.mall.coupon.persistence.request.PageMemberCouponCondition" resultMap="BaseResultMap">
+    select id, member_id, seller_id,
+    coupon_id, coupon_name,
+    coupon_type, coupon_value, `status`,
+    use_start_time, use_end_time, min_amount,
+    use_type, use_type_value, use_limit_num,
+    saller_overlay, platform_overlay, create_time,
+    update_time,is_more_product,product_json_list
+    from cash_coupon_user
+    where member_id = #{memberId}
+    <if test="type == 1">
+      AND `status`=1
+      AND use_end_time >= NOW()
+    </if>
+    <if test="type == 2">
+      AND `status`=2
+    </if>
+    <if test="type == 3">
+      AND `status`=1
+      AND use_end_time &lt; NOW()
+    </if>
+    order by create_time desc
+  </select>
+
+  <select id="findReceivedNumByMemberId" parameterType="java.lang.Integer" resultType="com.sibu.mall.coupon.persistence.entity.CashCouponUserReceivedNum">
+    SELECT coupon_id as couponId, count(0) as receivedNum FROM cash_coupon_user WHERE member_id =#{memberId} group by coupon_id
+  </select>
+
+  <select id="countRecivedNumByMemberId" parameterType="com.sibu.mall.coupon.persistence.request.CouponUserByMemberIdCondition" resultType="java.lang.Integer">
+    SELECT count(*) FROM cash_coupon_user WHERE member_id =#{memberId} AND coupon_id = #{couponId}
+  </select>
+
+  <!-- 获取当前用户有效的优惠券数量 -->
+  <select id="getEnableCountByMemberId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+    SELECT COUNT(1) FROM cash_coupon_user where member_id = #{memberId} AND status = 1 AND  use_end_time >= now()
+  </select>
+
+  <!-- 根据id查询 -->
+  <select id="findCouponUserByCouponUserId" resultMap="BaseResultMap">
+    SELECT
+     <include refid="Base_Column_List"/>
+     FROM cash_coupon_user where member_id = #{memberId} and id = #{couponUserId}
+  </select>
+
+  <select id="getCouponReceivedNumById" resultType="Integer">
+    select count(id) from cash_coupon_user where coupon_id =#{couponId}
+  </select>
+
+  <select id="getCouponReceivedNumByGiftId" resultMap="CashCouponGiftReceivedNum" >
+    select count(id) as receivedNum,coupon_id from cash_coupon_user where gift_Id =#{giftId} group by coupon_id
+  </select>
+
+  <select id="getCouponUseNumByGiftId" resultMap="CashCouponGiftUseNum">
+    select count(id) as useNum,coupon_id from cash_coupon_user where gift_Id =#{giftId} and status=#{status} group by coupon_id
+  </select>
+
+  <select id="getCouponUseNumById" resultType="Integer">
+    select count(id) from cash_coupon_user where coupon_id =#{couponId} and status=#{status}
+  </select>
+
+  <select id="pageExcel" parameterType="com.sibu.mall.coupon.persistence.request.CashCouponUserExcelCondition"
+          resultMap="PageCouponUserResult">
+    select
+    <include refid="pageSql"/>
+    from `cash_coupon_user`
+    <include refid="pageConditionExcel"/>
+    limit #{pageNow} , #{pageSize}
+  </select>
+
+  <select id="findSumByMemberId615" parameterType="java.lang.Integer" resultType="com.sibu.mall.coupon.persistence.entity.CashCouponUserSum">
+    SELECT SUM(coupon_value) AS receiveSum
+    FROM cash_coupon_user
+    WHERE member_id = #{memberId} and coupon_type!=3
+    and create_time >='2019-06-15 20:00:00' and create_time &lt; '2019-06-30 00:00:00'
+  </select>
+
+  <update id="abortCoupon" parameterType="com.sibu.mall.coupon.persistence.request.CashCouponAbortCondition">
+    update `cash_coupon_user`
+    set `status` = 3 ,
+    `update_time`= now()
+    where `member_id` = #{memberId}
+    AND `id` = #{couponUserId}
+    and `status` = 1
+    AND `use_end_time` &gt;= NOW()
+  </update>
+
+  <select id="findExchangeCoupon" parameterType="com.sibu.mall.coupon.persistence.request.CashCouponExchangeCondition" resultType="com.sibu.mall.coupon.persistence.entity.CashCouponUserExchange">
+    SELECT
+    id as couponUserId,
+    coupon_value as couponValue,
+    coupon_type as couponType,
+    use_type as useType,
+    use_type_value as useTypeValue,
+    status,
+    use_start_time as useStartTime,
+    use_end_time as useEndTime,
+    order_sn as orderSn
+    FROM cash_coupon_user
+    WHERE member_id = #{memberId} and equity_type = 3
+    <if test="couponUserId != null">
+      AND id=#{couponUserId}
+    </if>
+    order by create_time desc limit 1
+  </select>
+
+  <select id="selectCashCouponByMemberId" parameterType="com.sibu.mall.coupon.persistence.request.OrderCashCouponCondition" resultMap="BaseResultMap">
+    SELECT
+      id,
+      coupon_id as couponId,
+      coupon_name as couponName,
+      coupon_type as couponType,
+      use_type as useType,
+      coupon_value as couponValue,
+      status,
+      use_start_time as useStartTime,
+      use_end_time as useEndTime,
+      order_sn as orderSn,
+      equity_type as equityType
+    FROM cash_coupon_user
+    WHERE member_id = #{memberId} and equity_type in(2,3)
+  </select>
+
+  <select id="findNotUsedExchangeCoupon" parameterType="com.sibu.mall.coupon.persistence.request.CashCouponExchangeCondition" resultType="com.sibu.mall.coupon.persistence.entity.CashCouponUserExchange">
+    SELECT
+    id as couponUserId,
+    coupon_value as couponValue,
+    coupon_type as couponType,
+    use_type as useType,
+    use_type_value as useTypeValue,
+    status,
+    use_start_time as useStartTime,
+    use_end_time as useEndTime,
+    order_sn as orderSn
+    FROM cash_coupon_user
+    WHERE member_id = #{memberId} and equity_type = 3 and status = 1
+    order by create_time desc limit 1
+  </select>
+
+</mapper>
